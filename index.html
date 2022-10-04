@@ -1,9 +1,405 @@
+<!DOCTYPE html>
 <html>
 <head>
-<title>nicholastsmith</title>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
 </head>
+
 <body>
-Under construction...
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="Posts/About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><h1><a href="Posts/67.html">On The Importance of Centering in PCA</a></h1><h2>Fri, 09 Sep 2022</h2><p>The previous post presents methods for efficiently performing principal component analysis (PCA) on certain rectangular sparse matrices. Since routines for performing the singular value decomposition (SVD) on sparse matrices are readily available (e.g. <i>svds</i> and <i>TruncatedSVD</i>), it is reasonable to investigate the influence centering has on the resulting transformation.
+</p><p><a href="Posts/67.html" style="text-decoration: underline;">View Post #67</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/66.html">Weighted Sparse PCA for Rectangular Matrices</a></h1><h2>Tue, 06 Sep 2022</h2><p>Consider a sparse <i>m</i>x<i>n</i> rectangular matrix \(\mathbf{X}\), where either \(m &gt;&gt; n\) or \(m &lt;&lt; n\). Performing a principal component analysis (PCA) on \(\mathbf{X}\) involves computing the eigenvectors of its covariance matrix. This is often accomplished using the singular value decomposition (SVD) of the centered matrix \(\mathbf{X}-\mathbf{U}\). But, with large sparse matrices, this centering step is frequently intractable. If it is tractable, however, to compute the eigendecomposition of either an <i>m</i>x<i>m</i> or an <i>n</i>x<i>n</i> dense matrix in memory, other approaches are possible.
+<br/>
+<br/></p><p><a href="Posts/66.html" style="text-decoration: underline;">View Post #66</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/65.html">Weighted PCA</a></h1><h2>Fri, 08 Jul 2022</h2><p>Consider an <i>m</i> by <i>n</i> matrix \(\mathbf{A}\) and an <i>m</i> by <i>1</i> vector of integers \(\mathbf{w}\). Now, consider the matrix \(\mathbf{R}\), where \(\mathbf{R}\) is formed by taking \(\mathbf{A_i}\), that is the <i>i</i>-th row of \(\mathbf{A}\), and repeating it \(\mathbf{w_i}\) times. This new matrix \(\mathbf{R}\) has dimension <i>s</i> by <i>n</i>, where
+<p style="text-align:center;">\[\displaylines{s = \sum_{i=1}^{m}{\mathbf{w_i}}}\ .\]</p>
+If \(s &gt;&gt; m\), then it is undesirable to compute the full matrix \(\mathbf{R}\) and perform principal component analysis (PCA) on it. Instead, the highly structured form of \(\mathbf{R}\), suggests there should be a more efficient method to perform this decomposition. This method is known as weighted PCA and is the topic of this post.
+<br/>
+<br/></p><p><a href="Posts/65.html" style="text-decoration: underline;">View Post #65</a></p><p>Tags: <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/64.html">ICP In Practice</a></h1><h2>Sat, 29 May 2021</h2><p>This post explores the iterative constrained pathways rule ensemble (ICPRE) method introduced in an earlier post using the Titanic dataset popularized by Kaggle [1]. The purpose of the text is to introduce the features and explore the behavior of the library.
+<br/>
+<br/>Some of the code snippets in this post are shortened for brevity sake. To obtain the full source and data, please see the <i>ICPExamples</i> GitHub page [2].
+</p><p><a href="Posts/64.html" style="text-decoration: underline;">View Post #64</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i>, <i>Python</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/63.html">The Iterative Constrained Pathways Optimizer</a></h1><h2>Tue, 18 May 2021</h2><p>Many optimization methods seek an optimal parameter set with regard to error or likelihood. Such a solution is most desirable in many regards. However, when the broader context of a problem is included, the indisputable superiority of the optimum frequently becomes less clear. This context often includes other guidelines and restrictions that may limit the usefulness of solutions lacking certain properties. Unfortunately, typical loss criteria can rarely take these into account.
+<br/>
+<br/>This blog post presents a method that abandons the quest for optimality and instead focuses on better satisfying the broader context of a problem. It describes a method that does not attempt to find the minimum, but instead simply tries to get closer to it while respecting imposed constraints. This blog post describes the iterative constrained pathways optimizer.
+</p><p><a href="Posts/63.html" style="text-decoration: underline;">View Post #63</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/62.html">Simulated Genetic Drift in Populations</a></h1><h2>Sat, 20 Feb 2021</h2><p>This video shows a simulation of genetic drift in a synthetically generated population as a result of sexual reproduction. A fixed population size is divided into different distinct sub-populations with differing allele frequencies. Starting with an initial population, 80 simulated epochs are passed in which each population member is replaced via sexual reproduction from two randomly selected parents. Pairs of parents are chosen such that the probability they come from the same sub-population is higher than the probability that they from come different sub-populations.<br/>
+<p style="text-align:center;"><iframe src="https://www.youtube-nocookie.com/embed/hxQx3k59E14" title="YouTube video player" frameborder="0" allow="accelerometer;autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+<p style="text-align:center;"><b>Figure 1: Simulated Genetic Drift in Populations</b></p>
+In the animation, the high-dimensional allele features for each population member are represented in two dimensions using PCA. The size and color of each marker encodes information about sub-population makeup and may be used to help distinguish highly mixed samples.
+<br/>
+<br/>Although the data is entirely synthetic, it demonstrates the middling affect that cross-breeding has on the genetic makeup of the overall population. As the number of sub-populations grows and the overall population size remains fixed, the impact of cross-breeding is intensified and the population as a whole converges more rapidly.</p><p><a href="Posts/62.html" style="text-decoration: underline;">View Post #62</a></p><p>Tags: <i>Bioinformatics</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Genetics</i>, <i>Genomics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/61.html">CoV-2 Genome Explorer</a></h1><h2>Fri, 05 Feb 2021</h2><p>At the time of this writing, NCBI Virus has over 40,000 complete CoV-2 sequences available. I made <a href="https://nicholastoddsmith.github.io/COV2Explorer/">an interactive webpage</a> to help visualize a random subset of these genomes using principal component analysis.
+<p style="text-align:center;"><a href="https://nicholastoddsmith.github.io/COV2Explorer/"><img src="../Img/cov2explorer.png"" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: CoV-2 Explorer Interface</b></p>
+The <i>x</i>, <i>y</i>, size, and color axes respectively represent the first four principal axes. The plot markers identify viruses with unique nucleotide sequences in the <i>GU280_gp02</i> (spike glycoprotein) gene region. The range sliders can be used to visualize shift in the viral genomes over time. The bar chart in the bottom right counts the frequency of SNP mutations in the sequences present in the specified date range.</p><p><a href="Posts/61.html" style="text-decoration: underline;">View Post #61</a></p><p>Tags: <i>Cov-2</i>, <i>Covid-19</i>, <i>Data Visualization</i>, <i>Genome Sequencing</i>, <i>Genomics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/60.html">Ancestry Determination Part 3: openSNP Data Evaluation</a></h1><h2>Tue, 26 Jan 2021</h2><p>The website <i>openSNP</i> allows users to share and discuss genetic information [1]. The purpose of the site is perhaps best summarized by its bio on Twitter: "<i>crowdsourcing genome wide association studies</i>" [2]. This post uses the machine learning and statistical techniques developed in previous blog entries to analyze the ancestry of <i>openSNP</i> members who have genotyping data associated to their accounts. By comparing the derived results with the self-reported answers from <i>openSNP</i> users, the accuracy of these methods on real-world data is assessed.
+</p><p><a href="Posts/60.html" style="text-decoration: underline;">View Post #60</a></p><p>Tags: <i>Ancestry</i>, <i>Bioinformatics</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Genetics</i>, <i>Genomics</i>, <i>Machine Learning</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/59.html">Identifying Family Relationships using Genetic Similarity Measures</a></h1><h2>Sat, 02 Jan 2021</h2><p>In general, are parents more genetically similar to their children or to their siblings? Why do some siblings look alike while others look completely different? How can the genetic similarity between two individuals be computed? This post uses biostatistics to explore genetic similarity and tries to answer these and other questions.
+<br/>
+<br/></p><p><a href="Posts/59.html" style="text-decoration: underline;">View Post #59</a></p><p>Tags: <i>Bioinformatics</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Family</i>, <i>Genetics</i>, <i>Genomics</i>, <i>Machine Learning</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/58.html">Decorrelation Redux</a></h1><h2>Sat, 26 Dec 2020</h2><p>Consider the typical statement of the least squares problem.
+<p style="text-align:center;">\[\displaylines{\mathbf{A}\mathbf{x}=\mathbf{y}}\ ,\]</p>
+where \(\mathbf{A}\) is the <i>m</i> x <i>n</i> data matrix, \(\mathbf{x}\) is the <i>n</i> x <i>1</i> vector of regression coefficients, and \(\mathbf{y}\) is the <i>m</i> x <i>1</i> vector of target values.
+</p><p><a href="Posts/58.html" style="text-decoration: underline;">View Post #58</a></p><p>Tags: <i>Data Science</i>, <i>Mathematics</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/57.html">Analysis of the Preliminary 2020 Election Results</a></h1><h2>Sat, 14 Nov 2020</h2><p>The 2020 general election in the U.S.A. is interesting in several regards. Perhaps chief among these is the influence of the COVID-19 pandemic on voting patterns and the subsequent shift to more reliance on mail-in voting. This post presents analysis of the preliminary election results and attempts to explain some of the observed trends.
+</p><p><a href="Posts/57.html" style="text-decoration: underline;">View Post #57</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Election</i>, <i>Election2020</i>, <i>Statistics</i>, <i>Voting</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/56.html">Analysis of the 2016 US General Election</a></h1><h2>Wed, 21 Oct 2020</h2><p>Counties within the United States vary substantially along a number of demographic and socioeconomic axes. These factors explain much of the variation observed throughout the US with respect to election and polling trends. This post attempts to untangle some of this complexity to give insight into the factors that influence voter behavior and other broader national trends.
+</p><p><a href="Posts/56.html" style="text-decoration: underline;">View Post #56</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>Election</i>, <i>Voter Turnout</i>, <i>Voting</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/55.html">The United States by County</a></h1><h2>Sun, 11 Oct 2020</h2><p><p>This post explores the composition of the United States using choropleth charts. The statistics and other values represented are as of the year 2016. Percentage changes in the number of democratic and republican voters are computed between the years 2008 and 2016.</p>
+<p></p><p><a href="Posts/55.html" style="text-decoration: underline;">View Post #55</a></p><p>Tags: <i>Data Visualization</i>, <i>Demographics</i>, <i>Election</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/54.html">The Atlantic Hurricane Season: 120 Years</a></h1><h2>Thu, 08 Oct 2020</h2><p>The following plot shows the number of tropical storms and major hurricanes occurring during each of the past 120 Atlantic hurricane seasons.
+</p><p><a href="Posts/54.html" style="text-decoration: underline;">View Post #54</a></p><p>Tags: <i>2020</i>, <i>Data Visualization</i>, <i>Hurricane Delta</i>, <i>Hurricanes</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/53.html">The Shooting Regressor; Randomized Gradient-Based Ensembles</a></h1><h2>Wed, 16 Sep 2020</h2><p>Gradient boosting stands apart from many other supervised learning approaches in some regard. It is an ensemble method, However, the ensemble is constructed sequentially. It estimates a target value. But, it does so indirectly through the gradient.
+<br/>
+<br/></p><p><a href="Posts/53.html" style="text-decoration: underline;">View Post #53</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/52.html">Precipitation Totals by City in the USA</a></h1><h2>Fri, 19 Jun 2020</h2><p>The following plots show the average amount of precipitation over the past 70 years for 8 cities in the USA. Each sub-image depicts a hypothetical calendar month and each colored square in a sub-image depicts a single day. The color of a given square describes the amount of precipitation a city receives for the day corresponding to that square on average.
+<br/>
+<br/></p><p><a href="Posts/52.html" style="text-decoration: underline;">View Post #52</a></p><p>Tags: <i>Data Visualization</i>, <i>Statistics</i>, <i>Weather</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/51.html">Ancestry Determination via Genetic Variant Analysis Part 2</a></h1><h2>Mon, 18 May 2020</h2><p>In this post, the techniques outlined in an earlier blog post are employed to predict the ancestry of the author. Two approaches are considered: an approach using a classification model and one using similarity functions. Finally, scatter plots depicting low dimensional projections of the data are shown, plotting the genome of the author alongside samples from the IGSR dataset.
+<br/>
+<br/></p><p><a href="Posts/51.html" style="text-decoration: underline;">View Post #51</a></p><p>Tags: <i>Bioinformatics</i>, <i>Data Science</i>, <i>Data Visualization</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/50.html">My Experience with Whole Genome Sequencing</a></h1><h2>Sun, 17 May 2020</h2><p>So, I decided to have my genome sequenced.
+</p><p><a href="Posts/50.html" style="text-decoration: underline;">View Post #50</a></p><p>Tags: <i>Free-Form</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/49.html">Visualizing Coronavirus Phylogenies with Genome Mutation Analysis</a></h1><h2>Sun, 26 Apr 2020</h2><p>In this post, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) responsible for the recent pandemic is analyzed. Several attributes about the presently recorded virus genomes are plotted and genetic mutations in the sequences are traced to identify probable phylogenies among the samples.
+<br/>
+<br/></p><p><a href="Posts/49.html" style="text-decoration: underline;">View Post #49</a></p><p>Tags: <i>Bioinformatics</i>, <i>Coronavirus</i>, <i>Covid-19</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Medicine</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/48.html">Ancestry Determination via Genetic Variant Analysis</a></h1><h2>Sat, 18 Apr 2020</h2><p><h1>Introduction</h1>
+Sequencing of the human genome began in 1990 as part of the Human Genome Project. With the technology available at the time, the project was a substantial undertaking. The human genome contains two sets of 23 chromosomes each with roughly 3.2 billion base pairs. A number of institutions, in countries around the world, participated in the project. Thirteen years later the project was complete at a cost of roughly three billion US dollars. The result was the first reference human genome.
+<br/>
+<br/>Rapid advances in the field of genomics have dramatically lowered the cost of genetic sequencing and have ushered in the age of the once fabled "$1000 genome." Now, a growing list of companies offer whole genome sequencing for hundreds of dollars with turn around time measured in weeks. This technology enables introspection into the sequences of nucleobases that comprise DNA and thus the genes of anyone curious enough to take the plunge.
+<br/>
+<br/></p><p><a href="Posts/48.html" style="text-decoration: underline;">View Post #48</a></p><p>Tags: <i>Ancestry</i>, <i>Bioinformatics</i>, <i>Data Science</i>, <i>Genome Sequencing</i>, <i>Medicine</i>, <i>Snp</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/47.html">CoVID-19 Projections using Kernel SVR and Death Rate Analysis</a></h1><h2>Sun, 05 Apr 2020</h2><p><strong>Updated April 8th 2020</strong>
+<br/>
+<br/>I've spent a disturbing amount of time trying to come up with a decent model for the CoVID-19 pandemic. The big challenge is how little good data there is. Pretty much all available data is riddled with confounding variables and bias. There is a long list of challenges but some I find most daunting are that:
+<br/>
+<br/></p><p><a href="Posts/47.html" style="text-decoration: underline;">View Post #47</a></p><p>Tags: <i>Covid-19</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/46.html">Flu/Pneumonia Deaths by Month in 2017 in the US</a></h1><h2>Tue, 24 Mar 2020</h2><p><p style="text-align:center;"><a href="../Img/fludeathsbymonth2017.png"><img src="../Img/fludeathsbymonth2017.png"" alt="FluDeathsByMonth2017" height="auto" width="75%" /></a></p>
+<br/>
+<b>Note:</b> The data in this chart is taken from the National Center for Health Statistics on CDC's website.</p><p><a href="Posts/46.html" style="text-decoration: underline;">View Post #46</a></p><p>Tags: <i>Coronavirus</i>, <i>Covid-19</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Influenza</i>, <i>Image</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/45.html">Population Normalized CoVID-19 Charts and Predictions</a></h1><h2>Sun, 22 Mar 2020</h2><p>The following charts compare the number of deaths resulting from the CoVID-19 pandemic in various countries as of March 20th 2020. The daily totals are normalized by the population in each country to produce per capita numbers. Per capita numbers allow for more easy comparison between countries.
+<br/>
+<br/></p><p><a href="Posts/45.html" style="text-decoration: underline;">View Post #45</a></p><p>Tags: <i>Coronavirus</i>, <i>Covid-19</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Medicine</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/44.html">On the Influence of Recessions on the S&amp;P 500 Index</a></h1><h2>Sat, 21 Mar 2020</h2><p>The following plots explore the influence of two economic factors during recessions on the S&amp;P 500 index: unemployment and gross domestic product (GDP). A linear model is constructed to predict the low of the S&amp;P 500 index during a given recession using two transformed variables derived from the maximum unemployment and GDP differentials for that recession.
+<br/>
+<br/></p><p><a href="Posts/44.html" style="text-decoration: underline;">View Post #44</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/43.html">Sunrise and Sunset Times by City</a></h1><h2>Sun, 04 Aug 2019</h2><p>The following plots show the amount of daylight, sunrise time, and sunset time for four US cities throughout the year of 2019.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/sunrise-1.png"><img src="../Img/sunrise-1.png" /></a></td><td><a href="../Img/sunset-1.png"><img src="../Img/sunset-1.png" /></a></td><td><a href="../Img/sundif-1.png"><img src="../Img/sundif-1.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 1: Hours of Daylight, Sunrise Time, and Sunset Time by City</b></p>
+<br/>
+The rise and set times are shown in local time without adjustment for daylight saving times (DST). Data obtained from the U.S. Naval Observatory Astronomical Applications Department.</p><p><a href="Posts/43.html" style="text-decoration: underline;">View Post #43</a></p><p>Tags: <i>Astronomical Data</i>, <i>Data Visualization</i>, <i>Sunrise</i>, <i>Sunset</i>, <i>Weather</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/42.html">RangeMap: A Simple Interval Query Datastructure</a></h1><h2>Thu, 04 Jul 2019</h2><p>Maps are a fundamental data structure. Their prevalence is a testament to their importance. Indeed, many search problems can be reduced to the construction of an appropriate map. However, a search problem occasionally arises that is difficult to solve, at least directly, with a map. The interval query problem is one such problem.
+<br/>
+<br/></p><p><a href="Posts/42.html" style="text-decoration: underline;">View Post #42</a></p><p>Tags: <i>Algorithms</i>, <i>C++</i>, <i>Computer Science</i>, <i>Interval Query</i>, <i>Software</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/41.html">Visualizing International Trade of Food Products</a></h1><h2>Sat, 12 Jan 2019</h2><p>With the rise of globalization, countries increasingly trade food products internationally. Acting in their own economic interests, countries buy and sell food where profitable, much like any other product. Import and export records provide a fascinating window into this complex world of international food trade.
+<br/>
+<br/></p><p><a href="Posts/41.html" style="text-decoration: underline;">View Post #41</a></p><p>Tags: <i>Data Visualization</i>, <i>Economics</i>, <i>Food</i>, <i>International Trade</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/40.html">Applying Correlation as a Criterion in Hierarchical Decision Trees</a></h1><h2>Thu, 27 Dec 2018</h2><p>Decision trees are a simple yet powerful method of machine learning. A binary tree is constructed in which the leaf nodes represent predictions. The internal nodes are decision points. Thus, paths from the root to the leafs represent sequences of decisions that result in an ultimate prediction.
+<br/>
+<br/>Decision trees can also be used in hierarchical models. For instance, the leafs can instead represent subordinate models. Thus, a path from the root to a leaf node is a sequence of decisions that result in a prediction made by a subordinate model. The subordinate model is only responsible for predicting samples that fall within the leaf.
+<br/>
+<br/>This post presents an approach for a hierarchical decision tree model with subordinate linear regression models.
+<br/>
+<br/></p><p><a href="Posts/40.html" style="text-decoration: underline;">View Post #40</a></p><p>Tags: <i>Cython</i>, <i>Data Science</i>, <i>Decision Tree</i>, <i>Machine Learning</i>, <i>Scikit-Learn</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/39.html">A Method for Addressing Nonhomogeneous Data using an Implicit Hierarchical Linear Model</a></h1><h2>Sat, 27 Oct 2018</h2><p>Datasets containing nonhomogenous groups of samples present a challenge to linear models. In particular, such datasets violate the assumption that there is a linear relationship between the independent and dependent variables. If the data is grouped into distinct clusters, linear models may predict responses that fall in between the clusters. These predictions can be quite far from the targets depending on how the data is structured. In this post, a method is presented for automatically handling nonhomogenous datasets using linear models.
+<br/>
+<br/></p><p><a href="Posts/39.html" style="text-decoration: underline;">View Post #39</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Linear Algebra</i>, <i>Linear Models</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Research</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/38.html">Decorrelating Features using the Gram-Schmidt Process</a></h1><h2>Thu, 04 Oct 2018</h2><p>A problem that frequently arises when applying linear models is that of multicollinearity. The term <b>multicollinearity</b> describes the phenomenon where one or more features in the data matrix can be accurately predicted using a linear model involving others of the features. The consequences of multicollinearity include numerical instability due to ill-conditioning, and difficulty in interpreting the regression coefficients. An approach to decorrelate features is presented using the Gram-Schmidt process.
+<br/>
+<br/></p><p><a href="Posts/38.html" style="text-decoration: underline;">View Post #38</a></p><p>Tags: <i>Data Science</i>, <i>Linear Algebra</i>, <i>Linear Models</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/37.html">TVLib: A C++ Text Vectorization Library with Python Bindings</a></h1><h2>Mon, 09 Jul 2018</h2><p>I am a big fan of the <b>CountVectorizer</b> class in <i>scikit-learn</i> [1]. With a robust and easy interface that produces (sparse!) matrices, what’s not to love? Well, it’s… pretty… slow…
+<br/>
+<br/>The performance is okay for 10s of MB of text, but GBs take minutes or more. It terms out that <b>CountVectorizer</b> is implemented in pure Python. The functions are single threaded too. It seems like low-hanging fruit. Just whip up some parallel C++, right? Well, not quite, but I’m getting ahead of myself.
+<br/>
+<br/></p><p><a href="Posts/37.html" style="text-decoration: underline;">View Post #37</a></p><p>Tags: <i>C++</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Nlp</i>, <i>Python</i>, <i>Sklearn</i>, <i>Software</i>, <i>Sparse Matrices</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/36.html">On the Analysis and Prediction of Recessions in the USA</a></h1><h2>Sat, 23 Jun 2018</h2><p>This chapter explores recessions in the United States of America. Datasets are collected from a variety of locations including the Federal Reserve Economic Data (FRED) and from the website of Yale professor and Nobel laureate Dr. Robert J. Shiller. A classifier model is constructed which predicts recessions and this model is analyzed for useful insights.
+<br/>
+<br/></p><p><a href="Posts/36.html" style="text-decoration: underline;">View Post #36</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>Machine Learning</i>, <i>Statistics</i>, <i>Stocks</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/35.html">Real S&amp;P Composite Moving Average</a></h1><h2>Sat, 16 Jun 2018</h2><p>Recently, I have been experimenting with windowing functions for time series data. While trying out my code, I came up with a nice and (somewhat) thought-provoking plot.
+<br/>
+<br/></p><p><a href="Posts/35.html" style="text-decoration: underline;">View Post #35</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>S&P</i>, <i>Statistics</i>, <i>Stocks</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/34.html">A Brief Analysis of Survey Data from a Speed Dating Event</a></h1><h2>Sat, 05 May 2018</h2><p>In this post, survey data collected from several speed dating events is analyzed. The events were conducted between 2002 and 2004 by two professors from Columbia University: Ray Fisman and Sheena Iyengar. In addition to questions about personal interests, the survey includes academic and occupational questions as well.
+<br/>
+<br/></p><p><a href="Posts/34.html" style="text-decoration: underline;">View Post #34</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Human Behavior</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/33.html">Malware Detection and Classification using Logistic Regression</a></h1><h2>Mon, 02 Apr 2018</h2><p>In this post, an approach to detecting malware using machine learning is presented. System call activity is processed and analyzed by a classification model to detect the presence of malicious applications.
+<br/>
+<br/></p><p><a href="Posts/33.html" style="text-decoration: underline;">View Post #33</a></p><p>Tags: <i>Anti-Virus</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Malware</i>, <i>Security</i>, <i>Windows</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/32.html">A Look at Stack Overflow Questions about Python</a></h1><h2>Mon, 05 Mar 2018</h2><p>There is a <a href="https://www.kaggle.com/stackoverflow/pythonquestions">dataset on Kaggle</a> that contains questions taken from Stack Overflow about the Python programming language. This post briefly explores portions of the dataset.
+<br/>
+<br/></p><p><a href="Posts/32.html" style="text-decoration: underline;">View Post #32</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Python</i>, <i>Software</i>, <i>Stack Overflow</i>, <i>Wordcloud</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/31.html">Mortality in the United States and Its Causes</a></h1><h2>Sat, 24 Feb 2018</h2><p>In this chapter, vital statistics for the United States of America are explored. The Center for Disease Control maintains several datasets containing vital statistics for the nation. These datasets contain records of deaths organized by year. Each record includes age, gender, race, cause of death, and other details. This chapter explores data for the year 2016.
+<br/>
+<br/></p><p><a href="Posts/31.html" style="text-decoration: underline;">View Post #31</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Death</i>, <i>Medicine</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/30.html">On Forename Popularity in the USA</a></h1><h2>Fri, 19 Jan 2018</h2><p>In this chapter, forenames in the USA are considered. The United States Social Security Administration (SSA) makes available a dataset containing information about Social Security records. The dataset contains counts of the number of records that exist for a specific first name and birth year.
+<br/>
+<br/></p><p><a href="Posts/30.html" style="text-decoration: underline;">View Post #30</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Name Popularity</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/29.html">A Statistical Analysis of Facial Attractiveness</a></h1><h2>Tue, 02 Jan 2018</h2><p><p style="text-align:center;"><img src="../Img/faactivation1.png"" height="auto" width="75%" /></p>
+<em>An intermediate activation volume produced by a convolutional neural network predicting the attractiveness of a person.</em>
+<br/>
+<br/><hr>
+<br/>
+<br/>Does beauty truly lie in the eye of its beholder? This chapter explores the complex array of factors that influence facial attractiveness to answer that question or at least to understand it better.
+<br/>
+<br/></p><p><a href="Posts/29.html" style="text-decoration: underline;">View Post #29</a></p><p>Tags: <i>Data Science</i>, <i>Data Visualization</i>, <i>Facial Attractiveness</i>, <i>Machine Learning</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/28.html">Visualizing Bitcoin Wealth Distribution</a></h1><h2>Wed, 27 Dec 2017</h2><p>This post explores the distribution of wealth among nonempty addresses on the Bitcoin network.
+<br/>
+<br/>All addresses on the Bitcoin network are queried. The number of addresses with at least one satoshi is 24,473,765 at the time of the query. The resulting addresses are sorted by the amount of Bitcoin they contain. The list is divided into quantiles and the wealth of each quantile is plotted in a bar plot.
+<br/>
+<br/></p><p><a href="Posts/28.html" style="text-decoration: underline;">View Post #28</a></p><p>Tags: <i>Bitcoin</i>, <i>Cryptocurrency</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Statistics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/27.html">Binary Classification with Artificial Neural Networks using Python and TensorFlow</a></h1><h2>Sat, 09 Dec 2017</h2><p>This post is an introduction to using the <i>TFANN</i> module for classification problems. The TFANN module is <a href="https://github.com/nicholastoddsmith/pythonml">available here on GitHub</a>. The name TFANN is an abbreviation for <i>TensorFlow Artificial Neural Network</i>. <a href="https://www.tensorflow.org/">TensorFlow</a> is an open-source library for data flow programming. Due to the nature of computational graphs, using TensorFlow can be challenging at times. The TFANN module provides several classes that allow for interaction with the TensorFlow API using familiar object-oriented programming paradigms.
+<br/>
+<br/></p><p><a href="Posts/27.html" style="text-decoration: underline;">View Post #27</a></p><p>Tags: <i>Classification</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i>, <i>Python</i>, <i>Tensorflow</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/26.html">What is a Bitcoin Worth, Anyway?</a></h1><h2>Thu, 26 Oct 2017</h2><p>Is the recent surge in Bitcoin's price a speculative bubble?
+<br/>
+<br/>By definition, an economic bubble is a situation in which an asset is traded within a price range that far exceeds its intrinsic value. So, the question is: what <i>is</i> the intrinsic value of Bitcoin? The purpose of this post is to explain some of the technical details of Bitcoin so as to gain a better idea of its value.
+<br/>
+<br/></p><p><a href="Posts/26.html" style="text-decoration: underline;">View Post #26</a></p><p>Tags: <i>Bitcoin</i>, <i>Computer Science</i>, <i>Cryptocurrency</i>, <i>Hashing</i>, <i>Security</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/25.html">Deep Learning OCR using TensorFlow and Python</a></h1><h2>Sat, 14 Oct 2017</h2><p>In this post, deep learning neural networks are applied to the problem of optical character recognition (OCR) using Python and TensorFlow. This post makes use of TensorFlow and the convolutional neural network class available in <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFANN.py">the TFANN module</a>. The full source code from this post is <a href="https://github.com/nicholastoddsmith/pythonml/tree/master/DeepOCR">available here</a>.
+<br/>
+<br/></p><p><a href="Posts/25.html" style="text-decoration: underline;">View Post #25</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Deep Learning</i>, <i>Machine Learning</i>, <i>Ocr</i>, <i>Python</i>, <i>Tensorflow</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/24.html">Introducing: Deep Learning Deathmatch TV</a></h1><h2>Wed, 13 Sep 2017</h2><p>This post is made in introduction of a new YouTube series titled <i>Deep Learning Deathmatch</i>. In this series, a deep learning based AI that relies only on visual input is pitted against video game bosses. The resulting battle is recorded, edited, and compiled into a video. In the first video in the series, the AI fights the Oasis boss in Path of Exile.<br/>
+<p style="text-align:center;"><iframe src="https://www.youtube-nocookie.com/embed/BLmhZm_LLyc" title="YouTube video player" frameborder="0" allow="accelerometer;autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+<br/>
+More videos are available on <a href="https://www.youtube.com/channel/UCdkASWTlm-9EuAdZmbhkxgQ">my YouTube channel</a>.
+</p><p><a href="Posts/24.html" style="text-decoration: underline;">View Post #24</a></p><p>Tags: <i>Computer Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Neural Networks</i>, <i>Path Of Exile</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/23.html">PoE AI Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</a></h1><h2>Sat, 26 Aug 2017</h2><p>This post is the fifth part of a series on creating an AI for the game Path of Exile © (PoE).
+
+<ol>
+<li><a href="Posts/14.html">A Deep Learning Based AI for Path of Exile: A Series</a></li>
+<li><a href="Posts/15.html">Calibrating a Projection Matrix for Path of Exile</a></li>
+<li><a href="Posts/16.html">PoE AI Part 3: Movement and Navigation</a></li>
+<li><a href="Posts/21.html">PoE AI Part 4: Real-Time Screen Capture and Plumbing</a></li>
+<li><b><a href="Posts/23.html">AI Plays Path of Exile Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</a></b></li>
+</ol>
+As discussed in the first post of this series, the AI program takes a screenshot of the game and uses it to form predictions that are then used to update its internal state. In this post, methods for classifying and organizing information from visual input of the game screen is discussed. I have made the source code for this project <a href="https://github.com/nicholastoddsmith/poeai">available on my GitHub</a>. Enjoy!
+<br/>
+<br/></p><p><a href="Posts/23.html" style="text-decoration: underline;">View Post #23</a></p><p>Tags: <i>Ai</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/22.html">Using Random Forests and Wordclouds to Visualize Feature Importance in Document Classification</a></h1><h2>Thu, 17 Aug 2017</h2><p>What characteristics do the works of famous authors have that make them unique? This post uses ensemble methods and wordclouds to explore just that.
+<br/>
+<br/></p><p><a href="Posts/22.html" style="text-decoration: underline;">View Post #22</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i>, <i>Matplotlib</i>, <i>Nlp</i>, <i>Python</i>, <i>Random Forest</i>, <i>Wordcloud</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/21.html">PoE AI Part 4: Real-time Screen Capture and Plumbing</a></h1><h2>Fri, 11 Aug 2017</h2><p>This post is the forth part of a series on creating an AI for the game Path of Exile © (PoE).
+
+<ol>
+<li><a href="Posts/14.html">A Deep Learning Based AI for Path of Exile: A Series</a></li>
+<li><a href="Posts/15.html">Calibrating a Projection Matrix for Path of Exile</a></li>
+<li><a href="Posts/16.html">PoE AI Part 3: Movement and Navigation</a></li>
+<li><a href="Posts/21.html"><b>PoE AI Part 4: Real-Time Screen Capture and Plumbing</b></a></li>
+<li><a href="Posts/23.html">AI Plays Path of Exile Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</a></li>
+</ol>
+As discussed in the first post of this series, the AI program takes a screenshot of the game and uses it to form predictions that are then used to update its internal state. In this post, efficient methods for capturing images of the game screen are explored.
+<br/>
+<br/></p><p><a href="Posts/21.html" style="text-decoration: underline;">View Post #21</a></p><p>Tags: <i>Computer Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i>, <i>Python</i>, <i>Screenshot</i>, <i>Software</i>, <i>Windows Api</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/20.html">Analysis of Historical Weather Data for Los Angeles, CA</a></h1><h2>Fri, 04 Aug 2017</h2><p>This post explores historical weather data from Los Angeles, California over the period of 1906 to the present using <a href="http://pandas.pydata.org/">Pandas</a> and <a href="http://matplotlib.org/">Matplotlib</a>. The data in the post was collected from the <a href="https://www.ncdc.noaa.gov/cdo-web/datatools/findstation">National Centers for Environmental Information</a> website. An order must be placed through the website to obtain a (temporary) link to download the data.
+<br/>
+<br/></p><p><a href="Posts/20.html" style="text-decoration: underline;">View Post #20</a></p><p>Tags: <i>Climate Change</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Los Angeles</i>, <i>Weather</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/19.html">Path of Exile AI Teaser Footage</a></h1><h2>Mon, 31 Jul 2017</h2><p>I compiled a short video of footage from the Path of Exile AI. All footage is of the actual AI running. The video is available below on my YouTube channel.<br/>
+<p style="text-align:center;"><iframe src="https://www.youtube-nocookie.com/embed/6U_3Hv1KW3k" title="YouTube video player" frameborder="0" allow="accelerometer;autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+<br/>
+Stayed tuned for more posts about the Targeting System and Screen Viewer components in the next few weeks.</p><p><a href="Posts/19.html" style="text-decoration: underline;">View Post #19</a></p><p>Tags: <i>Computer Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i>, <i>Poe</i>, <i>Python</i>, <i>Software</i>, <i>Video</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/18.html">An Annotated Timeline of the Bitcoin to USD Exchange Rate</a></h1><h2>Fri, 28 Jul 2017</h2><p><p style="text-align:center;"><a href="../Img/bitcointimeline2.png"><img src="../Img/bitcointimeline2.png"" alt="BitcoinTimeline" height="auto" width="75%" /></a></p></p><p><a href="Posts/18.html" style="text-decoration: underline;">View Post #18</a></p><p>Tags: <i>Bitcoin</i>, <i>Cryptocurrency</i>, <i>Image</i>, <i>Matplotlib</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/17.html">Introducing GopherJoy: A Controller Input Application</a></h1><h2>Fri, 21 Jul 2017</h2><p>So, I was looking for a way to use my XBox 360 Controller for Windows to browse the web and play games without built-in controller support. After searching for a while, I found most existing applications were either not free or did not work very well. Some required extra dll files (pro-tip DON'T search for "<i>[insert name].dll missing</i>" and download the first thing you find), or were not fully functional. Having experience handling mouse and keyboard input using Windows API, I decided to see if I could come up with something better. The result: <em>GopherJoy</em>.
+<br/>
+<br/></p><p><a href="Posts/17.html" style="text-decoration: underline;">View Post #17</a></p><p>Tags: <i>Gaming</i>, <i>Golang</i>, <i>Path Of Exile</i>, <i>Pc Controller</i>, <i>Software</i>, <i>Windows</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/16.html">PoE AI Part 3: Movement and Navigation</a></h1><h2>Wed, 19 Jul 2017</h2><p>This post is part of <a href="Posts/14.html">a series on creating an AI for the game Path of Exile © (PoE)</a>. In this post, techniques for moving the character around a level are explored.
+<br/>
+<br/></p><p><a href="Posts/16.html" style="text-decoration: underline;">View Post #16</a></p><p>Tags: <i>Bot</i>, <i>Computer Science</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i>, <i>Poe</i>, <i>Python</i>, <i>Security</i>, <i>Software</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/15.html">Calibrating a Projection Matrix for Path of Exile</a></h1><h2>Sun, 09 Jul 2017</h2><p>This post is part of <a href="Posts/14.html">a series on creating an AI for the game Path of Exile © (PoE)</a>. In this post, techniques for updating the internal representation of the world given a static image of the game are explored.
+<br/>
+<br/></p><p><a href="Posts/15.html" style="text-decoration: underline;">View Post #15</a></p><p>Tags: <i>3D Projection</i>, <i>Camera Transform</i>, <i>Computer Science</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Poe</i>, <i>Python</i>, <i>Software</i>, <i>Tensorflow</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/14.html">A Deep Learning Based AI for Path of Exile: A Series</a></h1><h2>Sat, 08 Jul 2017</h2><p>This post is the first in a series on creating an AI for the game Path of Exile based on deep learning and other machine learning techniques. A list of posts in this series follows.
+
+<ol>
+<li><b><a href="Posts/14.html">A Deep Learning Based AI for Path of Exile: A Series</a></b></li>
+<li><a href="Posts/15.html">Calibrating a Projection Matrix for Path of Exile</a></li>
+<li><a href="Posts/16.html">PoE AI Part 3: Movement and Navigation</a></li>
+<li><a href="Posts/21.html">PoE AI Part 4: Real-Time Screen Capture and Plumbing</a></li>
+<li><a href="Posts/23.html">AI Plays Path of Exile Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</a></li>
+</ol>
+The goal of the project is to create an AI that operates based on visual input, is able to navigate levels successfully, can defend itself, and of course to have fun and learn something in the process.
+<br/>
+<br/></p><p><a href="Posts/14.html" style="text-decoration: underline;">View Post #14</a></p><p>Tags: <i>Bot</i>, <i>Computer Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Poe</i>, <i>Python</i>, <i>Software</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/13.html">Replacing the Fan of a NVidia GTX 970 Reference Edition</a></h1><h2>Sat, 06 May 2017</h2><p>I recently acquired a NVidia GTX 970 Founder's Edition. The device had a damaged fan. As can be <b>clearly</b> seen in the photo, the fan did not sit properly in the mount. This caused the fan to scrape against its metal housing, preventing it from spinning. Actually it's not clear at all. Nevertheless, the side closest to the camera is higher than the other.
+<br/>
+<br/></p><p><a href="Posts/13.html" style="text-decoration: underline;">View Post #13</a></p><p>Tags: <i>Computer Repair</i>, <i>Computers</i>, <i>Gpu</i>, <i>Hardware</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/12.html">Multi-Layer Perceptron Networks in Theano and TensorFlow: An Implementation and Benchmark</a></h1><h2>Sat, 15 Apr 2017</h2><p>A <a href="Posts/5.html">past blog post</a> explored using multi-layer-perceptrons (MLP) to predict stock prices using Tensorflow and Python. This post introduces another common library used for artificial neural networks (ANN) and other numerical purposes: <a href="http://deeplearning.net/software/theano/">Theano</a>. An MLP Python class is created implemented using Theano, and then the performance of the class is compared with the <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFANN.py">TFANN</a> class in a benchmark.
+<br/>
+<br/></p><p><a href="Posts/12.html" style="text-decoration: underline;">View Post #12</a></p><p>Tags: <i>Ai</i>, <i>Ann</i>, <i>Benchmark</i>, <i>Computer Science</i>, <i>Machine Learning</i>, <i>Mlp</i>, <i>Python</i>, <i>Tensorflow</i>, <i>Theano</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/11.html">Image Classification Using Convolutional Neural Networks</a></h1><h2>Sun, 02 Apr 2017</h2><p>This blog post introduces a type of neural network called a convolutional neural network (CNN) using Python and <a href="https://www.tensorflow.org/">TensorFlow</a>. A brief introduction to CNNs is given and a helper class for building CNNs in Python and TensorFlow is provided. The source code from this post is <a href="https://github.com/nicholastoddsmith/pythonml/tree/master/TFANN">available here on GitHub</a>.
+<br/>
+<br/></p><p><a href="Posts/11.html" style="text-decoration: underline;">View Post #11</a></p><p>Tags: <i>Classification</i>, <i>Cnn</i>, <i>Computer Science</i>, <i>Computer Vision</i>, <i>Machine Learning</i>, <i>Neural Networks</i>, <i>Python</i>, <i>Tensorflow</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/10.html">Visualizing Neural Network Performance on High-Dimensional Data</a></h1><h2>Mon, 13 Mar 2017</h2><p>This post presents a short script that plots neural network performance on high-dimensional binary data using <a href="http://matplotlib.org/">MatPlotLib</a> in Python. Binary vectors, or vectors only containing 0 and 1, can be useful for representing categorical data or discrete phenomena. The code in this post is <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFPlot.py">available on GitHub.</a>
+<br/>
+<br/></p><p><a href="Posts/10.html" style="text-decoration: underline;">View Post #10</a></p><p>Tags: <i>Computer Science</i>, <i>Deep Learning</i>, <i>Machine Learning</i>, <i>Matplotlib</i>, <i>Neural Networks</i>, <i>Python</i>, <i>Software</i>, <i>Tensorflow</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/9.html">ShortX: A Hotkey Program for Windows</a></h1><h2>Tue, 21 Feb 2017</h2><p>This post introduces a new program I wrote in <a href="https://golang.org/">Go</a> and C named <em>ShortX</em>. <em>ShortX</em> allows for the creation of keyboard shortcuts that can be used to trigger other keys or commands. The program runs in the background and triggers shortcuts that are specified in a simple <a href="https://en.wikipedia.org/wiki/INI_file">ini</a> file.
+<br/>
+<br/>Expansion is accomplished using low-level Windows API calls so that resource utilization is kept low. <em>ShortX</em> is useful for launching program in Windows, for custom macros in games, and more. Program executables are available on <a href="">the Software page.</a>
+<br/>
+<br/></p><p><a href="Posts/9.html" style="text-decoration: underline;">View Post #9</a></p><p>Tags: <i>Golang</i>, <i>Hotkeys</i>, <i>Macros</i>, <i>Shortcuts</i>, <i>Software</i>, <i>Windows</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/8.html">WPA2 Key Derivation with Anaconda Python</a></h1><h2>Wed, 16 Nov 2016</h2><p>This post is regarding the WPA2 4-way handshake that is used for authentication and the establishment of encryption keys for secure wireless communication. A practical implementation of the key derivation process is provided in python. The sample packet capture containing the 4-way handshake that is used in this post is <a href="https://github.com/aircrack-ng/aircrack-ng/blob/master/test/wpa2.eapol.cap">available here</a>. The complete source code discussed in this post is <a href="https://github.com/nicholastoddsmith/PyCrack/blob/master/pywd.py">on Github</a>. The software <a href="https://www.wireshark.org/">Wireshark</a> is used to analyze the provided packet trace.
+<br/>
+<br/></p><p><a href="Posts/8.html" style="text-decoration: underline;">View Post #8</a></p><p>Tags: <i>Anaconda</i>, <i>Computer Science</i>, <i>Cryptography</i>, <i>Networking</i>, <i>Python</i>, <i>Security</i>, <i>Wireless Networks</i>, <i>Wpa2</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/7.html">Text Mining Online Reviews for Sentiment Analysis</a></h1><h2>Fri, 28 Oct 2016</h2><p>This post aims to introduce several basic text mining techniques. Sample implementations will be explored in the <a href="http://scikit-learn.org/stable/">Scikit-learn library</a> using <a href="https://www.continuum.io/downloads">Anaconda Python</a>.
+<br/>
+<br/></p><p><a href="Posts/7.html" style="text-decoration: underline;">View Post #7</a></p><p>Tags: <i>Data Science</i>, <i>Machine Learning</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/6.html">Multimodal Biometrics for Enhanced Mobile Device Security</a></h1><h2>Sun, 28 Aug 2016</h2><p>This post is a reference to a contributed article that I helped to co-author which was recently published in Communications of the ACM, Vol. 59 No. 4, Pages 58-65. The article, which I worked on while in graduate school, describes the advantages of using multimodal biometrics to secure mobile devices such as cell phones and tablets. An implementation for the Android OS of such a multimodal biometric system is presented along with results and a conclusion. <a href="http://cacm.acm.org/magazines/2016/4/200169-multimodal-biometrics-for-enhanced-mobile-device-security/abstract">Please find the article at this link,</a> if you wish to read more.
+<br/>
+<br/>N</p><p><a href="Posts/6.html" style="text-decoration: underline;">View Post #6</a></p><p>Tags: <i>Biometrics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/5.html">Multi-Layer Perceptrons as Smoother Functions</a></h1><h2>Wed, 20 Apr 2016</h2><p>In this post, the multi-layer perceptron (MLP) is presented as a method for smoothing time series data. A class based on the TensorFlow library is presented. Finally, for the sake of a toy example, the class is applied to the problem of smoothing historical stock prices (*).
+<br/>
+<br/></p><p><a href="Posts/5.html" style="text-decoration: underline;">View Post #5</a></p><p>Tags: <i>Ann</i>, <i>Computer Science</i>, <i>Machine Learning</i>, <i>Mlp</i>, <i>Numpy</i>, <i>Python</i>, <i>Stock</i>, <i>Tensorflow</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/4.html">CombinoChord: A Guitar Chord Generator App</a></h1><h2>Tue, 05 Apr 2016</h2><p>This post is concerned with an approach to generating guitar chords fingerings given run-time parameters regarding the guitar configuration and player's hand. The approach is expected to run acceptably on an Android mobile device and should be responsive to user input and should assign conventional fingerings high heuristic scores. The core source code that is described in this post is available at <a href="https://github.com/nicholastoddsmith/combinochord">the following git repository</a>. The app is available for download on <a href="https://play.google.com/store/apps/details?id=com.nickandross.app.combinochord">the Google play store</a>.
+<br/>
+<br/></p><p><a href="Posts/4.html" style="text-decoration: underline;">View Post #4</a></p><p>Tags: <i>Android</i>, <i>Computer Science</i>, <i>Guitar</i>, <i>Mathematics</i>, <i>Music</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/3.html">Multi-Layer Perceptrons and Back-Propagation; a Derivation and Implementation in Python</a></h1><h2>Sun, 27 Mar 2016</h2><p>Artificial neural networks have regained popularity in machine learning circles with recent advances in deep learning. Deep learning techniques trace their origins back to the concept of back-propagation in multi-layer perceptron (MLP) networks, the topic of this post. The complete code from this post is <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/bprop.py">available on GitHub</a>.
+<br/>
+<br/></p><p><a href="Posts/3.html" style="text-decoration: underline;">View Post #3</a></p><p>Tags: <i>Computer Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Neural Networks</i>, <i>Numpy</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/2.html">Eigenfaces versus Fisherfaces on the Faces94 Database with Scikit-Learn</a></h1><h2>Thu, 18 Feb 2016</h2><p>In this post, two basic facial recognition techniques will be compared on the <a href="http://cswww.essex.ac.uk/mv/allfaces/faces94.html" target="_blank">Faces94</a> database. Images from the Faces94 database are 180 by 200 pixels in resolution and were taken as the subjects were speaking to induce variations in the images. In order to train a classifier with the images, the raw pixel information is extracted, converted to grayscale, and flattened into vectors of dimension \(180 \times 200 = 36000\). For this experiment, 12 subjects will be used from the database with 20 files will be used per subject. Each subject is confined to a unique directory that contains only 20 image files.</p><p><a href="Posts/2.html" style="text-decoration: underline;">View Post #2</a></p><p>Tags: <i>Biometrics</i>, <i>Computer Science</i>, <i>Facial Recognition</i>, <i>Machine Learning</i>, <i>Mathematics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/1.html">Wine Classification Using Linear Discriminant Analysis</a></h1><h2>Sat, 13 Feb 2016</h2><p><p style="text-align:left;">In this post, a classifier is constructed which determines the cultivar to which a specific wine sample belongs. Each sample consists of a vector \(\textbf{v}\) of 13 attributes of the wine, that is \(\textbf{v} \in \mathbb{R}^{13}\). The attributes are as follows:</p>
+
+<ol>
+	<li style="text-align:left;">Alcohol</li>
+	<li style="text-align:left;">Malic acid</li>
+	<li style="text-align:left;">Ash</li>
+	<li style="text-align:left;">Alcalinity of ash</li>
+	<li style="text-align:left;">Magnesium</li>
+	<li style="text-align:left;">Total phenols</li>
+	<li style="text-align:left;">Flavanoids</li>
+	<li style="text-align:left;">Nonflavanoid phenols</li>
+	<li style="text-align:left;">Proanthocyanins</li>
+	<li style="text-align:left;">Color intensity</li>
+	<li style="text-align:left;">Hue</li>
+	<li style="text-align:left;">OD280/OD315 of diluted wines</li>
+	<li style="text-align:left;">Proline</li>
+</ol>
+Based on these attributes, the goal is to identify from which of three cultivars the data originated. The data set is available at the <a href="https://archive.ics.uci.edu/ml/datasets/Wine" target="_blank">UCI Machine Learning Repository.</a> The following code block shows three rows from the dataset.
+<br/>
+<br/></p><p><a href="Posts/1.html" style="text-decoration: underline;">View Post #1</a></p><p>Tags: <i>Computer Science</i>, <i>Machine Learning</i>, <i>Mathematics</i></p><br/>
+<hr/><br/>
+<h1><a href="Posts/0.html">Breast Cancer Malignancy Classification using PCA and Logistic Regression</a></h1><h2>Sun, 07 Feb 2016</h2><p>In this post, a linear classifier is constructed that aids in classifying fine needle aspiration (FNA) cytology results. The classifier receives a vector consisting of aggregate measurements from FNA of a breast mass. Each vector contains aggregations, over multiple cell nuclei, of the following ten measurements:
+<br/>
+<br/></p><p><a href="Posts/0.html" style="text-decoration: underline;">View Post #0</a></p><p>Tags: <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i></p><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
 </body>
 </html>
