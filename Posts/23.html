@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>PoE AI Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</h1><h2>Sat, 26 Aug 2017</h2><h3><i>Ai</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i></h3>This post is the fifth part of a series on creating an AI for the game Path of Exile © (PoE).
+
+<ol>
+<li><a href="Posts/14.html">A Deep Learning Based AI for Path of Exile: A Series</a></li>
+<li><a href="Posts/15.html">Calibrating a Projection Matrix for Path of Exile</a></li>
+<li><a href="Posts/16.html">PoE AI Part 3: Movement and Navigation</a></li>
+<li><a href="Posts/21.html">PoE AI Part 4: Real-Time Screen Capture and Plumbing</a></li>
+<li><b><a href="Posts/23.html">AI Plays Path of Exile Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</a></b></li>
+</ol>
+As discussed in the first post of this series, the AI program takes a screenshot of the game and uses it to form predictions that are then used to update its internal state. In this post, methods for classifying and organizing information from visual input of the game screen is discussed. I have made the source code for this project <a href="https://github.com/nicholastoddsmith/poeai">available on my GitHub</a>. Enjoy!
+<h1>Architecture of the Classification System</h1>
+
+<p style="text-align:center;">
+<a href="../Img/botlogic2.png"><img src="../Img/botlogic2.png" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 1: Flowchart of AI Logic</b></p>
+<br/>
+Recall from part 3 that the movement map maintains a dictionary of 3D points to labels. For example, at a given time, the bot might have the data shown in Table 1 in its internal map.
+<br/>
+<br/><table align="center" style="margin: 0px auto;">
+<tr><th align="center">World Point</th><th align="center">Projected Point</th></tr>
+<tr><td align="center">\((0,0,0)\)</td><td align="center">Open</td></tr>
+<tr><td align="center">\((1,0,0)\)</td><td align="center">Open</td></tr>
+<tr><td align="center">\((0,-1,0)\)</td><td align="center">Obstacle</td></tr>
+<tr><td align="center">\((1,1,0)\)</td><td align="center">Obstacle</td></tr>
+<tr><td align="center">\((-1,-1,0)\)</td><td align="center">Open</td></tr>
+</table>
+<p style="text-align:center;"><b>Table 1: The Internal Map</b></p>
+<br/>
+Also recall from part 2 that the projection map class allows for any pixel on the screen to be mapped to a 3D coordinate (assuming the player is always on the <i>xy</i> plane. This 3D coordinate is then quantized to some arbitrary precision so that the AI's map of the world consists of an evenly spaced grid of points.
+<br/>
+<br/>Thus, all that is needed is a method which can identify if a given pixel on the screen is part of an obstacle, enemy, item, etc. This task is, in essence, object detection. Real-time object detection is a difficult and computationally expensive problem. A simplified scheme which allows for a good trade-off between performance and accuracy is presented.
+<br/>
+<br/>To simplify the object detection task, the game screen is divided up into equally sized rectangular regions. For a resolution of 800 by 600, a grid consisting of \(m = 7\) rows and \(n = 9\) columns is chosen. Twelve, four, and four pixels are removed from the bottom, left, and right edge of the screen so that the resulting sizes (792 and 588) are divisible by 9 and 7 respectively. Thus, each rectangle in the grid of the screen has a width and height of 88 and 84 pixels respectively. Figure 2 shows an image of the game screen divided using the above scheme.<br/>
+<p style="text-align:center;">
+<a href="../Img/screendiv.png"><img src="../Img/screendiv.png" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 2: Division of the Game Screen</b></p>
+<br/>
+One convolutional neural network (CNN) is used to classify if a cell on the screen contains an obstacle or is open. An obstacle means that there is something occupying the cell such that the player cannot stand there (for instance a boulder). Examples of open and closed cells are shown in Figure 3.<br/>
+<p style="text-align:center;">
+<a href="../Img/p5trainlabel.png"><img src="../Img/p5trainlabel.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: Labeling of Image Cells</b></p>
+<br/>
+A second CNN is used to identify items and enemies. Given a cell on the screen the CNN classifies the cell as either containing an enemy, an item, or nothing.
+<br/>
+<br/>In order to only target living enemies a third CNN is used as a binary classifier for movement. Given a cell on the screen, the 3rd CNN determines if movement is occurring in the cell. Only cells that contain movement are passed into the second CNN. This CNN then predicts if these cells contain either items or enemies. Items labels are detected as movement by toggling item highlighting in successive screenshots.
+<br/>
+<br/>Image data for movement detection is created by taking 2 images of the screen in rapid succession and only preserving the regions in the images that are significantly different. This is implemented using the <i>numpy.where</i> function (16 is chosen arbitrarily).
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>I1 = #... Image 1
+I2 = #... Image 2
+R = np.where(np.abs(I1 - I2) &gt;= 16, I2, 0)</code></pre><br/><hr/><br/>
+<br/>
+<br/>To summarize, screenshots are captured from the game screen and input to each of the 3 CNNs. The first CNN detects obstacles in the screen cells. The 3D grid points within each cell on the screen are then labeled accordingly in the movement map. The internal map keeps a tally of the predictions for each cell and reports the most frequent prediction class when a cell is queried. The second and third CNNs are used in conjunction to detect enemies and items.
+<h1>The Dataset</h1>
+Using screenshots taken with the <i>ScreenViewer</i> class, a training data set is manually constructed. Currently, the dataset only consists of data from the level <i>Dried Lake</i> in act 4 of the game. The dataset consists of over 14,000 files across 11 folders and is roughly 164MB in size. Screenshots of the dataset are shown in Figure 4.<br/>
+<p style="text-align:center;">
+<table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/trainingdataclosed.png"><img src="../Img/trainingdataclosed.png" /></a></td><td><a href="../Img/trainingdataenemy.png"><img src="../Img/trainingdataenemy.png" /></a></td></tr><tr><td><a href="../Img/trainingdataopen.png"><img src="../Img/trainingdataopen.png" /></a></td><td><a href="../Img/trainingdatafolder.png"><img src="../Img/trainingdatafolder.png" /></a></td></tr></table>
+</p>
+<p style="text-align:center;"><b>Figure 4: The Training Dataset</b></p>
+<br/>
+In the dataset, images in <i>Closed</i> are cells containing obstacles. The first CNN uses the folders <i>Closed</i>, <i>Open</i>, and <i>Enemy</i>. The second CNN uses the folders <i>Open</i>, <i>Enemy</i>, and <i>Item</i>. The third CNN uses the folders <i>Move</i> and <i>NoMove</i>.
+<h1>Training</h1>
+A somewhat modest CNN architecture is employed for the AI; two sequences of convolutional and pooling layers are followed by 3 fully-connected layers. The architecture is shown below in Figure 5.<br/>
+<p style="text-align:center;">
+<a href="../Img/cnnarch.png"><img src="../Img/cnnarch.png" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 5: CNN Architecture</b></p>
+<br/>
+Cross-validation accuracy in the mid to high 90s is acheived in roughly 20 to 30 epochs through the entire dataset. Epochs are performed by randomly sampling batches of size 32 from the training data until the appropriate number of samples are drawn. Training on a NVidia GTX 970 takes roughly 5 to 10 minutes.
+<h1>Using Concurrency for Better Performance</h1>
+To improve the performance of the AI, the CNN detection is performed concurrently. This allows for a speed-up as numpy and TensorFlow code avoids the <a href="https://en.wikipedia.org/wiki/Global_interpreter_lock">global interpreter lock issue</a> from which normal Python code suffers. Code to launch the classification thread for enemy targeting follows.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Gets a current list of enemy positions in a thread safe manner
+    def GetEnemyPositions(self):
+        self.tlMut.acquire()
+        lut = self.tlut         #Last update time for enemy cell positions
+        rv = self.ecp[:]        #Make copy of current list to prevent race conditions
+        self.tlMut.release()
+        if self.tllct == lut:
+            return []           #No update since last time
+        self.tllct = lut        #Note time for current results
+        return rv
+
+    def StartTargetLoop(self):
+        self.ctl = True
+        thrd = Thread(target = self.TargetLoop)
+        thrd.start()
+        return True
+        
+    def TargetLoop(self):
+        while self.ctl:     #Loop while continue targeting loop flag is set
+            self.ts.DetectMovement(self.GetScreenDifference())  #Find cells that have movement
+            self.ts.ClassifyDInput(self.sv.GetScreen())         #Determine which cells contain enemies or items
+            tecp = self.ts.EnemyPositionsToTargets()            #Obtain target locations
+            self.tlMut.acquire()
+            self.ecp = tecp                                     #Update shared enemy position list
+            self.tlut = time.time()                             #Update time
+            self.tlMut.release()   
+            time.sleep(Bot.ENT_WT)
+            
+    def StopTargetLoop(self):
+        self.ctl = False        #Turn off continue targeting loop flag</code></pre><br/><hr/><br/>
+<br/>
+<br/><br /><br /><br/>
+<p style="text-align:center;">
+<a href="../Img/threadingorganization.png"><img src="../Img/threadingorganization.png" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 6: Thread Logical Organization</b></p>
+<br/>
+Thus, classification is performed concurrently and data members containing the predictions are provided to the main thread in a thread-safe manner using mutex locks. Figure 6 illustrates the logical organization of the threads and mutex locks. In the figure, <i>ecp</i> and <i>pct</i> are the data members of the <i>Bot</i> class that contain the enemy cell positions and predicted cell types respectively.
+<h1>The Result</h1>
+The following video summarizes the project and contains over four minutes of the AI playing Path of Exile.<br/>
+<p style="text-align:center;">
+<p style="text-align:center;"><iframe src="https://www.youtube-nocookie.com/embed/UrrZOswJaow" title="YouTube video player" frameborder="0" allow="accelerometer;autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+</p>
+<p style="text-align:center;"><b>Figure 7: PoE AI Footage</b></p>
+<br/>
+More footage of the latest version of the bot is available on <a href="https://www.youtube.com/channel/UCdkASWTlm-9EuAdZmbhkxgQ">my YouTube channel</a>.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

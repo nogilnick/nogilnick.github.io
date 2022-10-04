@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <text class="FontHeader"><b>nicholastsmith</b>.</text>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div style="display: table; height: 100%; width: 100%; margin: 0; padding 0;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>On The Importance of Centering in PCA</h1><br/><h2>Fri, 09 Sep 2022</h2><br/><h3><i><u>Computer Science</u></i> <i><u>Data Science</u></i> <i><u>Machine Learning</u></i> <i><u>Statistics</u></i></h3><br/>The previous post presents methods for efficiently performing principal component analysis (PCA) on certain rectangular sparse matrices. Since routines for performing the singular value decomposition (SVD) on sparse matrices are readily available (e.g. <i>svds</i> and <i>TruncatedSVD</i>), it is reasonable to investigate the influence centering has on the resulting transformation.
+<!--more-->
+Consider a matrix \(\mathbf{A}\), where the rows of \(\mathbf{A}\) are drawn from a bi-variate Gaussian Distribution \(N(\mathbf{\mu}, \mathbf{\Sigma})\). Specifically, assume that \(\mathbf{\mu} = (2, 4)^T\), \(\mathbf{\Sigma_{00}} = \mathbf{\Sigma_{11}} = 1\),  and \(\mathbf{\Sigma_{01}} = \mathbf{\Sigma_{10}} = 0.6\). The impact of centering on the resulting projection is explored in the following three scatter charts. The three plots respectively show the original data with the two sets of computed basis vectors, the data projected onto the principal axis obtained with centering, and lastly the projected data without centering.
+<p style="text-align:center;">
+<img src="../Img/figure-2022-09-07-172724.png" height="auto" width="75%" /></p>
+<p style="text-align:center;">
+<b>Figure 1: Projection of Bi-Variate Gaussian Distribution</b></p>
+Unlike the green (centered) axes, the red (uncentered) axes do not accurately represent the directions of maximum variance within the point cloud. The first component points in the direction of the distribution mean (although it is negated due to sign-indeterminacy), while the second appears to be a slightly rotated version of the true second component. The middle plot finds the data properly aligned on the principal axes. Finally, the rightmost plot shows that the uncentered axes do not capture the covariance in the data like the centered transformation. The entire point mass remains removed from the origin and the correlation between the variables persists.
+<br/>
+<br/>In the uncentered case, the entire operation is equivalent to a 2D rotation. With this simple example, one can even solve for the theta value that produces a projection matrix that is identical to the right singular vectors from the uncentered SVD.
+<p style="text-align:center;">
+<img src="../Img/pcarotation.gif" height="auto" width="75%" /></p>
+<p style="text-align:center;">
+<b>Figure 2: Uncentered Rotation of Bi-Variate Gaussian Distribution</b></p>
+The above animation shows the transformed points being rotated into place using the uncentered transformation. In this case, the rotation is about 118° and results in the points having a downward trend on the new axes, although this can vary due to sign-indeterminacy.<br/><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

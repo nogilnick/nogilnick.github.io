@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Real S&amp;P Composite Moving Average</h1><h2>Sat, 16 Jun 2018</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>S&P</i>, <i>Statistics</i>, <i>Stocks</i></h3>Recently, I have been experimenting with windowing functions for time series data. While trying out my code, I came up with a nice and (somewhat) thought-provoking plot.<br/>
+<p style="text-align:center;"><a href="../Img/sprealmeanleft.png"><img src="../Img/sprealmeanleft.png" alt="SPRealMean" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: Windowed Moving Average of Real S&amp;P Composite Index</b></p>
+<br/>
+The plot shows the moving average of the real (inflation adjusted) S&amp;P composite stock price index with progressively wider windows. The averages for the darker lines are taken over shorter time periods with the lighter lines over longer ones. The larger windows smooth out the recent volatility in the stock marker showing a more modest growth rate. Data collected from <a href="http://www.econ.yale.edu/~shiller/">the website</a> of Dr. Robert J. Shiller.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/sprealmean.png"><img src="../Img/sprealmean.png" /></a></td><td><a href="../Img/sprealmeanright.png"><img src="../Img/sprealmeanright.png" /></a></td><td><a href="../Img/sprealmeancent.png"><img src="../Img/sprealmeancent.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 2: Alternative Padding Schemes</b></p>
+<br/>
+The plot in Figure 1 uses the average of the previous <i>n</i> time periods. By adjusting the padding, some other cool (though less meaningful) plots are constructed. These plots are shown in Figure 2.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

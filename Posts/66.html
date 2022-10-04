@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Weighted Sparse PCA for Rectangular Matrices</h1><h2>Tue, 06 Sep 2022</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></h3>Consider a sparse <i>m</i>x<i>n</i> rectangular matrix \(\mathbf{X}\), where either \(m &gt;&gt; n\) or \(m &lt;&lt; n\). Performing a principal component analysis (PCA) on \(\mathbf{X}\) involves computing the eigenvectors of its covariance matrix. This is often accomplished using the singular value decomposition (SVD) of the centered matrix \(\mathbf{X}-\mathbf{U}\). But, with large sparse matrices, this centering step is frequently intractable. If it is tractable, however, to compute the eigendecomposition of either an <i>m</i>x<i>m</i> or an <i>n</i>x<i>n</i> dense matrix in memory, other approaches are possible.
+<br/>
+<br/>
+<h1>Weighted PCA</h1>
+Let \(\mathbf{U}\) be a matrix with the weighted column means of \(\mathbf{X}\) in its columns, and \(\mathbf{W}\) be a diagonal matrix with non-negative sample weights along its diagonal. It is assumed that these weights are normalized so that \(\sum_{i=1}^{m}{W_{ii}}=1\). The weighted covariance matrix may be estimated as:
+<p style="text-align:center;">
+\[\displaylines{\mathbf{\Sigma} = ({\mathbf{X}-\mathbf{U}})^T\mathbf{W}({\mathbf{X}-\mathbf{U}})}\ .\]</p>
+Again, this definition is problematic for sparse matrices as centering by subtracting the column means \(\mathbf{U}\) destroys the sparsity of the matrix. For this reason, the SVD of the uncentered matrix \(\mathbf{X}\) is often employed as an alternative (e.g. <i>TruncatedSVD</i>). Unfortunately, the resulting components may be dominated by the column means and produce misleading results.
+<br/>
+<br/>When either <i>m</i> or <i>n</i> is sufficiently small, it is possible to efficiently perform PCA using the eigenvalue decomposition of \(\mathbf{\Sigma}\), while avoiding memory intensive centering operations. There are two cases to cover here: one when \(m &gt;&gt; n\) and the other when \(m &lt;&lt; n\)
+<h1>Vertical Case</h1>
+When \(m &gt;&gt; n\) it is more efficient to perform the PCA using the typical formula for the covariance. However, this formula can be expanded so that it may be computed efficiently with sparse matrices. Namely,
+<p style="text-align:center;">
+\[\displaylines{\mathbf{\Sigma} = ({\mathbf{X}-\mathbf{U}})^T\mathbf{W}({\mathbf{X}-\mathbf{U}})}\]</p>
+<p style="text-align:center;">
+\[\displaylines{= {(\mathbf{W}^{1/2}(\mathbf{X}-\mathbf{U}))}^T{(\mathbf{W}^{1/2}(\mathbf{X}-\mathbf{U}))}}\]</p>
+<p style="text-align:center;">
+\[\displaylines{= {(\mathbf{W}^{1/2}\mathbf{X}-\mathbf{W}^{1/2}\mathbf{U})}^T{(\mathbf{W}^{1/2}\mathbf{X}-\mathbf{W}^{1/2}\mathbf{U})}}\]</p>
+<p style="text-align:center;">
+\[\displaylines{= {(\mathbf{W}^{1/2}\mathbf{X})^T(\mathbf{W}^{1/2}\mathbf{X})-(\mathbf{W}^{1/2}\mathbf{X})^T(\mathbf{W}^{1/2}\mathbf{U})-(\mathbf{W}^{1/2}\mathbf{U})^T(\mathbf{W}^{1/2}\mathbf{X})+(\mathbf{W}^{1/2}\mathbf{U})^T(\mathbf{W}^{1/2}\mathbf{U})}}\]</p>
+<p style="text-align:center;">
+\[\displaylines{= {\mathbf{X}^T\mathbf{W}\mathbf{X}-\mathbf{X}^T\mathbf{W}\mathbf{U}-\mathbf{U}^T\mathbf{W}\mathbf{X}+\mathbf{U}^T\mathbf{W}\mathbf{U}}}\ .\]</p>
+Now, each of the four elements in the equation are <i>n</i>x<i>n</i> matrices that can be computed without the need for the memory intensive centering operation. However, this formula can be simplified further by noting,
+<p style="text-align:center;">
+\[\displaylines{\mathbf{X}^T\mathbf{W}\mathbf{U} = \mathbf{X}^T\mathbf{W}^T\mathbf{U} = (\mathbf{W}\mathbf{X})^T\mathbf{U}=(\mathbf{U}^T(\mathbf{W}\mathbf{X}))^T }\ .\]</p>
+Further, since the sample weights are non-negative, \(\mathbf{Tr}[{\mathbf{W}}]=1\), and \(\mathbf{U}\) contains the weighted means of \(\mathbf{X}\) repeated in its columns, the expression \((\mathbf{W}\mathbf{X})^T\mathbf{U}\) is equivalent to the outer product of the weighted column means: \(\mathbf{\mu}\mathbf{\mu}^T\). Since this outer product is symmetric, the formula reduces to:
+<p style="text-align:center;">
+\[\displaylines{= ({\mathbf{X}^T\mathbf{W}\mathbf{X}-2\mathbf{\mu}\mathbf{\mu}^T+\mathbf{U}^T\mathbf{W}\mathbf{U})}}\ .\]</p>
+Finally, the last term contains the two column mean matrices. Each element \(\mathbf{U}_{ij}\) contain the sum of the product of the <i>i</i>-th column mean and the <i>j</i>-th column mean repeated <i>m</i> times. However, as \(\mathbf{Tr}[{\mathbf{W}}]=1\), the weight matrix cancels this factor of <i>m</i> out and the expression is found to be equivalent to the above outer product: \(\mathbf{\mu}\mathbf{\mu}^T\).
+<br/>
+<br/>Thus, the final equation is as follows:
+<p style="text-align:center;">
+\[\displaylines{\mathbf{\Sigma} = {\mathbf{X}^T\mathbf{W}\mathbf{X}-2\mathbf{\mu}\mathbf{\mu}^T+\mathbf{\mu}\mathbf{\mu}^T}}\]</p>
+<p style="text-align:center;">
+\[\displaylines{= {\mathbf{X}^T\mathbf{W}\mathbf{X}-\mathbf{\mu}\mathbf{\mu}^T}}\ .\]</p>
+With \(\mathbf{\Sigma}\) estimated, the eigenvalue decomposition can be computed using a routine for symmetric matrices. That is, find an orthogonal matrix \(\mathbf{Q}\) and a diagonal matrix \(\mathbf{\Lambda}\) such that
+<p style="text-align:center;">
+\[\displaylines{\mathbf{\Sigma} = {\mathbf{Q}\mathbf{\Lambda}\mathbf{Q}^T}}\ .\]</p>
+The principal components are then recovered from the columns of \(\mathbf{Q}\).
+<h1>Horizontal Case</h1>
+When \(m &lt;&lt; n\) it is more efficient to perform the PCA using a row-oriented analysis. This analysis hinges on the fact from linear algebra that if \(\mathbf{v}\) is an eigenvector of \(\mathbf{A}\mathbf{A}^T\) then \(\mathbf{A}^T\mathbf{v}\) is an eigenvector of \(\mathbf{A}^T\mathbf{A}\) with the same eigenvalue. This can be seen using the definition of eigenvectors and eigenvalues:
+<p style="text-align:center;">
+\[\displaylines{(\mathbf{A}\mathbf{A}^T)\mathbf{v} = \lambda\mathbf{v} }\]</p>
+<p style="text-align:center;">
+\[\displaylines{\mathbf{A}^T(\mathbf{A}\mathbf{A}^T)\mathbf{v} = \mathbf{A}^T\lambda\mathbf{v} }\]</p>
+<p style="text-align:center;">
+\[\displaylines{(\mathbf{A}^T\mathbf{A})(\mathbf{A}^T\mathbf{v}) = \lambda(\mathbf{A}^T\mathbf{v}) }\]</p>
+<p style="text-align:center;">
+\[\displaylines{(\mathbf{A}^T\mathbf{A})\mathbf{w} = \lambda\mathbf{w} }\ ,\]</p>
+which implies that \(\mathbf{w}=\mathbf{A}^T\mathbf{v}\) is an eigenvector of \(\mathbf{A}^T\mathbf{A}\). Thus, the approach is to compute the smaller matrix \(\mathbf{A}\mathbf{A}^T\) and then use the above formula to find the principal components.
+<br/>
+<br/>Let \(\mathbf{V} = \mathbf{V}^T = \mathbf{W}^{1/2}\). Note that from above \(\mathbf{\Sigma}={(\mathbf{W}^{1/2}(\mathbf{X}-\mathbf{U}))}^T{(\mathbf{W}^{1/2}(\mathbf{X}-\mathbf{U}))}\). With sample weights and centering, the formula to expand is:
+<p style="text-align:center;">
+\[\displaylines{{(\mathbf{W}^{1/2}(\mathbf{X}-\mathbf{U}))}{(\mathbf{W}^{1/2}(\mathbf{X}-\mathbf{U}))}^T }\]</p>
+<p style="text-align:center;">
+\[\displaylines{= \mathbf{V}[(\mathbf{X}-\mathbf{U})(\mathbf{X}-\mathbf{U})^T]\mathbf{V}^T }\]</p>
+<p style="text-align:center;">
+\[\displaylines{=\mathbf{V}[\mathbf{X}\mathbf{X}^T - \mathbf{X}\mathbf{U}^T - \mathbf{U}\mathbf{X}^T - \mathbf{U}\mathbf{U}^T]\mathbf{V} }\ .\]</p>
+In this case, the cross terms do not simplify as much due to the placement of the \(\mathbf{W}^{1/2}\) matrices. However, the inner terms are simply transposes of each-other and so the matrix product can be computed once and then transposed. The final term is a constant matrix where each element is equal to \(\mathbf{\mu}^T\mathbf{\mu}\). Ultimately, broadcasting allows the final 3 terms to be easily computed.
+<br/>
+<br/>With the row-wise matrix computed, the eigenvalue decomposition can again be performed and then the principal components can be obtained as \((\mathbf{V}(\mathbf{X}-\mathbf{U}))^T\mathbf{Q}\). Notice the addition of the weighting and the centering terms. Again, this can also be expanded to avoid centering the sparse matrix:
+<p style="text-align:center;">
+\[\displaylines{(\mathbf{V}(\mathbf{X}-\mathbf{U}))^T\mathbf{Q} = (\mathbf{V}\mathbf{X})^T\mathbf{Q} - (\mathbf{V}\mathbf{U})^T\mathbf{Q}}\ .\]</p>
+Both terms above are more efficiently computed using broadcasting. Finally, these components may be re-normalized to form orthonormal principal components.
+<h1>Source Code</h1>
+In conclusion, this post details a method to compute the full PCA of a sparse <i>m</i>x<i>n</i> rectangular matrix. Specifically, this method applies to problems where a dense SVD on the original matrix is not possible, but it is tractable to compute the eigendecomposition of either an <i>m</i>x<i>m</i> or an <i>n</i>x<i>n</i> dense matrix in memory. The two approaches to weighted PCA described above are implemented in the class <i>EigenPCA</i> <a href="https://github.com/nicholastoddsmith/WeightedPCA">available here on GitHub</a>.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

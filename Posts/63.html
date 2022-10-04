@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>The Iterative Constrained Pathways Optimizer</h1><h2>Tue, 18 May 2021</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></h3>Many optimization methods seek an optimal parameter set with regard to error or likelihood. Such a solution is most desirable in many regards. However, when the broader context of a problem is included, the indisputable superiority of the optimum frequently becomes less clear. This context often includes other guidelines and restrictions that may limit the usefulness of solutions lacking certain properties. Unfortunately, typical loss criteria can rarely take these into account.
+<br/>
+<br/>This blog post presents a method that abandons the quest for optimality and instead focuses on better satisfying the broader context of a problem. It describes a method that does not attempt to find the minimum, but instead simply tries to get closer to it while respecting imposed constraints. This blog post describes the iterative constrained pathways optimizer.
+
+<h1>Interpretability and Human Intuition</h1>
+The term interpretability frequently arises in the context of machine learning models. Interpretable models are often portrayed as being inherently superior to their opaque, black-box counterparts. And this is understandable and well-motivated in many context. Some use-cases seem especially sensitive to requirements involving explainable models. Fraud detection and automated diagnosis are two such examples that seem reasonable if not a little trite. Indeed, it is not difficult to imagine some of the problems that might arise from deploying difficult-to-understand models in these scenarios.
+<br/>
+<br/>However, even simple models like decision trees and linear regression are not without their challenges. Collinearity, small sample size, sampling bias, noise, and other artifacts in the data are just a few of many things that can go wrong and give rise to a bizarre model.
+<br/>
+<br/>But what, exactly, is strange about such models?
+<br/>
+<br/>With linear models, the solution obtained is frequently the analytically optimal solution. In some purely technical sense, such a model is the perfect solution. However, in the broader context, it may be unacceptable.
+<br/>
+<br/>The argument presented here is that this issue can frequently arise when a model clearly disagrees with the human intuition for a problem. For instance, a model which asserts that a person is likely to earn less in adulthood for each additional year of education the individual completes is likely to raise eyebrows. However, given other terms in the model and the nuances of the dataset at hand, such a result may very easily arise. And, again, a model asserting such a bold claim may very well be correct in some purely technical sense.
+<br/>
+<br/>In this instance, an unstated requirement exists that years of education be positively correlated with the predicted response. This condition may be thought to be part of the broader context of the problem. The argument presented here is that such constraints frequently boil down to a requirement that the relationships between input variables and model responses match human intuition.
+<h1>Iterative Constrained Pathways</h1>
+The method presented here attempts to address the problems described in the previous section in several ways.
+<br/>
+<br/>First, an attempt to find the intuitive direction of each relationship is made. This is accomplished by looking at the univariate correlation of each feature with the response variable. For binary variables in a classification setting, the base rate of the target class can be compared in samples where the feature is zero and where it is non-zero. In a rule ensemble model, this allows the rules to be more naturally reinforcing rather than highly entangled with one another. Alternatively, the column directions can be manually entered.
+<br/>
+<br/>Next, interval constraints are made on the columns of the data matrix so that the coefficients of the solution adhere to the “intuitive” direction for the problem. The algorithm supports arbitrary interval constraints, but interval constraints of the form \((-\infty, 0 \rbrack\), \(\lbrack 0, \infty)\) are perhaps most interesting here.
+<br/>
+<br/>Then, an initial guess of a solution is made. There is likely no optimal first guess for this method, so reasonable heuristics such as average log-odds, averaged signed response, or average log-probability may be employed.
+<br/>
+<br/>Next, an iterative process begins. In this process, the algorithm chooses a column from the data matrix and attempts to move along this path such that the interval constraint on the column is still preserved. A search along this path is conducted for a magnitude which minimizes the error. As the loss function employed is convex, this search can terminate as soon as the loss along this path begins increasing. If for some reason, the loss cannot be reduced along this path, the algorithm tries another column. The algorithm continues in this way until the loss no longer decreases for any column in the data matrix. When this occurs, the algorithm terminates.
+<br/>
+<br/><b>Lemma</b>: The ICP algorithm terminates in a finite number of steps.
+<br/>
+<br/><b>Proof</b>: Assume without loss of generality that the problem is bounded by a possibly non-unique global minimum. Each step of the algorithm must decrease the value of the loss function. Since the error cannot decrease beneath the value of the global minimum and the algorithm makes progress towards the minimum at each step, the algorithm terminates in a finite number of steps. \(\blacksquare\)
+<br/>
+<br/>It should be noted that although the algorithm makes progress towards the global minimum at each step, it may never achieve this value. In fact, the method likely rarely achieves the global minimum.
+<br/>
+<br/>The algorithm determines the distance it can move along a path by comparing the current column coefficient with the boundaries of the feasible region. For example, if the current coefficient value is <i>x</i> and the feasible region for the coefficient is \(\lbrack a, b \rbrack\), then the path search is constrained to \((0, x-a \rbrack\) in the negative direction and \((0, b-x \rbrack\) in the positive direction.
+<br/>
+<br/>In this way, the algorithm is made to respect the constraints of the problem. Using non-negative or non-positive intervals, the optimizer may be forced to respect constraints placed on the sign of the relationship of any given column with the target value.
+<br/>
+<br/>Figure 1 shows the behavior of the ICP solver on a dataset with two samples. In the dataset, one sample belongs to the positive class and one two the negative class. The columns in the matrix are sign constrained. In this case, the margin targeted by the algorithm is 1 and the solution obtained is <i>[-1.,          0.98636858]</i>.<br/>
+<p style="text-align:center;"><a href="../Img/icppathways.png"><img src="../Img/icppathways.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: Iterative Constrained Pathways in Action</b></p>
+As can be seen, the algorithm alternates between two columns snaking its way towards a better solution.
+<br/>
+<br/>When selecting a path, further constraints may be placed on the algorithm. For instance, constraints on the maximum number of unique pathways can be chosen. This places a hard limit on the number of features that the model may employ. If multiple columns employ the same underlying feature, they may be logically grouped together and the algorithm can be made to respect an upper limit on the number of groups that may be used.
+<br/>
+<br/>Other arbitrary constraints such as coefficient ordering, coefficient vector norms, maximum number of iterations, or minimum step error improvement can easily be included. The mechanism is the same; either constrain the line search or abandon the current pathway and try another.
+<br/>
+<br/>Each additional constraint can be thought of as a trade-off that sacrifices analytical error for suitability of the model in some broader context.
+<h1>The ICP Rule Ensemble</h1>
+One of the challenges with existing rule ensemble methods is that the signs of the rules may appear paradoxical, resulting in dubious model explanations. The ICP optimizer can perhaps help here. The argument is that by following a solution approach which more closely resembles one which humans use, a more understandable ensemble is produced. Again, the optimizer aims to produce an ensemble in which the rules are less highly entangled with collinearity and are more reinforcing in nature.
+<br/>
+<br/>As in prediction rule ensemble (PRE), gradient boosting machines (GBM) can similarly be applied here [1]. There are many possible parameter settings, but one which produces especially transparent models occurs when the depth of each tree is limited to 1. By gathering the split criteria for each tree in the forest, a collection of rules is obtained. Next, these rules are used to form a matrix in which the <i>i</i>-th row and <i>j</i>-th column indicates the result of the <i>j</i>-th splitting criteria evaluated against the <i>i</i>-th sample.
+<br/>
+<br/>Due to their simplicity and the behavior of the GBM algorithm, the resulting rules are likely to be collinear. However, the ICP optimizer can reduce the complexity of the model and produce a more natural final ensemble. A sign-constrained ICP solution is obtained and all rules with coefficient 0 are discarded. The remaining rules are grouped by column index and split into non-overlapping regions. The method described above is dubbed the ICP rule ensemble (ICPRE).
+<br/>
+<br/>The ultimate rules produced by ICPRE are of the form:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>if (a11 &lt;= x1 &lt; b11) then =&gt; score += z11
+if (a12 &lt;= x1 &lt; b12) then =&gt; score += z12
+…
+if (aij &lt;= xi &lt; bij) then =&gt; score += zij
+...</code></pre><br/><hr/><br/>
+<br/>
+<br/>In this way, the rules identify key intervals for the features and show the impact of a given variable falling into a specific range. Depending on the dataset and the underlying data generation process, it may be difficult to truly disentangle the effects of all the variables. Nonetheless, the model at least presents a reasonable explanation and is a faithful representation of the optimization process itself.
+<h1>ICP In Practice</h1>
+This section showcases some of the advantages of the iterative constrained pathways algorithm. The ICP rule ensemble method is employed on several classification datasets and the results from the model are presented.
+<h3>Census Income Data</h3>
+The first dataset is the “adult income dataset” obtained from the University of California at Irvine [2]. The purpose of the dataset is to predict whether an individual earns more than $50,000 per year given information about the individual. Overall, the dataset might be described as being moderately difficult. Most reported accuracy measurements from models fit on the data are roughly around 85% or so.
+<br/>
+<br/>The model finds an initial solution employing the following rules:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>Age &lt;= 28.5                      -0.619637
+Age &lt;= 33.5                      -0.619637
+WorkingHours &lt;= 40.5             -0.619637
+IsHusband &lt;= 0.5                 -1.38036
+YearsEducation &gt; 9.5             +0.619637
+YearsEducation &gt; 10.5            +0.760726
+CapGain &gt; 5119.0                 +2.0
+CapGain &gt; 7055.5                 +1.38036
+CapLoss &gt; 1820.5                 +1.38036
+IsWife &gt; 0.5                     +1.38036</code></pre><br/><hr/><br/>
+<br/>
+<br/>These are then consolidated into the following non-overlapping rules:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>Rule   0:
+-Coef: -1.380363
+-Pred: (IsHusband &lt;= 0.5)
+Rule   1:
+-Coef: -1.239274
+-Pred: (Age &lt;= 28.5)
+Rule   2:
+-Coef: -0.619637
+-Pred: ((28.5 &lt; Age) &amp; (Age &lt;= 33.5))
+Rule   3:
+-Coef: -0.619637
+-Pred: (WorkingHours &lt;= 40.5)
+Rule  11:
+-Coef: +0.619637
+-Pred: ((9.5 &lt; YearsEducation) &amp; (YearsEducation &lt;= 10.5))
+Rule  12:
+-Coef: +1.380363
+-Pred: (10.5 &lt; YearsEducation)
+Rule  13:
+-Coef: +1.380363
+-Pred: (1820.5 &lt; CapLoss)
+Rule  14:
+-Coef: +1.380363
+-Pred: (0.5 &lt; IsWife)
+Rule  15:
+-Coef: +2.000000
+-Pred: ((5119.0 &lt; CapGain) &amp; (CapGain &lt;= 7055.5))
+Rule  16:
+-Coef: +3.380363
+-Pred: (7055.5 &lt; CapGain)</code></pre><br/><hr/><br/>
+<br/>
+<br/>Starting from rule 16, the model shows that individuals with more than $7000 in capital gains reported are very likely to earn more than $50k. Rule 15 shows that if you fall slightly short of rule 16, you are still likely to be in class 1, but the effect size is smaller. Years of education has a similar ordered effect taking place. Being under the age of 34 reduces earnings potential, but the effect becomes more pronounced under the age of 29. Overall the model appears very reasonable in terms of agreement with human intuition.
+<br/>
+<br/>
+<table style="margin: 0px auto;">
+<tbody>
+<tr>
+<th>Method</th>
+<th>Train</th>
+<th>Test</th>
+</tr>
+<tr>
+<td>IPCRE</td>
+<td>84.65%</td>
+<td>84.75%</td>
+</tr>
+<tr>
+<td>RFC</td>
+<td>99.90%</td>
+<td>84.32%</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 1: Census Income Accuracy Results</b></p>
+The training and validation results of the model are shown in Table 1. Table 1 also shows the results for a random forest classifier (RFC) fit on the same training and validation split. Default parameters are used for both models. The random forest uses over 1.3 million nodes while ICPRE achieves similar accuracy with essentially 21 parameters (10 split points, 10 coefficients, and 1 intercept).<br/>
+<p style="text-align:center;"><a href="../Img/incomeroc.png"><img src="../Img/incomeroc.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: Adult Income ROC Comparison</b></p>
+Figure 2 compares the ROC curves and ROC AUC scores for the two models over the validation data. Both the AUC score and the curves are nearly identical between the two models.
+<h3>Automobile MPG Dataset</h3>
+Next, the behavior of ICPRE is explored on the “automobile MPG” dataset from UCI [3]. The purpose of this dataset is to predict the number of miles per gallon (MPG) a car achieves, given information about the vehicle. The dataset is posed as a regression problem, however in this example it is repurposed as a classification dataset. The target value is set to a boolean variable indicating if the car achieves at least the median MPG of the dataset (23 MPG).
+<br/>
+<br/>The initial fitting process identifies the following rules:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>Cylinders &lt;= 3.5                 -3.51117
+Cylinders &lt;= 5.5                 +2.75559
+Displacement &lt;= 120.5            +0.755587
+Weight &lt;= 2278.5                 +1.51117
+Year &lt;= 73.5                     -1.51117
+Year &lt;= 78.5                     -0.755587
+Displacement &gt; 120.5             -0.755587
+Displacement &gt; 198.5             -2.0
+Weight &gt; 2764.5                  -0.755587
+Year &gt; 78.5                      +1.51117
+Year &gt; 79.5                      +1.24441</code></pre><br/><hr/><br/>
+<br/>
+<br/>Again, these are then consolidated into the following non-overlapping rules:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>Rule   0:
+-Coef: -2.755587
+-Pred: (198.5 &lt; Displacement)
+Rule   1:
+-Coef: -2.266760
+-Pred: (Year &lt;= 73.5)
+Rule   2:
+-Coef: -0.755587
+-Pred: (Cylinders &lt;= 3.5)
+Rule   3:
+-Coef: -0.755587
+-Pred: ((120.5 &lt; Displacement) &amp; (Displacement &lt;= 198.5))
+Rule   4:
+-Coef: -0.755587
+-Pred: (2764.5 &lt; Weight)
+Rule   5:
+-Coef: -0.755587
+-Pred: ((73.5 &lt; Year) &amp; (Year &lt;= 78.5))
+Rule   8:
+-Coef: +0.755587
+-Pred: (Displacement &lt;= 120.5)
+Rule   9:
+-Coef: +1.511173
+-Pred: (Weight &lt;= 2278.5)
+Rule  10:
+-Coef: +1.511173
+-Pred: ((78.5 &lt; Year) &amp; (Year &lt;= 79.5))
+Rule  11:
+-Coef: +2.755587
+-Pred: ((3.5 &lt; Cylinders) &amp; (Cylinders &lt;= 5.5))
+Rule  12:
+-Coef: +2.755587
+-Pred: (79.5 &lt; Year)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The rules show that newer cars (the dataset covers the years 1970-82) have better fuel efficiency. Again, there is a natural ordering to the coefficients with respect to year, weight, and displacement. Finally, the coefficients and their relative order appear to corroborate human intuition.
+<br/>
+<br/>
+<table style="margin: 0px auto;">
+<tbody>
+<tr>
+<th>Method</th>
+<th>Train</th>
+<th>Test</th>
+</tr>
+<tr>
+<td>IPCRE</td>
+<td>94.97%</td>
+<td>95.00%</td>
+</tr>
+<tr>
+<td>RFC</td>
+<td>100.00%</td>
+<td>92.50%</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 2: Auto MPG Accuracy Results</b></p>
+Table 2 shows the performance of ICPRE on this dataset. Again, a random forest fit on the same training and validation split is shown for comparison purposes. The random forest has a total of 5384 nodes while the ICPRE model has essentially 23 parameters.
+<br/>
+<br/>It should be noted that the primary purpose of these experiments is <i>not</i> to show that ICPRE is more accurate than RFC. No special tuning or cherry-picking is performed for either model, but accuracy results are obviously highly dependent on the dataset and parameters for both model types. Instead, the purpose is to demonstrate that ICP achieves performance that is in the same ballpark as existing methods while producing more explainable models.
+<h3>Model Timings</h3>
+Due to its dual stage process, the ICPRE fitting procedure is somewhat slower than some other methods. Rough timing results for RFC and ICPRE over both of the above datasets are shown in Table 3. The ICP optimization method is currently implemented in Python, while RFC is implemented in Cython. Random forest is also fit using 4 parallel threads, while ICP does not currently utilize multi-threading. These both likely account for some of the difference that is observed.
+<br/>
+<br/>
+<table style="margin: 0px auto;">
+<tbody>
+<tr>
+<th>Model</th>
+<th>Income</th>
+<th>MPG</th>
+</tr>
+<tr>
+<td>IPCRE</td>
+<td>1.54s</td>
+<td>0.04s</td>
+</tr>
+<tr>
+<td>RFC</td>
+<td>0.92s</td>
+<td>0.12s</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 3: Fit Timing Results</b></p>
+Despite the somewhat longer fitting times seen on the larger census income dataset, the method is still able to scale to large instances. In fact, the solution for a problem with over 1 million rows and 1500 columns is found in under 5 minutes. While already fairly reasonable, a C++ extension module could likely further reduce the fitting time for ICP to be more in line with other faster methods.
+<h1>Challenges with ICP</h1>
+There appear to be two primary challenges with the ICP model. The first is that the model is somewhat sensitive to its initial starting point. As the algorithm is constrained with respect to the directions in which it may move, it seems intuitive that certain starting positions can result in better solutions than others. As with other initialization sensitive methods, trying several initial starting values can help here.
+<br/>
+<br/>The second issue is that the algorithm is sensitive to column traversal order. Again, as the algorithm is constrained to fixed directions, some moves my ultimately lead to a poorer final solution. This problem is somewhat more difficult to address, as finding an optimal ordering is <i>NP-hard</i>. Introducing a limit on the maximum distance to move before trying a new direction helps here. This limit is akin to learning rate parameters in other methods.
+<br/>
+<br/>In general, random column ordering with a small learning rate tends to create more complex but performant models. An alternative to purely random ordering is to cycle through the columns and swap those that reduce error ahead in the traversal strategy, so that they are encountered again sooner. The aim of this strategy is to strike a tradeoff between the complexity of a purely random ordering and the over simplicity of one performing steepest descent without a learning rate.
+<br/>
+<br/>By defining minimum and maximum swap distances, a buffer space that constitutes an <i>active set</i> is constructed. Due to the shuffling algorithm, this space contains both columns inside and outside the active set. Directions that do not reduce error are passed over, removing them from the set, while directions that reduce error are preserved. Columns in the set may also be randomly dropped due to the swapping mechanism. By using a small learning rate and a reasonable active set size, the moving average of the direction of descent is hopefully made closer to an optimal one.
+<h1>Conclusion</h1>
+ICP aims to produce a solution that is intuitive and corroborates human intuition for a problem. By constraining itself only to actions that are reasonable, it produces a final solution that is easier to understand than other less restricted methods. Despite these constraints, the algorithm appears to perform comparable to standard methods when evaluated on several well-known datasets. Further, the rule ensemble produced on each dataset appears to reasonably corroborate human intuition.
+<h1>Using ICP</h1>
+The ICP optimization method, the ICPRE algorithm, and the code for consolidating rules is all available on GitHub [4]. The latest ICP package is available via PyPi [5]. Use the command:
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>pip install ICPOptimize</code></pre><br/><hr/><br/>
+to install ICP. For examples on how to use the <i>ICPOptimize</i> package, please see the <i>ICPExamples</i> GitHub repository [6].
+<br/>
+<br/>
+<table style="margin: 0 auto;border:none;">
+<tbody>
+<tr>
+<td style="border:none;" width="5%" valign="top">[1]</td>
+<td style="border:none;" width="95%"><a href="http://statweb.stanford.edu/~jhf/ftp/RuleFit.pdf">http://statweb.stanford.edu/~jhf/ftp/RuleFit.pdf</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[2]</td>
+<td style="border:none;"><a href="http://archive.ics.uci.edu/ml/datasets/Adult">http://archive.ics.uci.edu/ml/datasets/Adult</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[3]</td>
+<td style="border:none;"><a href="https://archive.ics.uci.edu/ml/datasets/Auto%2BMPG">https://archive.ics.uci.edu/ml/datasets/Auto%2BMPG</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[4]</td>
+<td style="border:none;"><a href="https://github.com/nicholastoddsmith/ICPOptimize">https://github.com/nicholastoddsmith/ICPOptimize</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[5]</td>
+<td style="border:none;"><a href="https://pypi.org/project/ICPOptimize/">https://pypi.org/project/ICPOptimize/</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[6]</td>
+<td style="border:none;"><a href="https://github.com/nicholastoddsmith/ICPExamples">https://github.com/nicholastoddsmith/ICPExamples</a></td>
+</tr>
+</tbody>
+</table><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

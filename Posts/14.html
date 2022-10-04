@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>A Deep Learning Based AI for Path of Exile: A Series</h1><h2>Sat, 08 Jul 2017</h2><h3><i>Bot</i>, <i>Computer Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Poe</i>, <i>Python</i>, <i>Software</i></h3>This post is the first in a series on creating an AI for the game Path of Exile based on deep learning and other machine learning techniques. A list of posts in this series follows.
+
+<ol>
+<li><b><a href="Posts/14.html">A Deep Learning Based AI for Path of Exile: A Series</a></b></li>
+<li><a href="Posts/15.html">Calibrating a Projection Matrix for Path of Exile</a></li>
+<li><a href="Posts/16.html">PoE AI Part 3: Movement and Navigation</a></li>
+<li><a href="Posts/21.html">PoE AI Part 4: Real-Time Screen Capture and Plumbing</a></li>
+<li><a href="Posts/23.html">AI Plays Path of Exile Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</a></li>
+</ol>
+The goal of the project is to create an AI that operates based on visual input, is able to navigate levels successfully, can defend itself, and of course to have fun and learn something in the process.
+<h1>Overview</h1>
+Path of Exile is a hack-and-slash style RPG similar to Diablo, Titan Quest, etc. A screenshot from the game is shown below in Figure 1.<br/>
+<p style="text-align:center;">
+<img src="../Img/poess3.jpg" height="auto" width="75%" /><br/>
+<b>Figure 1: Screenshot of Path of Exile</b>
+</p>
+<br/>
+The player interacts with the game primarily by using the mouse to move, attack monster, open chests, etc. Keyboard hotkeys are also used for special attacks, potions, and menu shortcuts.
+<h1>High-Level Design</h1>
+The idea for the AI is to use a Convolutional Neural Network (CNN) to classify images from the game in order to build an internal representation of the world. This internal representation of the world is then to used to guide the character through the world. The basic idea of the AI is represented in Figure 2 as a flowchart.<br/>
+<p style="text-align:center;">
+<img src="../Img/botlogic2.png" height="auto" width="75%" /><br/>
+<b>Figure 2: Flowchart of AI Logic</b>
+</p>
+<br/>
+The main loop of the AI program takes a still image from the game and passes it to a CNN. The CNN predicts what is occurring in the still image. These predictions are then passed to an internal map of the world. The internal map of the world is then updated based on the latest predictions. Given the present state of the internal map of the world, a number of actions are generated. Finally, these actions are then translated into mouse and keyboard input and sent to the mouse and keyboard. The loop is repeated indefinitely. Easy, right? Right.
+<br/>
+<br/>The programming language chosen is Python (3.6). The primary libraries to be used are:
+<ul>
+<li><b>scikit-learn</b></li>
+<li><b>TensorFlow</b></li>
+<li><b>PyUserInput</b></li>
+<li><b>win32gui</b></li>
+<li><b>scikit-image</b></li>
+</ul>
+Subsequent blog posts will explore breaking down the above components further and implementing them.
+<h1>Disclaimer</h1>
+Path of Exile, its logo, and artwork are property of Grinding Gear Games (GGG) Limited. The author is not in any way affiliated with GGG and the thoughts and opinions of the author do not necessarily represent those of GGG. The purpose of this series is to explore AI and deep learning. No copyright infringement or ToS violation is intended.
+<br/>
+<br/><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

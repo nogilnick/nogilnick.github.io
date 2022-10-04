@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Weighted PCA</h1><h2>Fri, 08 Jul 2022</h2><h3><i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></h3>Consider an <i>m</i> by <i>n</i> matrix \(\mathbf{A}\) and an <i>m</i> by <i>1</i> vector of integers \(\mathbf{w}\). Now, consider the matrix \(\mathbf{R}\), where \(\mathbf{R}\) is formed by taking \(\mathbf{A_i}\), that is the <i>i</i>-th row of \(\mathbf{A}\), and repeating it \(\mathbf{w_i}\) times. This new matrix \(\mathbf{R}\) has dimension <i>s</i> by <i>n</i>, where
+<p style="text-align:center;">\[\displaylines{s = \sum_{i=1}^{m}{\mathbf{w_i}}}\ .\]</p>
+If \(s &gt;&gt; m\), then it is undesirable to compute the full matrix \(\mathbf{R}\) and perform principal component analysis (PCA) on it. Instead, the highly structured form of \(\mathbf{R}\), suggests there should be a more efficient method to perform this decomposition. This method is known as weighted PCA and is the topic of this post.
+<br/>
+<br/>In vanilla PCA, the data matrix must first be centered by subtracting the column means from each column. Considering the full data matrix \(\mathbf{R}\), the element of the <i>i</i>-th row and <i>j</i>-th column \(\mathbf{A_{ij}}\) is repeated \(\mathbf{w_i}\) times so that the <i>j</i>-th column average is
+<p style="text-align:center;">\[\displaylines{\frac{\sum_{i=1}^{m}{\mathbf{w_i} * \mathbf{A_{ij}}}}{\sum_{i=1}^{m}{\mathbf{w_i}}}}\ .\]</p>
+To write this more succinctly, define \(\mathbf{v} = (1/s) * \mathbf{w}\), that is the vector \(\mathbf{w}\) normalized to sum to 1. In this way, the weighted column averages can be defined using the matrix product as
+<p style="text-align:center;">\[\displaylines{\mathbf{a} = \mathbf{v}^{T}\mathbf{A}}\ .\]</p>
+Though it is not necessary, it is frequently desirable to fully standardize the matrix \(\mathbf{A}\) by dividing each of its columns by the corresponding column standard deviations. To implicitly normalize the full matrix \(\mathbf{R}\), the weighted standard deviations need be computed instead. Using "broadcasting", and several other abuses of notation, this can be written as
+<p style="text-align:center;">\[\displaylines{\mathbf{d} = \sqrt{\mathbf{v}^{T} (\mathbf{A} - \mathbf{a})^2}}\ ,\]</p>
+where the square and square-root are both applied element-wise to the resulting vector.
+<br/>
+<br/>With the weighted average and standard deviation vectors computed, the matrix \(\mathbf{R}\) can be implicitly standardized by subtracting the column means and dividing by the column standard deviations. That is, define the standardized matrix as
+<p style="text-align:center;">\[\displaylines{\mathbf{M} = (\mathbf{A} - \mathbf{a}) / \mathbf{d}}\ ,\]</p>
+where the subtraction and division operations are performed using broadcasting.
+<br/>
+<br/>Next, the goal is to use the singular value decomposition (SVD) to perform the eigendecomposition of \((1/m) * \mathbf{M}^T\mathbf{M}\) and ultimately \((1/s) * \mathbf{R}_{s}^T\mathbf{R}_{s}\), where  \(\mathbf{R}_{s}\) is the appropriately standardized full matrix \(\mathbf{R}\) (*). Notice that the empirical covariance matrix \((1/s) * \mathbf{R}_{s}^T\mathbf{R}_{s}\) can be computed as \(\mathbf{M}^T\mathbf{W}\mathbf{A}\), where \(\mathbf{W} = diag(\mathbf{v})\) is a diagonal matrix with the vector \(\mathbf{v} = (1/s) * \mathbf{w}\) along the diagonal. This formula can be re-arranged as follows:
+<p style="text-align:center;">\[\displaylines{\mathbf{M}^T\mathbf{W}\mathbf{M}}\]</p>
+<p style="text-align:center;">\[\displaylines{= \mathbf{M}^T\mathbf{W}^{1/2}\mathbf{W}^{1/2}\mathbf{M}}\]</p>
+<p style="text-align:center;">\[\displaylines{= (\mathbf{W}^{1/2}\mathbf{M})^T\mathbf{W}^{1/2}\mathbf{M}}\]</p>
+<p style="text-align:center;">\[\displaylines{= \mathbf{B}^T\mathbf{B}}\ ,\]</p>
+since \(\mathbf{W} = \mathbf{W}^T\), as the matrix is diagonal and thus symmetric, and where \(\mathbf{B} = \mathbf{W}^{1/2}\mathbf{M}\).
+<br/>
+<br/>In this way, one can compute the SVD of the matrix \(\mathbf{B} = \mathbf{W}^{1/2}\mathbf{M}\) to implicitly perform PCA on the full data matrix \(\mathbf{R}\). That is, find the familiar \(\mathbf{U}\), \(\mathbf{\Sigma}\), and \(\mathbf{V}\) such that
+<p style="text-align:center;"> \[\displaylines{\mathbf{B} = \mathbf{U}\mathbf{\Sigma}\mathbf{V}^T}\ .\]</p>
+Using the compact SVD, the components are simply \(\mathbf{V}\), so that the projected data is defined to be \(\mathbf{P}=\mathbf{M}\mathbf{V}\). To obtain the projection of the full matrix \(\mathbf{R}\), simply repeat each row \(\mathbf{P}_i\) in the reduced projected matrix \(\mathbf{w}_i\) times!
+<br/>
+<br/>A simple Python helper class for performing a weighted PCA is <a href="https://github.com/nicholastoddsmith/WeightedPCA">available here on GitHub</a>.
+<br/>
+<br/>The following code snippet illustrates the above process in more detail:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import numpy as np
+from sklearn.decomposition import PCA
+
+# %% Generate a random problem instance
+m, n = 8, 4
+A = np.random.randint(0, 10, size=(m, n))
+# Repeats (or weightings) of the rows of A
+W = np.random.randint(1, 10, size=m)
+# Row i of A is repeated W[i] times
+R = np.repeat(A, W, axis=0)
+# %% Perform PCA on the full (repeated) data matrix
+Ra = R.mean(0)
+Rd = R.std(0)
+M  = (R - Ra) / Rd
+
+U1, S1, VT1 = np.linalg.svd(M, full_matrices=False)
+
+TA1 = M @ VT1.T
+# %% Perform PCA on the reduced data matrix with weights
+Wn = W / W.sum()
+Aa = Wn @ A
+Ad = np.sqrt(Wn @ np.square(A - Aa))
+M  = np.sqrt(W)[:, None] * (A - Aa) / Ad
+
+U2, S2, VT2 = np.linalg.svd(M, full_matrices=False)
+
+# SVD is sign indeterminate; fix order of signs
+# based on first sample
+for c, (i, j) in enumerate(zip(U1[0], U2[0])):
+&nbsp;&nbsp;if np.sign(i) != np.sign(j):
+&nbsp;&nbsp;&nbsp;&nbsp;U2[:, c] *= -1
+&nbsp;&nbsp;&nbsp;&nbsp;VT2[c]   *= -1
+
+TA2 = np.repeat(M @ VT2.T, W, axis=0)
+# %% Assert both results are close
+assert(np.allclose(TA1, TA2))
+# %% Validate against sklearn
+Ra = R.mean(0)
+Rd = R.std(0)
+M  = (R - Ra) / Rd
+
+pca = PCA().fit(M)
+
+# SVD is sign indeterminate; fix order of signs
+VT3 = pca.components_
+for c, (i, j) in enumerate(zip(VT2[:, 0], VT3[:, 0])):
+&nbsp;&nbsp;if np.sign(i) != np.sign(j):
+&nbsp;&nbsp;&nbsp;&nbsp;pca.components_[c] *= -1
+
+TA3 = pca.transform(M)
+assert(np.allclose(TA1, TA3))</code></pre><br/><hr/><br/>
+<br/>
+<br/>(*) The unbiased estimates can also be used instead. It is not used here as the difference is small and it complicates the notation somewhat.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>ICP In Practice</h1><h2>Sat, 29 May 2021</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i>, <i>Python</i>, <i>Statistics</i></h3>This post explores the iterative constrained pathways rule ensemble (ICPRE) method introduced in an earlier post using the Titanic dataset popularized by Kaggle [1]. The purpose of the text is to introduce the features and explore the behavior of the library.
+<br/>
+<br/>Some of the code snippets in this post are shortened for brevity sake. To obtain the full source and data, please see the <i>ICPExamples</i> GitHub page [2].
+
+<h1>Setup</h1>
+The ICPRE class is available in the <i>ICPOptimize</i> package that is hosted on <i>PyPi</i> [3]. To get started, the library can be installed using <i>pip</i>.
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>pip install ICPOptimize</code></pre><br/><hr/><br/>
+The ICP package has several sub-modules, but the two primary ones are <i>Models</i> and <i>Solver</i>. At present, <i>Models</i> implements the ICPRE algorithm and internally calls the ICPSolve function inside the Solver module.
+<br/>
+<br/>To get started, the ICPRE class can be imported using the following command.
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>from ICP.Models import ICPRuleEnsemble</code></pre><br/><hr/><br/>
+Next, <i>pandas</i> can be used to load the data about the passengers on the Titanic and do some basic feature extraction.
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import pandas as pd
+DF = pd.read_csv('TitanicFull.csv')
+
+DF['IsFemale'] = DF.Sex == 'female'
+…
+DF['2ndClass'] = DF.Pclass == 2
+DF['3rdClass'] = DF.Pclass == 3</code></pre><br/><hr/><br/>
+Next, the various parameters of the method are explained and their impact on the resulting model are explored.
+<h1>ICPRE Parameters</h1>
+Default parameters are specified for the model that attempt to be fairly general purpose. Further, the code documents the meaning of each of the input parameters. However, there are a number these that are worthy of further mention.
+<br/>
+<br/><b>Learning Rate</b>
+The <i>lr</i> parameter describes a type of learning rate that can dramatically change the resulting model. Specifically, it controls the maximum distance the algorithm can move at each iteration. Large values allow for greater loss reduction at each step, but can cause the algorithm to stall earlier. Smaller values allow the algorithm to run for more iterations, usually resulting in more accurate final models. In general, larger values produce models with fewer non-zero coefficients and smaller values produce models with more non-zero coefficients. However, this effect is dependent on other parameters including the swapping distances discussed later. For small values of <i>lr</i>, ensure that the <i>maxIter</i> and <i>tol</i> parameters allow for sufficient iterations to complete before optimization terminates.
+<br/>
+<br/><b>Tree Model Settings</b>
+The <i>tm</i> and <i>tmPar</i> settings allow for control over the tree method used to extract rules and the parameters that are provided to the given method. The default is to use the <i>GradientBoostingClassifier</i> class from <i>scikit-learn</i> with a maximum depth of 1. However, other settings and full customization is available.
+<br/>
+<br/>The only purpose of the tree model is to identify good splitting values to use as rules. In fact, the fitted tree model is discarded after the <i>fit</i> function returns. The <i>ESFx</i> parameter is a function that takes as input the fitted tree model and produces a list of (index, value) pairs describing these rules. Each rule is of the form <i>A[:, index] &lt;= value</i>.
+<br/>
+<br/><b>Swap Distance</b>
+The parameters <i>nsd</i> and <i>xsd</i> describe the minimum and maximum distance to move columns that reduce error ahead in the traversal plan. A random value between <i>nsd</i> and <i>xsd</i> is chosen and the current column is swapped with the column at that index. Then the traversal index is advanced by one, passing over the swapped column.
+<p style="text-align:center;"><a href="../Img/swapdraw.png"><img src="../Img/swapdraw.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: Column Traversal Order Update</b></p>
+Figure 1 illustrates a column traversal order update. In this case, the successful column (7) is set to be encountered again in four iterations. In general, shorter maximum swap distances allow the algorithm to re-encounter columns that reduce error sooner. Setting both the minimum and maximum distance to one has a similar effect to using a large learning rate.
+<br/>
+<br/><b>Column Order</b>
+The <i>cOrd</i> allows for relative or absolute ordering in the coefficients of the rule according to their individual performance against the target labels. This constrains the algorithm to prevent weaker rules from achieving larger magnitude coefficients than stronger rules. Relative ordering only constrains the algorithm in this way within rules using the same feature. Absolute ordering constrains the algorithm across all rules, regardless of the feature they use.
+<br/>
+<br/>To motivate such constraints, consider the problem of trying to predict the salary of an individual. In this situation, a variable containing the number of years of education completed by the individual is likely to be positively correlated with the target value. If there are two rules for having 12 years and 14 years of education respectively, then intuitively the rule for 14 years should have a larger coefficient than the one for 12 years. A relative ordering constraint can enforce such a requirement on the solution.
+<br/>
+<br/><b>Threads and Paths</b>
+The <i>nThrd</i> parameter controls the maximum number of parallel threads used to explore paths. If multiple paths are found simultaneously, the path that reduces error the most is used first. However, all paths that reduce error are swapped ahead in the traversal plan, regardless of whether the paths are actually taken or not. Note that the use of additional threads is load dependent, on smaller datasets <i>nThrd</i> threads may never be used.
+<h1>Using ICPRE</h1>
+Next, an ICPRE model is constructed and fit on the Titanic data. In this problem, members of class 1 are defined to be the survivors. Verbosity is set to high, so that the code prints detailed output to the screen.
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>IRE = ICPRuleEnsemble(v=2)
+IRE.fit(A[trn], Y[trn], W[trn])</code></pre><br/><hr/><br/>
+The consolidated and sorted rule set can be viewed using the following code:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>rl, cv = zip(*IRE.GetRules(FEAT_COL))</code></pre><br/><hr/><br/>
+<br/>
+<br/>Sample output of the above is shown next. However, since the algorithm is randomized the output on each run is likely to vary.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>Consolidated Rules
+Rule   0:
+-Coef: -2.177080
+-Pred: (3.50000 &lt; Parch)
+Rule   1:
+-Coef: -1.522920
+-Pred: (4.50000 &lt; SibSp)
+Rule   2:
+-Coef: -0.622920
+-Pred: (2.50000 &lt; SibSp) &amp; (SibSp &lt;= 4.50000)
+Rule   3:
+-Coef: -0.561460
+-Pred: (0.50000 &lt; IsMr)
+Rule   4:
+-Coef: -0.500000
+-Pred: (IsFemale &lt;= 0.50000)
+...
+Rule  12:
+-Coef: +0.322920
+-Pred: (1.50000 &lt; Age) &amp; (Age &lt;= 5.50000)
+Rule  13:
+-Coef: +0.377080
+-Pred: (IsMr &lt;= 0.50000)
+Rule  14:
+-Coef: +0.438540
+-Pred: (SibSp &lt;= 2.50000)
+Rule  15:
+-Coef: +0.722920
+-Pred: (0.50000 &lt; IsFemale)
+Rule  16:
+-Coef: +1.061460
+-Pred: (262.68750 &lt; Fare) &amp; (Fare &lt;= 387.66461)
+Rule  17:
+-Coef: +1.161460
+-Pred: (Age &lt;= 1.50000)
+Rule  18:
+-Coef: +1.938540
+-Pred: (78.00000 &lt; Age)
+Rule  19:
+-Coef: +2.261460
+-Pred: (387.66461 &lt; Fare)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The ICPRE class provides another function which offers an easier way to visualize the behavior of the model. This function is <i>GetResponseCurve</i>. The <i>GetResponseCurve</i> function returns a list of data points which describe how the model response changes as a single input variable changes.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code># %% Show response curves
+x, y, isOrig = map(list, zip(*IRE.GetResponseCurve(f)))
+xr = (x[-2] - x[1])
+x[ 0] = x[ 1] - xr * 0.05
+x[-1] = x[-2] + xr * 0.05
+fig, ax = mpl.subplots()
+ax.plot(x, y)
+ax.set_xlabel(FEAT_COL[f])
+ax.set_ylabel('Change in Response')
+ax.set_title('{:s} Response Curve'.format(FEAT_COL[f]))
+mpl.show()</code></pre><br/><hr/><br/>
+<br/>
+<br/>The above code snippet plots the response curves for all features that are ultimately used in the model. Figure 2 shows the response curve for the <i>age</i> variable in the model.
+<p style="text-align:center;"><a href="../Img/ageresponsecurve.png"><img src="../Img/ageresponsecurve.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: Response Curve for Variable: Age</b></p>
+Consider the plot for age. The result shows that infants (<i>Age &lt;= 1.5</i>) and very young children (<i>Age &lt;= 5.5</i>) have an increased chance of surviving, though the effect is larger for infants. Given that the survival rates within these groups are 77% and 65% respectively, whereas the overall survival rate is only 37%, these results corroborate intuition.
+<br/>
+<br/>The curve shows that the most elderly passengers (<i>78.0 &lt; Age</i>) have the highest chance of survival, overall. However, inspecting the data, there is only one passenger (who survived) who falls into this group. This is perhaps, a poor splitting point that could be eliminated using the <i>min_samples_leaf</i> parameter for the tree model.
+<p style="text-align:center;"><a href="../Img/pclassresponsecurve.png"><img src="../Img/pclassresponsecurve.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: Response Curve for Variable: Pclass</b></p>
+The <i>Pclass</i> curve seen in Figure 3 is also fairly interesting. It shows that survival is highest among first class passengers, the model response drops for second class, and becomes 0 for third class. The survival rates within these groups are 58%, 42%, and 26% respectively. Again, the results of the model corroborate intuition here.
+<p style="text-align:center;"><a href="../Img/fareresponsecurve.png"><img src="../Img/fareresponsecurve.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 4: Response Curve for Variable: Fare</b></p>
+The curve for <i>Fare</i> in Figure 4 tells a similar story. Only 10 passengers paid more than $262, but 8 of these 10 survived. Further, only 4 passengers paid more than $387 and each of these survived. In both cases, this is a dramatically higher survival rate than the 37% achieved by passengers paying less.
+<br/>
+<br/>The curves for binary variables are less interesting, as similar information can be obtained by simply inspecting the coefficient value.
+<h1>Introspecting Sample Predictions</h1>
+ICPRE implements a function Explain which produces a detailed explanation for the prediction of each sample it is provided. The function takes as argument a data matrix and a list of feature names and produces a list of sample explanations. Each explanation consists of a list of tuples where each tuple contains a rule that fired and the response value associated with the rule. The response values in the tuples may be summed to derive the final predicted value produced by decision_function.
+<br/>
+<br/>Consider passenger 259, one of the four who paid the maximum fare observed. The predicted score for this passenger is 3.3, indicating high likelihood of survival. The following code can be used to compute an explanation for the prediction.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>IRE.Explain(A[[258]], FEAT_COL)</code></pre><br/><hr/><br/>
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>-0.34 (IsMrs &lt;= 0.50000)
+-0.30 bias
+-0.06 (5.50000 &lt; Age) &amp; (Age &lt;= 78.00000)
++0.06 (Parch &lt;= 3.50000)
++0.06 (0.50000 &lt; 1stClass)
++0.20 (Pclass &lt;= 1.50000)
++0.38 (IsMr &lt;= 0.50000)
++0.44 (SibSp &lt;= 2.50000)
++0.72 (0.50000 &lt; IsFemale)
++2.26 (387.66461 &lt; Fare)</code></pre><br/><hr/><br/>
+<br/>
+<br/>As can be seen, the single largest factor influencing the result is the amount of fare paid followed by the fact that the passenger is female. The middling age (35) and title (Miss.) of the passenger detract slightly from the score, but leave the result largely unchanged. The bias is negative, which is reasonable given that only 37% of people survived overall.
+<p style="text-align:center;"><a href="../Img/titanicexplanationplot.png"><img src="../Img/titanicexplanationplot.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 5: Explanation Plot for Passenger #259</b></p>
+Figure 5 shows the impact of each rule on the final predicted score. The rules are ordered by their coefficient value.
+<h1>Comparison</h1>
+For comparison, a random forest classifier is fit to the same dataset. ROC curves and AUC scores are computed over a validation holdout for both models. Figure 6 shows both curves along with the AUC scores.
+<p style="text-align:center;"><a href="../Img/titanicroc.png"><img src="../Img/titanicroc.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 6: RFC and ICPRE ROC Curves</b></p>
+ICPRE exhibits similar AUC, though it achieves a better trade-off between FPR and TPR at several lower FPR values. For comparison, the RFC model has over 41k nodes while the ICPRE model uses only 17 rules.
+<p style="text-align:center;"><a href="../Img/titanicficomp.png"><img src="../Img/titanicficomp.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 7: RFC and ICPRE Feature Importances</b></p>
+Figure 7 compares the feature importance values produced by both method. ICPRE uses only 9 of the available 16 features, while RFC utilizes all available features as expected.
+<h1>Conclusion</h1>
+ICPRE attempts to provide a good trade-off between model interpretability and performance. Specifically, by constraining the solution according to univariate feature behavior and providing baked-in model introspection, ICPRE aims to produce models that are both useful and enlightening. For this reason, functions like <i>feature_activation</i>, <i>GetResponseCurve</i>, and <i>Explain</i> are implemented in the ICPRE class in addition to the standard <i>predict</i>, <i>transform</i> and <i>predict_proba</i> functions.
+<br/>
+<br/>For more details about ICP and the ICPRE algorithm, see the original blog post that introduces the method [4].
+<h1>References</h1>
+<table style="margin: 0 auto;border:none;">
+<tbody>
+<tr>
+<td style="border:none;" valign="top">[1]</td>
+<td style="border:none;"><a href="https://www.kaggle.com/c/titanic">https://www.kaggle.com/c/titanic</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[2]</td>
+<td style="border:none;"><a href="https://github.com/nicholastoddsmith/ICPExamples">https://github.com/nicholastoddsmith/ICPExamples</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[3]</td>
+<td style="border:none;"><a href="https://pypi.org/project/ICPOptimize/">https://pypi.org/project/ICPOptimize/</a></td>
+</tr>
+<tr>
+<td style="border:none;" width="5%" valign="top">[4]</td>
+<td style="border:none;" width="95%"><a href="Posts/63.html">Posts/63.html</a></td>
+</tr>
+</tbody>
+</table><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

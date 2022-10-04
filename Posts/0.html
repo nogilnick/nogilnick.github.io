@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Breast Cancer Malignancy Classification using PCA and Logistic Regression</h1><h2>Sun, 07 Feb 2016</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i></h3>In this post, a linear classifier is constructed that aids in classifying fine needle aspiration (FNA) cytology results. The classifier receives a vector consisting of aggregate measurements from FNA of a breast mass. Each vector contains aggregations, over multiple cell nuclei, of the following ten measurements:
+
+<ol>
+	<li>Clump Thickness</li>
+	<li>Uniformity of Cell Size</li>
+	<li>Uniformity of Cell Shape</li>
+	<li>Marginal Adhesion</li>
+	<li>Single Epithelial Cell Size</li>
+	<li>Bare Nuclei</li>
+	<li>Bland Chromatin</li>
+	<li>Normal Nucleoli</li>
+	<li>Mitoses</li>
+</ol>
+The mean, standard error, and maximum are each used to aggregate the underlying measurement data. Thus, each sample is a vector \(\textbf{v} \in \mathbb{R}^{30}\). Given a vector of these measurements, the classifier determines if the breast mass is benign or malignant. The data used in this post is courtesy of UCI's machine learning repository and is <a href="http://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+%28Original%29">available here</a> [1].
+<h1>Data Setup</h1>
+The data set contains 569 samples and 34 columns in total. The column containing the patient ID is discarded and the column containing the diagnosis is reserved as the target vector.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import matplotlib.pyplot as plt
+import numpy             as np
+import pandas            as pd
+from   sklearn.decomposition   import PCA
+from   sklearn.linear_model    import LogisticRegression
+from   sklearn.model_selection import ShuffleSplit
+from   sklearn.preprocessing   import StandardScaler
+
+D = pd.read_csv('wdbc.data', header=None)
+A = D[range(2, 32)].values
+Y = D[1].map({'M': 1, 'B': 0}).values
+trn, tst = next(ShuffleSplit(1, test_size=0.15).split(A))</code></pre><br/><hr/><br/>
+<br/>
+<br/>In the final line of code, a validation set containing ~15% of the data is reserved for model evaluation.
+<h1>Preprocessing and Dimensionality Reduction</h1>
+To better visualize the data, the input vectors are projected onto a lower dimensional subspace using principal component analysis (PCA). To perform PCA, first compute the mean \(\overline{v}_i\) of each input column vector \(\textbf{v}_i\). Now, consider the mean-centered data matrix<br/>
+<p style="text-align:center;">\[\displaylines{\textbf{V}=(\textbf{v}_{1}-\overline{v}_1,\textbf{v}_{2}-\overline{v}_2,\ldots,\textbf{v}_{n}-\overline{v}_n)^{T}}\ .\]</p>
+<br/>
+Next, consider the matrix<br/>
+<p style="text-align:center;">\[\displaylines{\textbf{C}=\frac{1}{n}\textbf{V}^{T}\textbf{V}}\ ,\]</p>
+<br/>
+where \(n\) is the number of records. The principal components are the eigenvectors of this matrix \(\textbf{C}\), sorted in descending order by their corresponding eigenvalues \(\lambda_{i}\). By preserving the first \(p\) principal components, the amount of variability in the original data that is preserved in the transformation is:<br/>
+<p style="text-align:center;">\[\displaylines{\sum\limits_{i=1}^{p}{\lambda_{i}}/\sum\limits_{i=1}^{n}{\lambda_{i}}}\ ,\]</p>
+<br/>
+where \(n\) is the total number of eigenvalues of the matrix \(\textbf{C}\). These \(p\) components are treated as basis vectors and are used to transform the original data from \(\mathbb{R}^{n}\) to \(\mathbb{R}^{p}\). All of this can easily be performed using <i>scikit-learn</i> as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code># %% Scale and reduce data using PCA
+ss  = StandardScaler().fit(A[trn])
+SA  = ss.transform(A)
+pca = PCA(n_components=2).fit(SA[trn])
+DRA = pca.transform(SA)
+#Display % variance explained by first 2 components
+vsum = sum(pca.explained_variance_ratio_)
+print('Explained Variance {:.2%}'.format(vsum))</code></pre><br/><hr/><br/>
+<br/>
+<br/>Note that prior to performing PCA, the data is standardized. Standardization essentially converts each column to a z-score by subtracting the mean from each column vector and then dividing each column by its standard deviation. This is an important step to perform before PCA as columns with larger scales naturally compose more of the variance. Standardizing puts each column on the same scale, preventing any single column from dominating the result.
+<br/>
+<br/>In this dataset, the first two components explains 45.13% and 19.11% of the variance in the input data respectively. In total, 63.10% of the variance in the original data is explained.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>x    = np.random.rand(32, 4)
+V    = x - x.mean(0)
+C    = V.T @ V
+l, v = np.linalg.eigh(C)
+pc1  = v[:, l.argsort()[::-1]]
+pc2  = PCA().fit(x).components_.T
+print((np.isclose(pc1,  pc2).all(0) | \ 
+       np.isclose(pc1, -pc2).all(0)).all())</code></pre><br/><hr/><br/>
+<br/>
+<br/>Alternatively, the principal components can be computed using the eigenvalue decomposition of the matrix \(\textbf{C}\). The above code block computes the components both using <i>eigh</i> and using <i>scikit-learn</i> and compares them. The final check is somewhat complex, because <i>scikit-learn</i> uses the singular value decomposition (SVD) to compute the components. SVD suffers from sign indeterminacy, and so the comparison checks that all components match only up to their sign. The function <i>eigh</i> is used instead of <i>eig</i>, because the matrix \(\textbf{C}=\textbf{V}^{T}\textbf{V}\) is symmetric and hence hermitian.
+<h1>Classification with Logistic Regression</h1>
+Next, a logistic regression is performed on the reduced data. The purpose of the regression is to find a linear function which can predict whether an input sample belongs to class 0 (benign) or class 1 (malignant). The decision function is defined as follows:<br/>
+<p style="text-align:center;">\[\displaylines{f(\textbf{x})=a_{0}+\sum\limits_{i=1}^{2}{a_{i}x_{i}}}\ .\]</p>
+<br/>
+The classifier determines which class an input belongs to as follows:<br/>
+<p style="text-align:center;">\[\displaylines{g(\textbf{x})=\begin{cases} 0 &amp; \frac{1}{1 + e^{-f(\textbf{x})}} &lt; 0.5 \\ 1 &amp; \frac{1}{1 + e^{-f(\textbf{x})}} \geq 0.5 \end{cases}}\ ,\]</p>
+<br/>
+where 0 and 1 correspond to benign and malignant respectively. The function  \[\displaylines{\frac{1}{1+e^{-x}}}\]  is known as the <i>logistic function</i>, hence the name <i>logistic regression</i>.
+<br/>
+<br/>The following python code creates the classifier object, computes the coefficient vector \(\textbf{a}\), and displays the training and validation accuracy.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>LR = LogisticRegression()
+LR.fit(DRA[trn], Y[trn])
+# Compute the slope and intercept
+m  = -LR.coef_[0, 0]    / LR.coef_[0, 1]
+b  = -LR.intercept_[0]  / LR.coef_[0, 1]
+# Compute training and validation accuracy
+print('Trn: {:.2%}'.format(LR.score(DRA[trn], Y[trn])))
+print('Tst: {:.2%}'.format(LR.score(DRA[tst], Y[tst])))</code></pre><br/><hr/><br/>
+<br/>
+<br/>Since the reduced data matrix is two dimensional, the decision function can be represented in the familiar slope intercept format<br/>
+<p style="text-align:center;">\[\displaylines{y = mx + b}\ ,\]</p>
+<br/>
+where \(m\) is the slope and \(b\) is the intercept. In this case, \(m=1.84414\) and \(b=-0.50989\).
+<h1>Results</h1>
+Next, the projected results are plotted on a scatter plot with the estimated decision function superimposed over the data.<br/>
+<p style="text-align:center;"><a href="../Img/bcpcaproj-2.png"><img src="../Img/bcpcaproj-2.png" alt="brstcncrpca" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><strong>Figure 1: Transformed Data Shown with Least Squares Line</strong></p>
+<br/>
+In Figure 1, the malignant class is colored red while the benign class is colored blue. The results of model evaluation are shown in Table 1.
+<br/>
+<br/><table style="width:50%;margin:0 auto;"><tbody>
+<tr><th>Set</th><th>Accuracy</th></tr>
+<tr><td>Train</td><td>94.62%</td></tr>
+<tr><td>Test</td><td>97.67%</td></tr>
+</tbody></table>
+<p style="text-align:center;"><strong>Table 1: Model Evaluation Results</strong></p>
+<br/>
+The plot in Figure 1 is produced using <i>matplotlib</i>. The following code is used to produce the above plot:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code># %% Plot the results
+fig, ax = plt.subplots()
+# Make scatter plots
+ax.scatter(DRA[Y == 0, 0], DRA[Y == 0, 1], color='C0', alpha=0.75, label='B')
+ax.scatter(DRA[Y == 1, 0], DRA[Y == 1, 1], color='C3', alpha=0.75, label='M')
+# Plot decision function
+x  = np.linspace(*ax.get_xlim())
+y  = m * x + b
+yl = ax.get_ylim()
+yr = ((y &gt;= yl[0]) &amp; (y &lt;= yl[1])).nonzero()[0]
+ax.plot(x[yr], y[yr], label=&#039;f(x)&#039;)
+# Formatting
+ax.set_xlabel(&#039;Principal Axis 1&#039;)
+ax.set_ylabel(&#039;Principal Axis 2&#039;)
+ax.set_title(&#039;PCA Projection with Decision Function&#039;)
+ax.legend(loc=&#039;best&#039;)
+plt.show()</code></pre><br/><hr/><br/>
+<br/>
+<br/>As can be seen, the logistic regression produces a linear decision boundary that separates the benign samples from the malignant ones with relative accuracy.
+<h3>References</h3>
+<ol>
+	<li>Wolberg, William H., and Olvi L. Mangasarian. "Multisurface method of pattern separation for medical diagnosis applied to breast cytology." Proceedings of the national academy of sciences 87.23 (1990): 9193-9196.</li>
+	<li>Hastie, Trevor, et al. "The elements of statistical learning: data mining, inference and prediction." The Mathematical Intelligencer 27.2 (2005): 83-85.</li>
+</ol><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

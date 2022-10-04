@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>RangeMap: A Simple Interval Query Datastructure</h1><h2>Thu, 04 Jul 2019</h2><h3><i>Algorithms</i>, <i>C++</i>, <i>Computer Science</i>, <i>Interval Query</i>, <i>Software</i></h3>Maps are a fundamental data structure. Their prevalence is a testament to their importance. Indeed, many search problems can be reduced to the construction of an appropriate map. However, a search problem occasionally arises that is difficult to solve, at least directly, with a map. The interval query problem is one such problem.
+<br/>
+<br/><b>The Problem</b>
+The interval query problem can be stated as follows. Given a list \(L\) of intervals of the form \([a, b)\) and a point \(p\), determine the set of all intervals in L that contain \(p\). At first glance, the problem seems like something that could be solved using an <i>std::map</i> with an appropriate comparator. Looking more closely, however, the comparator is ill-defined when the intervals overlap; there is no clear way to satisfy the invariants necessary to produce a meaningful tree.
+<br/>
+<br/>Unfortunately, the C++ (or even Python) standard library does not include an interval tree. 3rd party solutions from Boost and the like are present but not always options in a professional environment. While working on another project, the interval query problem came up again as an area for performance optimization. At the present, long and involved sessions of "Google-fu" on the topic produce little more than a hodge-podge of Stack Overflow answers like "use [heavy-weight 3rd party platform]" and other more obscure results of questionable veracity.
+<br/>
+<br/><b>The Idea</b>
+It appears the primary difficulty in the interval query problem arises when there are overlapping intervals. However, the case of overlapping intervals can be reduced to the case of non-overlapping intervals. Take for example the two intervals \([0, 3)\) and  \([2 ,5)\) labeled 1 and 2 respectively.<br/>
+<p style="text-align:center;"><img src="../Img/nline2.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: Two Overlapping Intervals</b></p>
+<br/>
+As show in Figure 2, these can be broken up into 3 intervals \([0, 2)\), \([2, 3)\), and \([3, 5)\) labeled (1), (1, 2), and (2) respectively.<br/>
+<p style="text-align:center;">
+<img src="../Img/nline1.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: Subdivided Intervals</b></p>
+<br/>
+In this way, the original intervals are subdivided into non-overlapping intervals that each map to a set of labels.
+<br/>
+<br/><b>A Tabular Approach</b>
+This subdivision is accomplished by sorting the start and end points of the intervals separately and performing a linear merge of these arrays. At each iteration, a running set of active intervals is maintained by recording the intervals that open and close at each point. At each point the active set changes, an interval ending at that point is recorded along with the previous active set. For ease of querying, additional markers are inserted at \(-\infty\), \(+\infty\) so that the entire number line falls within exactly one of the sub-divided intervals.
+<br/>
+<br/>The results of the above merge are recorded in two parallel arrays to facilitate fast queries. The sorted start and end points are stored in the first array, while the corresponding sets of labels are stored in the second. Queries are performed with a binary search in the first column. If the query point is less than the element found in the search, the desired labels are found at the same index in the second array. Otherwise, the labels are in the previous element. In this way, the query is performed in logarithmic time.
+<br/>
+<br/><b>Source Code</b>
+A C++ implementation of the data structure described above is <a href="https://github.com/nicholastoddsmith/RangeMap">available here</a>. The entire data structure is available in a single header file with no dependencies in addition to the C++ standard template library.
+<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

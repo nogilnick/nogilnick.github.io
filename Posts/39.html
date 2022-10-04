@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>A Method for Addressing Nonhomogeneous Data using an Implicit Hierarchical Linear Model</h1><h2>Sat, 27 Oct 2018</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Linear Algebra</i>, <i>Linear Models</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Research</i>, <i>Statistics</i></h3>Datasets containing nonhomogenous groups of samples present a challenge to linear models. In particular, such datasets violate the assumption that there is a linear relationship between the independent and dependent variables. If the data is grouped into distinct clusters, linear models may predict responses that fall in between the clusters. These predictions can be quite far from the targets depending on how the data is structured. In this post, a method is presented for automatically handling nonhomogenous datasets using linear models.
+<h1>A Motivating Example</h1>
+Consider the dataset plotted in Figure 1. A single independent variable <i>x</i> describes the dependent variable <i>y</i>. The data set appears to be grouped into four main clusters. Further, the relationship between <i>x</i> and <i>y</i> differs for each of the clusters.<br/>
+<p style="text-align:center;"><img src="../Img/nonhomogdata.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: A Nonhomogenous Dataset</b></p>
+<br/>
+As seen in Figure 2, a simple linear regression model for the dataset does quite poorly. The R² of the model is roughly 0.17.<br/>
+<p style="text-align:center;"><img src="../Img/olsperf.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: OLS Performance on Example Dataset</b></p>
+<br/>
+The reason for the poor performance is clear from the plot. There are four distinct trends present and so a single straight line cannot hope to model the data well. Further, ordinary least squares (OLS) minimizes the sum of all residuals simultaneously, and so the line represents somewhat of an average of the four distinct trends. Since the data falls into relatively tight but distinct clusters, the predictions typically fall far from the targets.
+<h1>Capturing Distinct Patterns</h1>
+Clustering is employed to capture different patterns in the dataset. Clustering is an unsupervised learning technique for grouping together portions of the input set that are similar. In this case, the KMeans algorithm is used, though any technique that produces centroids can be employed.
+<br/>
+<br/>KMeans clustering is typically accomplished through an iterative procedure known as Lloyd’s algorithm. The algorithm begins with some initial clusters, typically generated randomly. Each data point is assigned to its nearest cluster. The new clusters are then taken to be the average of all data points in the cluster. This procedure is iterated until convergence [1].<br/>
+<p style="text-align:center;"><img src="../Img/clustereddata.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 3: Clustered Data Points</b></p>
+<br/>
+The number of cluster centers is selected using cross-validation and is an additional tuning parameter for the model. Figure 3 shows a KMeans clustering applied to the original dataset with 4 clusters. The large black dots represent the cluster centroids. Note that clustering is only applied to the independent variable(s), in this case <i>x</i>.
+<h1>A Typical Hierarchical Model</h1>
+In a hierarchical model, a model assigns an input sample to one of several subordinate models. The subordinate model makes the final prediction. Figure 4 shows a diagram of a typical hierarchical model.<br/>
+<p style="text-align:center;"><img src="../Img/harchfeat.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 4: A Simple Hierarchical Model</b></p>
+<br/>
+In this case, the root model is a clustering model with subordinate linear regression models. So, a regression model can be fit to each of the above identified clusters. To form a prediction for an input sample, the nearest centroid is identified and then the corresponding regression is used to make the ultimate prediction. However, this is not the approach taken here. Instead, a single model is fit to an expanded feature set that models the hierarchical approach.
+<h1>Constructing an Implicit Linear Hierarchical Model</h1>
+Consider the typical linear regression formula<br/>
+<p style="text-align:center;">\[\displaylines{\textbf{A}\textbf{x}=\textbf{y}}\ ,\]</p>
+<br/>
+where <b>A</b> is an <i>m</i>x<i>n</i> data matrix with the first column a constant value of 1 used to compute the intercept term. For each input sample, the Mahalanobis distances to each of the clusters are computed [2]. Using these distances, cluster weights are computed as<br/>
+<p style="text-align:center;">\[\displaylines{w_{ik}=\frac{e^{- \lVert \textbf{x}_i - \textbf{c}_{k} \rVert / \sigma}}{\sum\limits_{j=1}^{C}{e^{- \lVert \textbf{x}_i - \textbf{c}_{j} \rVert / \sigma}}} }\ ,\]</p>
+<br/>
+using the function<br/>
+<p style="text-align:center;">\[\displaylines{f(\textbf{x})=e^{- \lVert \textbf{x} - \textbf{c}_{k} \rVert / \sigma}}\ ,\]</p>
+<br/>
+where \(x_i\) is the <i>i</i>-th sample, \(c_k\) is the <i>k</i>-th cluster, and <i>s</i> is a free parameter. This function represents a Gaussian function centered around the cluster. The denominator normalizes the weights so that they sum to one.
+<br/>
+<br/>Let \(\textbf{W}_k\) be the <i>m</i>x<i>m</i> diagonal matrix with the weight \(w_{ik}\) at the <i>i</i>-th diagonal element of the matrix. Now construct a new horizontally stacked data matrix <b>B</b> as<br/>
+<p style="text-align:center;">\[\displaylines{\textbf{B}=\left(\begin{array}{c|c|c|c}\textbf{W}_1 \textbf{A} &amp; \textbf{W}_2 \textbf{A} &amp; \ldots &amp; \textbf{W}_C \textbf{A} \end{array}\right) }\],
+<br/>
+<br/>where <i>C</i> is the number of clusters. Notice that <b>B</b> has dimension <i>m</i>x<i>(nC)</i>. Further, since<br/>
+<p style="text-align:center;">\[\displaylines{\sum\limits_{j=1}^{C}{\textbf{W}_j}=\textbf{I}}\ .\]</p>
+<br/>
+notice that<br/>
+<p style="text-align:center;">\[\displaylines{\sum\limits_{j=1}^{C}{\textbf{W}_j \textbf{A}}=\textbf{A}}\ .\]</p>
+<br/>
+To gain intuition into the nature of the new feature space, it is interesting to observe the limiting behavior as \(\sigma \to 0\). That is<br/>
+<p style="text-align:center;">\[\displaylines{\lim\limits_{\sigma \to 0}\frac{e^{- \lVert \textbf{x}_i - \textbf{c}_{k} \rVert / \sigma}}{\sum\limits_{j=1}^{C}{e^{- \lVert \textbf{x}_i - \textbf{c}_{j} \rVert / \sigma}}} }\ .\]</p>
+<br/>
+Canceling the term in the numerator we have,<br/>
+<p style="text-align:center;">\[\displaylines{\lim\limits_{\sigma \to 0}\frac{1}{1+\sum\limits_{\substack{j=1 \\ j \neq i}}^{C}{e^{(\lVert \textbf{x}_i - \textbf{c}_{k} \rVert - \lVert \textbf{x}_i - \textbf{c}_{j} \rVert) / \sigma}}} }\ .\]</p>
+<br/>
+Notice that if the sum contains any infinite terms, then the fraction is 0. Thus, the fraction is only non-zero for the smallest value of \(\lVert \textbf{x}_i - \textbf{c}_{k} \rVert\). For this term, the sum is 0 and so the fraction is 1. Thus, \(w_i\) is 1 for the cluster of minimum distance and 0 for all others.
+<br/>
+<br/>In this limiting form, the matrix <b>B</b> becomes sparse with a maximum of <i>mn</i> non-zero terms in a matrix with <i>mnc</i> elements. It has precisely the same number of non-zero terms as does <b>A</b>. In this case the matrix <b>B</b> can be arranged as a block matrix,<br/>
+<p style="text-align:center;">\[\displaylines{\textbf{B}=\left(\begin{array}{cccc}\textbf{A}_1 &amp; \textbf{0} &amp; \ldots &amp; \textbf{0} \\ \textbf{0} &amp; \textbf{A}_2 &amp; \ldots &amp; \textbf{0} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \textbf{0} &amp; \textbf{0} &amp; \ldots &amp; \textbf{A}_C \end{array}\right) }\ .\]</p>
+<br/>
+Notice the singular value decomposition (SVD) of such a matrix can be computed as the SVD of its blocks [3]. The SVD is<br/>
+<p style="text-align:center;">\[\displaylines{\begin{gathered}\textbf{B}=\textbf{U}\textbf{D}\textbf{V}^{T}=\\
+\left(\begin{array}{cccc}\textbf{U}_1 &amp; \textbf{0} &amp; \ldots &amp; \textbf{0} \\ \textbf{0} &amp; \textbf{U}_2 &amp; \ldots &amp; \textbf{0} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \textbf{0} &amp; \textbf{0} &amp; \ldots &amp; \textbf{U}_C \end{array}\right)\left(\begin{array}{cccc}\textbf{D}_1 &amp; \textbf{0} &amp; \ldots &amp; \textbf{0} \\ \textbf{0} &amp; \textbf{D}_2 &amp; \ldots &amp; \textbf{0} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \textbf{0} &amp; \textbf{0} &amp; \ldots &amp; \textbf{D}_C \end{array}\right)
+\left(\begin{array}{cccc}\textbf{V}_1^T &amp; \textbf{0} &amp; \ldots &amp; \textbf{0} \\ \textbf{0} &amp; \textbf{V}_2^T &amp; \ldots &amp; \textbf{0} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ \textbf{0} &amp; \textbf{0} &amp; \ldots &amp; \textbf{V}_C^T \end{array}\right)\end{gathered} }\ .\]</p>
+<br/>
+Thus, the limiting form of the model is equivalent to fitting <i>C</i> linear regression models to each of the <i>C</i> clusters. Since the constant intercept term is also duplicated, each model has both a unique set of coefficients and an intercept.
+<br/>
+<br/>Regularization is advantageous in this model to improve the conditioning of the solution. However, care must be taken in constructing the penalization matrix in order to avoid penalizing the intercept terms. With regularization, the SVD cannot be split as the penalty is shared among the implicit models. Instead a diagonal regularization matrix with 0s in each of the intercept columns is constructed. Such a matrix is a form of generalized Tikhonov regularization for which the solution can be obtained using generalized SVD [4]. Unfortunately, <i>numpy</i> <a href="https://github.com/numpy/numpy/issues/3475">does not provide a GSVD implementation</a>.
+<br/>
+<br/>However, the problem as presented above is typically ill-conditioned. An alternative approach is presented in a future blog post that simultaneously improves the conditioning and avoids penalizing the intercept terms.
+<h1>Constructing the Solution</h1>
+The data matrix <b>B</b> is constructed and a simple linear regression model is fit to the result. The results for \(s = 0.001\), \(s = 0.1\), \(s = 1\), and \(s = 10\) are shown in Figure 5.<br/>
+<p style="text-align:center;"><img src="../Img/sigmavalues.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 5: Implicit Hierarchical Model Performance</b></p>
+<br/>
+Notice that for small values of <i>s</i> the model begins to assume the form of four separate linear regression curves. As the value of s increases the model begins to assume the form of the single regression model.
+<br/>
+<br/>If regularization is used, the model has 3 primary parameters: regularization weight \(\lambda\), the distance function scale \(\sigma\), and the number of clusters <i>C</i>. If the clustering algorithm uses randomized initial clusters then the random seed can be considered as an additional parameter.
+<h1>A Note on Performance</h1>
+In the limiting case, the matrix <b>B</b> can be efficiently represented with a sparse matrix. Since the run-time of sparse operations is dependent on the number of non-zero terms and not the dimensions of the matrix, the run-time for prediction is roughly equivalent to that of a dense model fit to only <b>A</b>.
+<h1>A Benchmark</h1>
+The performance of the implicit linear hierarchical model (IHLM) is compared with traditional ridge regression and a support vector machine using a radial basis function kernel. The data set used to benchmark the performance is the abalone ring data set available on the <a href="http://archive.ics.uci.edu/ml/datasets/Abalone">UCI machine learning repository</a>. The task of the dataset is to predict the age of an abalone given several numerical measurements. The number of rings present in the abalone is directly related to its age [5].
+<br/>
+<br/><table align="center" style="margin: 0px auto;">
+<col width="34%"><col width="33%"><col width="33%">
+<tr><th>Method</th><th>Train R²</th><th>Test R²</th></tr>
+<tr><td>Ridge</td><td>0.5276</td><td>0.5287</td></tr>
+<tr><td>Kernel SVM</td><td>0.5613</td><td>0.5594</td></tr>
+<tr><td>IHLM</td><td>0.5817</td><td>0.5854</td></tr>
+</table>
+<p style="text-align:center;"><b>Table 1: ILHM Benchmark Results</b></p>
+<br/>
+Table 1 shows the performance of the three models on this dataset. A regularization weight of 1 is chosen for the ridge model. A regularization weight of 1 and kernel coefficient of 0.2 are chosen as parameters for the SVM model. Eight clusters, \(\sigma = 0.2\), and a regularization weight of 0.8 is used for the ILHM model.
+<br/>
+<br/><table align="center" style="margin: 0px auto;">
+<col width="34%"><col width="33%"><col width="33%">
+<tr><th>Method</th><th>Train</th><th>Predict</th></tr>
+<tr><td>Ridge</td><td>1.13 ms ± 30.2 µs</td><td>106 µs ± 12 µs</td></tr>
+<tr><td>Kernel SVM</td><td>855 ms ± 85.2 ms</td><td>457 ms ± 24.6 ms</td></tr>
+<tr><td>IHLM</td><td>438 ms ± 75.6 ms</td><td>3.71 ms ± 467 µs</td></tr>
+</table>
+<p style="text-align:center;"><b>Table 2: ILHM Run-Time Benchmark Results</b></p>
+<br/>
+Table 2 shows run-time performance for the three models for both training and prediction. As can be seen, IHLM performs significantly better than both the ridge and SVM models for the training and cross-validation sets. The prediction run-time for IHLM is dramatically lower than that of SVM; the training time is a more modest improvement.
+<h1>Conclusion</h1>
+These results highlight the ability of the ILHM to capture nonlinearity in the data. The fact that the model achieves higher cross-validation performance than the ridge model suggests that the dataset is somewhat nonhomogenous. This is often the case when datasets contain sub-populations with unique characteristics. For instance, a dataset for predicting BMI might have nonhomogeneous sub-populations for men and women. In many problems though, the distinctions are not so clear. Applying an ILHM can help explain more nonlinearity in the dataset without sacrificing too much interpretability.
+<h1>References</h1>
+<table style="margin: 0 auto;border:none;">
+<tr><td style="border:none;" width="5%" valign="top">[1]</td><td style="border:none;" width="95%">MacKay, David (2003). "Chapter 20. An Example Inference Task: Clustering" (PDF). Information Theory, Inference and Learning Algorithms. Cambridge University Press. pp. 284-292. ISBN 0-521-64298-1. MR 2012999</td></tr>
+<tr><td style="border:none;" width="5%" valign="top">[2]</td><td style="border:none;" width="95%">Mahalanobis, Prasanta Chandra (1936). "On the generalised distance in statistics" (PDF). Proceedings of the National Institute of Sciences of India. 2 (1): 49–55. Retrieved 2016-09-27.</td></tr>
+<tr><td style="border:none;" width="5%" valign="top">[3]</td><td style="border:none;" width="95%">Golub, Gene H., and Christian Reinsch. "Singular value decomposition and least squares solutions." Numerische mathematik 14.5 (1970): 403-420.</td></tr>
+<tr><td style="border:none;" width="5%" valign="top">[4]</td><td style="border:none;" width="95%">Dykes, Laura, and Lothar Reichel. "Simplified GSVD computations for the solution of linear discrete ill-posed problems." Journal of Computational and Applied Mathematics 255 (2014): 15-27.</td></tr>
+<tr><td style="border:none;" width="5%" valign="top">[5]</td><td style="border:none;" width="95%">Sam Waugh (1995) "Extending and benchmarking Cascade-Correlation", PhD thesis, Computer Science Department, University of Tasmania.</td></tr>
+</table><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

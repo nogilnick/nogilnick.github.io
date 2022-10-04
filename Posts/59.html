@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Identifying Family Relationships using Genetic Similarity Measures</h1><h2>Sat, 02 Jan 2021</h2><h3><i>Bioinformatics</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Family</i>, <i>Genetics</i>, <i>Genomics</i>, <i>Machine Learning</i>, <i>Statistics</i></h3>In general, are parents more genetically similar to their children or to their siblings? Why do some siblings look alike while others look completely different? How can the genetic similarity between two individuals be computed? This post uses biostatistics to explore genetic similarity and tries to answer these and other questions.
+<br/>
+<br/>
+<h1>IGSR Data</h1>
+This post again leverages data collected from the International Genome Sample Resource (IGSR) webpage [1]. The IGSR hosts sequence and other data for the thousands of samples made available by the 1000 Genomes Project. Though the majority are unrelated, there are a small number of participants that are related to others in the dataset. Fortunately, these related participants in the study are identified and further the type of relationship is specified. From the labels provided, six relationship types are delineated: avuncular, parent/child, sibling, second order, third order, and unrelated.
+<br/>
+<br/>The majority (95%) of samples are unrelated to all other participants. This leaves 126 related samples, though many of these samples are not present in the phase 3 VCF files. After filtering, 57 unique relationships remain:
+<p style="text-align:center;"></p>
+<br/>
+<table border="1" style="margin: 0px auto;">
+<thead>
+<tr style="text-align:right;">
+<th>Type</th>
+<th>Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Third Order</th>
+<td>23</td>
+</tr>
+<tr>
+<th>Parent/Child</th>
+<td>10</td>
+</tr>
+<tr>
+<th>Siblings</th>
+<td>10</td>
+</tr>
+<tr>
+<th>Second Order</th>
+<td>9</td>
+</tr>
+<tr>
+<th>Avuncular</th>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 1: Relationship Type Counts</b></p>
+To emulate the imbalanced nature of this problem, 6 times this number of unrelated pairs are randomly selected from the population. This balance of related to unrelated samples is one factor which may be tuned to control the false positive rate of models fit to the data.
+<h1>Mutations and Ancestry</h1>
+Mutation rates may bring to mind viruses, bacteria, and antigenic escape, but the human genome also has its own rate of change. In fact, an estimated 100 to 200 mutations are introduced with each new generation [2]. Given that the human genome contains roughly 3.2 billion basepairs, the odds are quite small that a mutation will arise at a given position in the genome even within several generations.
+<br/>
+<br/>At the same time, the average person has millions of mutations when compared with the reference genome. From this, it can be seen that the majority of mutations are passed down from generation to generation. For when a mutation occurs, and it is not fatal, the bearer may in turn pass down his or her newly mutated genes to his or her progeny. The result is that the majority of mutations an individual possesses are inherited and not novel.
+<br/>
+<br/>In this way, mutations offer a window into ancestry and inheritance. And as demonstrated in past blog posts, genetic mutations may be effectively used for determining ancestry and for reconstructing viral phylogenies [3, 4, 5]. In this post, genetic mutations are again employed for producing measurements of genetic similarity. These measurements are then used to construct a mathematical model that can identify related individuals.
+<br/>
+<br/>For the sake of ease and to broaden the applicability of the project, only single nucleotide polymorphisms (SNPs) are leveraged. Further, only SNPs that are commonly reported from direct-to-consumer companies are included. In this way, the models trained from the IGSR data may be used on data from other services such as <i>23andMe</i> and others. Roughly 7000 SNPs are included in the final set.
+<h1>Genetic Similarity</h1>
+The genetic similarity between parents and children is frequently quoted as being 50%. This number is likely a reference to the coefficient of relationship, which utilizes information about a family tree to determine the consanguinity of two individuals [6]. The idea behind the measure stems from the genetic mechanisms of sexual reproduction and the process of meiosis; individuals typically receive one chromosome per pair per parent. However, there are a number of sources of genetic variation that do not neatly fit into this picture: mutation, recombination, and immigration [7].
+<br/>
+<br/>Genetic similarity between siblings is somewhat more complex. Because of meiosis, offspring (typically) receive one chromosome from each parent for each pair of chromosomes. Taking into account the effects of crossing-over, an oversimplified model of the process to determine which copy of a gene is passed down from each parent to child might be a coin flip. In this way, the expected similarity between two siblings is 50%. It is theoretically feasible that the similarity between any two siblings be dramatically higher or lower than this. However, due to the size of the genome and both mutation and recombination rates, extreme deviations have a low probability of occurring.<br/>
+<p style="text-align:center;"><a href="../Img/siblingsmodel-1.png"><img src="../Img/siblingsmodel-1.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: A Simplified Model of Genetic Inheritance</b></p>
+It is perhaps interesting to note that 100% similarity between siblings happens much more frequently than the above over-simplified model would suggest. Identical twins share the same DNA, though this is achieved by another mechanism entirely.
+<br/>
+<br/>Returning to the first principles of mutations and ancestry, it seems plausible that basic statistical measures should reliably estimate genetic similarity despite these complications. In terms of the data at hand, there are a finite number of possible outcomes when comparing the genotype of two individuals for a given chromosome and position. Neglecting aneuploidy, two individuals can have 0, 1, or 2 matching alleles at a given position [8]. For example, consider comparing genotypes for the most common reference and alternate alleles of the SNP rs12913832, a variant associated with eye color [9].
+<p style="text-align:center;"></p>
+<br/>
+<table border="1" style="margin: 0px auto;">
+<thead>
+<tr>
+<th>Type</th>
+<th>AA</th>
+<th>GA</th>
+<th>AG</th>
+<th>GG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>AA</th>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<th>AG</th>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<th>GA</th>
+<td>1</td>
+<td>2</td>
+<td>2</td>
+<td>1</td>
+</tr>
+<tr>
+<th>GG</th>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 2: Genotype Comparison</b></p>
+Table 2 shows the possible outcomes for this single comparison. Taking <i>1/2</i> the average of this measure over all positions considered gives a statistical measure of similarity across the genome.
+<br/>
+<br/>The Jaccard index may also be used to compare the similarity of two individuals [10]. The Jaccard index is defined to be
+<p style="text-align:center;">\[\displaylines{J(X, Y) = \frac{ | X \cap Y | } { | X \cup Y | }}\ .\]</p>
+<p style="text-align:center;"><b>Equation 1: The Jaccard Index</b></p>
+Thus, the two individuals genetic data is first encoded into sets so that the above set operations may be computed. Ultimately, four similarity measures are derived using these techniques and a matrix is formed computing each of these measure for each of the earlier selected pairs of individuals.
+<h1>Similarity Distributions</h1>
+Next, several charts are created to compare the theoretical similarities derived from the coefficient of relationship with the above outlined empirical measures. First, the relationships from the IGSR data are grouped by their coefficient of relationship and the distributions of the Jaccard index for each group are shown in histograms.
+<p style="text-align:center;">
+<a href="../Img/relsimhistwitherr.png"><img src="../Img/relsimhistwitherr.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: Genetic Similarity by Relationship Type</b></p>
+In Figure 2, the original relationship labels are combined into four types: first order, second order, third order, and unrelated. The first three of these types correspond to 50%, 25%, and 12.5% similarity according to the coefficient of relationship score. As can be seen, there is clear separation between the types in the majority of cases, though the upper and lower tails overlap in some places.
+<br/>
+<br/>Due to the size of the dataset, it is easy to inspect some of these overlapping cases manually. In one instance, two individuals (NA20336 and NA20344) are reported as siblings, though they are quite genetically different. It is unclear from the data if this is a labeling error. Another pair (NA19238 and HG02814) are listed as being unrelated although their similarity scores suggest they may be third order relatives. Erring on the side of caution, these two pairs are discarded.
+<p style="text-align:center;">
+<a href="../Img/relsimscatter.png"><img src="../Img/relsimscatter.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: 2D Genetic Similarity by Relationship Type</b></p>
+Figure 3 shows a scatter plot that simultaneously depicts the four similarity measures. The <i>x</i>, <i>y</i>, and color axes correspond to the Jaccard index for heterozygous, homozygous reference, and homozygous alternate matches respectively. The size axis denotes the shared allele percentage.
+<p style="text-align:center;">
+<a href="../Img/relsimlda-1.png"><img src="../Img/relsimlda-1.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 4: LDA Projection of Relationship Type</b></p>
+Figure 4 shows a projection of the four metrics using linear discriminant analysis. In the plot, each sample pair is colored according to type of the relationship and the large markers correspond to the type centroids.
+<p style="text-align:center;"></p>
+<br/>
+<table border="1" style="margin: 0px auto;">
+<thead>
+<tr>
+<th></th>
+<th>Avg.</th>
+<th>Std.</th>
+</tr>
+<tr>
+<th>Rel</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>Avuncular</th>
+<td>65.78%</td>
+<td>--.--%</td>
+</tr>
+<tr>
+<th>Parent/Child</th>
+<td>72.73%</td>
+<td>0.84%</td>
+</tr>
+<tr>
+<th>Second Order</th>
+<td>66.79%</td>
+<td>1.59%</td>
+</tr>
+<tr>
+<th>Siblings</th>
+<td>74.45%</td>
+<td>1.48%</td>
+</tr>
+<tr>
+<th>Third Order</th>
+<td>62.46%</td>
+<td>2.50%</td>
+</tr>
+<tr>
+<th>Unrelated</th>
+<td>57.15%</td>
+<td>1.85%</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 3: Grouped Similarity Statistics</b></p>
+Finally, Table 3 shows the mean and standard deviation of the average similarity score for each type of relationship. The four similarity scores are first scaled so that their contributions to the final average score are more proportional.
+<br/>
+<br/>
+<table width="100%" bgcolor="2389A8" style="margin: 0px auto;">
+<tbody>
+<tr align="left">
+<td><b>Insight:</b>
+On average, fraternal and kinship relationships have roughly equivalent levels of similarity with the former type exhibiting more variability.</td>
+</tr>
+</tbody>
+</table>
+<br/>As can be seen, kinship and fraternal relationships are similar in terms of the average, though fraternal relationships have more variability. This corroborates the discussion above and helps to answer one of the introductory questions in this post.
+<h1>A Relationship Classifier</h1>
+Given the relatively well-behaved nature of the data in Figure 2, it seems reasonable to choose a simple model to identify the familial relationship between two individuals. The simplifying assumption of this model is that different types of relationships have different ranges of genetic similarity. To identify the relationship between two individuals, simply compute the similarity scores and determine into which range the measures fall. For this reason, and for ease of interpretability, a decision tree model is chosen.
+<br/>
+<br/>Now, given the above discussion about genetic similarity in kin and siblings, it is reasonable to question if the above similarity measures can accurately distinguish between relationships of the same order, for instance fraternal and kinship relationships. Since the inheritance mechanism is not fully random, characteristic patterns may arise when comparing such relationships. It may be possible to build a more complex model that accounts for this. However, due to the small sample size, such avenues are not explored further.
+<br/>
+<br/>To help minimize issues distinguishing same order relatives, the labels are grouped by their corresponding coefficient of relationship: first order, second order, and so on. In this way, given two individuals, the model predicts the order of relationship between the two individuals. The order of genetic similarity <i>O</i> produced by the model corresponds to a similarity of \(100 \times (2^{-O}) \%\) according to the coefficient of relationship.
+<p style="text-align:center;">
+<a href="../Img/relativedt-1.png"><img src="../Img/relativedt-1.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 5: Decision Tree for Determining Relationship Type</b></p>
+Figure 5 shows the fitted decision tree in its entirety. Internal nodes show the splitting condition, error, sample count, and average similarity at that position in that order. The leaf nodes do not have a splitting condition. The shallowness of the tree is a testament to the relative simplicity of the problem. In general, it is quite apparent from the similarity metrics if two people are related or not.
+<br/>
+<br/>A large number of training and validation splits are constructed and the average confusion matrix over all splits is computed. Table 4 shows the confusion matrix for the model in tabular form while Figure 6 shows the matrix as a heatmap. Due to the imbalanced nature of the problem, the rows are normalized so that the relative rates may be more easily determined.
+<p style="text-align:center;"></p>
+<br/>
+<table border="1" style="margin: 0px auto;">
+<thead>
+<tr style="text-align:right;">
+<th></th>
+<th>First</th>
+<th>Second</th>
+<th>Third</th>
+<th>Unrelated</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th>First</th>
+<td>89.98%</td>
+<td>1.13%</td>
+<td>8.88%</td>
+<td>0.00%</td>
+</tr>
+<tr>
+<th>Second</th>
+<td>1.44%</td>
+<td>81.95%</td>
+<td>4.33%</td>
+<td>12.27%</td>
+</tr>
+<tr>
+<th>Third</th>
+<td>5.34%</td>
+<td>2.75%</td>
+<td>74.35%</td>
+<td>17.56%</td>
+</tr>
+<tr>
+<th>Unrelated</th>
+<td>0.00%</td>
+<td>0.35%</td>
+<td>1.10%</td>
+<td>98.54%</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 4: Row Normalized Confusion Matrix</b></p>
+As can be seen, the model struggles distinguishing more distantly related individuals (third order relatives) from unrelated individuals. This agrees with intuition as well as with the overlapping distributions for these types seen in Figure 2.
+<p style="text-align:center;">
+<a href="../Img/relpredcm.png"><img src="../Img/relpredcm.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 6: Confusion Matrix Heatmap</b></p>
+The model accuracy could likely be improved by including more SNPs into the metric computations. At the same time, the more SNPs required by the model, the more values may be missing from variants that are less commonly tested by direct-to-consumer labs. Overall, the accuracy for the model seems satisfactory, especially for identifying close relatives.
+<h1>References</h1>
+<table style="margin: 0 auto;border:none;">
+<tbody>
+<tr>
+<td style="border:none;" width="5%" valign="top">[1]</td>
+<td style="border:none;" width="95%"><a href="https://www.internationalgenome.org/home">https://www.internationalgenome.org/home</a></td>
+</tr>
+<tr>
+<td style="border:none;" width="5%" valign="top">[2]</td>
+<td style="border:none;" width="95%"><a href="https://www.nature.com/news/2009/090827/full/news.2009.864.html">https://www.nature.com/news/2009/090827/full/news.2009.864.html</a></td>
+</tr>
+<tr>
+<td style="border:none;" width="5%" valign="top">[3]</td>
+<td style="border:none;" width="95%"><a href="Posts/48.html">Posts/48.html</a></td>
+</tr>
+<tr>
+<td style="border:none;" width="5%" valign="top">[4]</td>
+<td style="border:none;" width="95%"><a href="Posts/49.html">Posts/49.html</a></td>
+</tr>
+<tr>
+<td style="border:none;" width="5%" valign="top">[5]</td>
+<td style="border:none;" width="95%"><a href="Posts/51.html">Posts/51.html</a></td>
+</tr>
+<tr>
+<td style="border:none;" width="5%" valign="top">[6]</td>
+<td style="border:none;" width="95%"><a href="https://en.wikipedia.org/wiki/Coefficient_of_relationship">https://en.wikipedia.org/wiki/Coefficient_of_relationship</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[7]</td>
+<td style="border:none;"><a href="https://www.ncbi.nlm.nih.gov/books/NBK22012/">https://www.ncbi.nlm.nih.gov/books/NBK22012/</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[8]</td>
+<td style="border:none;"><a href="https://en.wikipedia.org/wiki/Aneuploidy">https://en.wikipedia.org/wiki/Aneuploidy</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[9]</td>
+<td style="border:none;"><a href="https://www.ncbi.nlm.nih.gov/snp/rs12913832#clinical_significance">https://www.ncbi.nlm.nih.gov/snp/rs12913832#clinical_significance</a></td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[10]</td>
+<td style="border:none;"><a href="https://en.wikipedia.org/wiki/Jaccard_index">https://en.wikipedia.org/wiki/Jaccard_index</a></td>
+</tr>
+</tbody>
+</table><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

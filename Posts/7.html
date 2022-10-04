@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Text Mining Online Reviews for Sentiment Analysis</h1><h2>Fri, 28 Oct 2016</h2><h3><i>Data Science</i>, <i>Machine Learning</i></h3>This post aims to introduce several basic text mining techniques. Sample implementations will be explored in the <a href="http://scikit-learn.org/stable/">Scikit-learn library</a> using <a href="https://www.continuum.io/downloads">Anaconda Python</a>.
+<h1>Introduction</h1>
+In data science and machine learning, there is often difficulty in extracting useful features from raw data. Textual data presents an interesting challenge in this regards, especially due to its abundance on the internet. Because of its complexity, natural language is often not directly suited to training a classifier or regressor model. The following section discusses several simple ways to extract useful features from raw text. The dataset containing the raw text that will be used can be <a href="https://archive.ics.uci.edu/ml/machine-learning-databases/00331/sentiment%20labelled%20sentences.zip">found here.</a>
+<h1>Feature Extraction</h1>
+The dataset consists of sentences gathered from Imbd, Amazon, and Yelp reviews. Each sentence is associated with a sentiment score: 0 if it is a negative sentence, and 1 if it is positive. For simplicity, the three files are first combined into a single file. This can be accomplished using a linux simple command:
+<br/>
+<br/><i>cat imdb_labelled.txt amazon_cells_labelled.txt yelp_labelled.txt &gt; comb.txt</i>.
+<br/>
+<br/>A basic function to parse the data is shown in the following block:
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Read sentiment labeled sentences from the specified path
+#path:      The path to the file containing sentiment labeled text data
+#return:    A tuple (S, y) where S is an array of sentences and y is an
+#           array of target values.
+def LoadData(path):
+    #File format is \t
+    #Parse accordingly
+    S = []
+    y = []
+    #Open file and loop over it line by line
+    with open(path) as f:
+        for l in f:
+            text, sent = l.split('\t')
+            #Strip any non-ascii characters
+            text = StripNonAscii(text)
+            #Parse sentiment score
+            sent = float(sent)
+            #Append results
+            S.append(text)
+            y.append(sent)
+    return (S, y)</code></pre><br/><hr/><br/>
+<br/>
+<br/>With the data parsed, the next step is to extract numeric features from it. A simple yet effective way of accomplishing this is to make a vector of word frequencies. The concept of a frequency vector is like that of a histogram or word cloud.<br/>
+<p style="text-align:center;">
+<img src="../Img/figure_13.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 1: Word Frequency Histogram</b>
+</p>
+<br/>
+In a frequency vector, each component corresponds to the number of times a given word occurs in the corpus. A histogram where each bin contains a single word in the vocabulary is a visual representation of this concept.
+<br/>
+<br/>Another popular diagram that is related to these concepts is the word cloud. The word cloud plots words with their font size determined by the frequency of their occurance. An example word cloud created from the above dataset is shown below in Figure 2.<br/>
+<p style="text-align:center;">
+<img src="../Img/wordcloud.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 2: Word Cloud of the Dataset</b>
+</p>
+<br/>
+Computing a matrix of word frequencies can be easily accomplished with Scikit-learn using the <i>CountVectorizer</i> class. The constructor takes many arguments, but useful default are provided for all but one. Some interesting arguments to notes are:
+
+<ul>
+	<li><b>input:</b> A file, filename, or sequence of string-like objects.</li>
+	<li><b>ngram_range:</b> The range of <i>ngram</i>* sizes to include.</li>
+	<li><b>stop_words:</b> Words that will be ignored (like 'a').</li>
+	<li><b>max_df:</b> Any word occuring more frequently than this number is discarded.</li>
+	<li><b>min_df:</b> Any word occuring less frequently than this number is discarded.</li>
+	<li><b>max_features:</b> The maximum number of terms that will be maintained.</li>
+	<li><b>vocabulary:</b> Explicitly provide a list of words to count and ignore others.</li>
+</ul>
+*<b>Note:</b> An <i>ngram</i> is a sequence of contiguous words like "the phone" or "favorite movie." The use of ngrams will be explored in a later blog post.
+<br/>
+<br/>To extract the features with our code so far, the following three lines suffice:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>S, y = LoadData('/path/to/directory/comb.txt')
+cv = CountVectorizer()
+A = cv.fit_transform(S)
+#Example use of cv</code></pre><br/><hr/><br/>
+<br/>
+<br/>The following code prints to the screen the top 32 words among all sentences along with the number of their occurances:
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>V = np.sum(cv.fit_transform(S).toarray(), axis = 0)
+D = list(zip(V, cv.get_feature_names(), range(V.shape[0])))
+for freq, word, c in sorted(D, key = lambda t : t[0], reverse = True)[0:32]:
+	print('{:5d}'.format(c) + '{:5d}'.format(freq) + '\t' + word)</code></pre><br/><hr/><br/>
+<br/>
+<br/>An inspection of Table 1 below reveals that the most commonly occuring features do not offer much useful information about the data. The goal is to assign a sentence a sentiment value, but the above words can be reasonably expected to occur both in positive and negative sentences. Their frequency is simply due to the semantics of the English language.<br/>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+	<tr>
+		<th>Number</th>
+		<th>Frequency</th>
+		<th>Word</th>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>1953</td>
+		<td>the</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>1138</td>
+		<td>and</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td>789</td>
+		<td>it</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>754</td>
+		<td>is</td>
+	</tr>
+	<tr>
+		<td>5</td>
+		<td>670</td>
+		<td>to</td>
+	</tr>
+</table></p>
+<p style="text-align:center;"><b>Table 1: Top 5 Words by Frequency</b></p>
+<br/>
+There are several ways to get around this problem. The most direct approach is to compile a list of <i>stop words</i>, or words to ignore. Thankfully, Scikit-learn has already implemented this. Simply specify <i>stop_words='english'</i> in the CountVectorizer constructor. Table 2 below shows the updated results.<br/>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+	<tr>
+		<th>Number</th>
+		<th>Frequency</th>
+		<th>Word</th>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>230</td>
+		<td>good</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>210</td>
+		<td>great</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td>182</td>
+		<td>movie</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>168</td>
+		<td>phone</td>
+	</tr>
+	<tr>
+		<td>5</td>
+		<td>163</td>
+		<td>film</td>
+	</tr>
+</table></p>
+<p style="text-align:center;"><b>Table 2: Top 5 Words by Frequency with Stop Words</b></p>
+<br/>
+The above list looks better, but it could be better; "movie", "phone", and "film" are most likely not the best words for determining the sentiment of a sentence. As seen above, Scikit-learn offers the ability to supply a custom vocabulary. Intuitively speaking, words with positive and negative connotations like "great", "horrible", and "love" ought to be of highest importance as a features.
+<br/>
+<br/>To explore this further, consider the dimensionality transform provided by <a href="Posts/1.html">linear discriminant analysis</a>. By modeling positive sentiment \((1)\) and negative sentiment \((0) \) as classes, a linear transform which maximizes the between-class variance relative to the within-class variance is constructed. Since there are only two classes in this case, the transform matrix reduces the \(n\)-dimensional features to \(1\)-dimensional features and thus will be of dimension \((1, n)\). The components of largest magnitude in this matrix will thus be the directions that most greatly influence the sentiment score. Code to view the top \(m\) components is as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>cv = CountVectorizer(stop_words = 'english', max_features=256)
+D = cv.fit_transform(S)
+lda = LinearDiscriminantAnalysis()
+lda.fit(D.toarray(), y)
+m = 40
+topmfeats = np.abs(lda.coef_[0]).argsort()[-m:][::-1]
+for i, j in enumerate(topmfeats):
+    s = '{:4d}'.format(i) + "\t"
+    s += '{:16s}'.format(cv.get_feature_names()[j])
+    s += '{:+5.3f}'.format(lda.coef_[0][j])
+    print(s)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The results are shown below in Table 3.<br/>
+<p style="text-align:center;"><table style="margin: 0px auto;"><tr>
+		<th>Index</th>
+		<th>Word</th>
+		<th>Coefficient</th>
+	<tr>
+		<td>0</td>
+		<td>perfect</td>
+		<td>+3.458</td>
+	</tr>
+	<tr>
+		<td>1</td>
+		<td>fantastic</td>
+		<td>+3.448</td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>delicious</td>
+		<td>+3.432</td>
+	</tr>
+	<tr>
+		<td>3</td>
+		<td>awesome</td>
+		<td>+3.400</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>beautiful</td>
+		<td>+3.287</td>
+	</tr>
+	<tr>
+		<td>5</td>
+		<td>enjoyed</td>
+		<td>+3.165</td>
+	</tr>
+	<tr>
+		<td>6</td>
+		<td>disappointing</td>
+		<td>-3.107</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>liked</td>
+		<td>+3.063</td>
+</tr></table></p>
+<p style="text-align:center;"><b>Table 3: Top Words by LDA Coefficient Magnitude</b></p>
+<br/>
+When considering the sources of the data (Imdb, Amazon, and Yelp), the above results confirm intuition. The sentiment rating is largely influence by words with strongly negative or positive connotations. Further words with positive connotations influence the result in a positive direction (towards \(1\)) while words with negative connotations influence the result in a negative direction (towards \(0\)).
+<h1>Training and Results</h1>
+Next, a classifier is trained and results are generated. First, the raw frequencies will be used with a stock logistic regression model. Sample code and results follow.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Prints testing accuracy results to the screen
+#C:     The classifier to use
+#F:     The feature extractor to use
+#S:     The list of sentences
+#y:     The target vectors
+def RunCVTest(C, F, S, y):
+	#Fix the random state for better comparison
+    kf = KFold(len(S), shuffle = True, random_state = 32)
+    for trn, tst in kf:
+        #Make sure to only train with the training data
+        #in a realistic scenario only training data is available at the
+        #feature extraction stage
+        F.fit(S[trn])
+        B = F.transform(S)
+        #Fit the classifier C
+        C.fit(B[trn], y[trn])
+        #Results for cross-validation set
+        r1 = C.score(B[tst], y[tst])
+        #Results for training data
+        r2 = C.score(B[trn], y[trn])
+        #Both results combined
+        r3 = C.score(B, y)
+        s = 'Tst: ' + '{:.4f}'.format(r1)
+        s += '\tTrn: ' + '{:.4f}'.format(r2)
+        s += '\tAll: ' + '{:.4f}'.format(r3)
+        print(s)    
+		
+#...
+#%% A first attempt
+S, y = LoadData(DATA_PATH + 'comb.txt')
+cv = CountVectorizer()
+lr = LogisticRegression()
+#Convert to numpy array for indexing ability
+S = np.array(S)
+y = np.array(y)
+print('LogisticRegression: ')
+RunCVTestHTML(lr, cv, S, y)</code></pre><br/><hr/><br/>
+<br/>
+<br/>At this point, the results are decent. However, as can be seen from Table 4 below, there is a large discrepancy between the testing and training accuracy scores; the model appears to be over-fitting the training data. This is not overly suprising when the results from Table 1 are considered. If the features contain superfluous information, the model is likely to at least partially fit the superfluous information allowing for high accuracy on the training data but poor generalization ability.<br/>
+<p style="text-align:center;">
+<table style="margin: 0px auto;"><tr>
+		<th>Test</th>
+		<th>Train</th>
+		<th>All</th>
+	</tr>
+	<tr>
+		<td>79.30%</td>
+		<td>98.20%</td>
+		<td>91.90%</td>
+	</tr>
+	<tr>
+		<td>79.90%</td>
+		<td>97.85%</td>
+		<td>91.87%</td>
+	</tr>
+	<tr>
+		<td>82.10%</td>
+		<td>97.95%</td>
+		<td>92.67%</td>
+	</tr></table>
+</p>
+<p style="text-align:center;"><b>Table 4: Logistic Regression Performance Results</b></p>
+<br/>
+To help reduce the dimensionality of the data, prevent over-fitting, and to slightly improve the results, a custom vocabulary is used. This vocabulary is constructed by using the LDA components of largest magnitude as discussed earlier.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#%% A second attempt with custom vocabulary
+S, y = LoadData(DATA_PATH + 'comb.txt')
+cv = CountVectorizer(stop_words = 'english', max_features = 512)
+D = cv.fit_transform(S)
+lda = LinearDiscriminantAnalysis()
+lda.fit(D.toarray(), y)
+#Determined by exhaustively searching 1 &lt;= m &lt;= 512
+m = 213
+topmfeats = np.abs(lda.coef_[0]).argsort()[-m:][::-1]
+voc = [cv.get_feature_names()[i] for i in topmfeats]    
+avgs = RunCVTest(LogisticRegression(), CountVectorizer(vocabulary = voc), S, y)</code></pre><br/><hr/><br/>
+<br/>
+<br/>In the above code, only the first 213 words are preserved. Table 5 contains the updated results from the above code.<br/>
+<p style="text-align:center;">
+<table style="margin: 0px auto;"><tr>
+		<th>Test</th>
+		<th>Train</th>
+		<th>All</th>
+	</tr>
+	<tr>
+		<td>80.50%</td>
+		<td>84.40%</td>
+		<td>83.10%</td>
+	</tr>
+	<tr>
+		<td>80.10%</td>
+		<td>83.90%</td>
+		<td>82.63%</td>
+	</tr>
+	<tr>
+		<td>82.50%</td>
+		<td>82.75%</td>
+		<td>82.67%</td>
+	</tr></table></p>
+<p style="text-align:center;"><b>Table 5: Logistic Regression with Custom Vocabulary Results</b></p>
+<br/>
+As can be seen, there is a modest improvement in the cross-validation performance. Performance on the training data has decreased. This is reasonable as some spurious features have been removed so the potential for over-fitting has been reduced. Finally, some other slight performance improvements can be had by grid searching through the parameters of the feature extractor and classifier.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Determines locally optimal parameters for the LogisticRegression
+#classifier using exhaustive search
+#S: 	The list of sentences
+#y: 	The target vectors of sentiment scores 
+#voc: 	The vocabulary to use for CountVectorizer
+#ret: 	The locally optimal classifier
+def FindBestParams(S, y, voc):
+	#This will take a long time to run!
+    params = {'penalty':('l1', 'l2'), 'intercept_scaling':np.arange(0.1,10.1,0.1), 'C':np.arange(0.1, 10.1, 0.1)}
+    cv = CountVectorizer(vocabulary = voc)
+    gscv = GridSearchCV(LogisticRegression(), params)
+    gscv.fit(cv.fit_transform(S), y)
+    return gscv
+	
+#...
+gscv = FindBestParams(S, y, voc)    
+lr = gscv.best_estimator_
+RunCVTest(lr, cv, S, y)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The final results are shown below in Table 6.<br/>
+<p style="text-align:center;">
+<table style="margin: 0px auto;"><tr>
+		<th>Test</th>
+		<th>Train</th>
+		<th>All</th>
+	</tr>
+	<tr>
+			<td>80.60%</td>
+			<td>84.80%</td>
+			<td>83.40%</td>
+	</tr>
+	<tr>
+			<td>80.80%</td>
+			<td>84.55%</td>
+			<td>83.30%</td>
+	</tr>
+	<tr>
+			<td>84.60%</td>
+			<td>83.10%</td>
+			<td>83.60%</td>
+	</tr></table></p>
+<p style="text-align:center;"><b>Table 6: Tuned Results for Logistic Regression</b></p>
+<br/>
+Further improvements in the size of the data and the performance of the model can probably be had by further tuning of the parameters.
+<h1>Conclusion</h1>
+Vectors of word frequencies are a basic type of feature that can be extracted from textual data. Despite the simplicity of the feature, reasonable performance can be achieved. A future blog post will explore some slightly more sophisticated methods available in Scikit-learn and possibly other libraries. I hope to see you then.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

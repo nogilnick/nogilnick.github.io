@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>PoE AI Part 4: Real-time Screen Capture and Plumbing</h1><h2>Fri, 11 Aug 2017</h2><h3><i>Computer Science</i>, <i>Deep Learning</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i>, <i>Python</i>, <i>Screenshot</i>, <i>Software</i>, <i>Windows Api</i></h3>This post is the forth part of a series on creating an AI for the game Path of Exile © (PoE).
+
+<ol>
+<li><a href="Posts/14.html">A Deep Learning Based AI for Path of Exile: A Series</a></li>
+<li><a href="Posts/15.html">Calibrating a Projection Matrix for Path of Exile</a></li>
+<li><a href="Posts/16.html">PoE AI Part 3: Movement and Navigation</a></li>
+<li><a href="Posts/21.html"><b>PoE AI Part 4: Real-Time Screen Capture and Plumbing</b></a></li>
+<li><a href="Posts/23.html">AI Plays Path of Exile Part 5: Real-Time Obstacle and Enemy Detection using CNNs in TensorFlow</a></li>
+</ol>
+As discussed in the first post of this series, the AI program takes a screenshot of the game and uses it to form predictions that are then used to update its internal state. In this post, efficient methods for capturing images of the game screen are explored.<br/>
+<p style="text-align:center;">
+<a href=""><img src="../Img/botlogic2.png" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 1: Flowchart of AI Logic</b></p>
+<br/>
+<h1>Available Libraries</h1>
+There are several Python libraries for capturing screenshots like <a href="https://pypi.python.org/pypi/pyscreenshot">pyscreenshot</a> and <a href="http://pillow.readthedocs.io/en/3.1.x/reference/ImageGrab.html">ImageGrab from PIL</a>. A brief program for testing the performance of the image capturing code follows.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import time
+from PIL import ImageGrab
+
+def GetScreenshot1():
+    im = ImageGrab.grab()
+
+if __name__ == &quot;__main__&quot;:
+    while True:
+        t1 = time.time()
+        GetScreenshot1()
+        t2 = time.time()
+        print('Elapsed: ' + str(t2 - t1))</code></pre><br/><hr/><br/>
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>C:\Users\Public\Python&gt;python SSTime.py
+Elapsed: 0.1562650203704834
+Elapsed: 0.15630722045898438
+Elapsed: 0.1562347412109375
+Elapsed: 0.14066553115844727
+Elapsed: 0.17187738418579102
+Elapsed: 0.1718764305114746
+Elapsed: 0.15629959106445312</code></pre><br/><hr/><br/>
+<br/>
+<br/>Unfortunately, the performance seen above leaves a bit to be desired. Without any other processing, the program could only hope to process a maximum of around 5 to 6 frames per second (FPS). Further, in the above code, the screen capture is happening on the main thread. Thus, the entire program waits for the screen capture during which no processing or interaction with the game can occur. Another issue is that only the game screen should be captured (in windowed mode) and not the rest of the desktop.
+<h1>Using Windows API</h1>
+Several Windows API calls can alleviate these issues and improve performance.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import numpy as np
+import win32gui
+import win32ui, win32con
+from threading import Thread, Lock
+import time
+
+#Asynchronously captures screens of a window. Provides functions for accessing
+#the captured screen.
+class ScreenViewer:
+
+    def __init__(self):
+        self.mut = Lock()
+        self.hwnd = None
+        self.its = None         #Time stamp of last image 
+        self.i0 = None          #i0 is the latest image; 
+        self.i1 = None          #i1 is used as a temporary variable
+        self.cl = False         #Continue looping flag
+        #Left, Top, Right, and bottom of the screen window
+        self.l, self.t, self.r, self.b = 0, 0, 0, 0
+        #Border on left and top to remove
+        self.bl, self.bt, self.br, self.bb = 12, 31, 12, 20
+
+    #Gets handle of window to view
+    #wname:         Title of window to find
+    #Return:        True on success; False on failure
+    def GetHWND(self, wname):
+        self.hwnd = win32gui.FindWindow(None, wname)
+        if self.hwnd == 0:
+            self.hwnd = None
+            return False
+        self.l, self.t, self.r, self.b = win32gui.GetWindowRect(self.hwnd)
+        return True
+        
+    #Get's the latest image of the window
+    def GetScreen(self):
+        while self.i0 is None:      #Screen hasn't been captured yet
+            pass
+        self.mut.acquire()
+        s = self.i0
+        self.mut.release()
+        return s
+        
+    #Get's the latest image of the window along with timestamp
+    def GetScreenWithTime(self):
+        while self.i0 is None:      #Screen hasn't been captured yet
+            pass
+        self.mut.acquire()
+        s = self.i0
+        t = self.its
+        self.mut.release()
+        return s, t
+        
+    #Gets the screen of the window referenced by self.hwnd
+    def GetScreenImg(self):
+        if self.hwnd is None:
+            raise Exception(&quot;HWND is none. HWND not called or invalid window name provided.&quot;)
+        self.l, self.t, self.r, self.b = win32gui.GetWindowRect(self.hwnd)
+        #Remove border around window (8 pixels on each side)
+        #Remove 4 extra pixels from left and right 16 + 8 = 24
+        w = self.r - self.l - self.br - self.bl
+        #Remove border on top and bottom (31 on top 8 on bottom)
+        #Remove 12 extra pixels from bottom 39 + 12 = 51
+        h = self.b - self.t - self.bt - self.bb
+        wDC = win32gui.GetWindowDC(self.hwnd)
+        dcObj = win32ui.CreateDCFromHandle(wDC)
+        cDC = dcObj.CreateCompatibleDC()
+        dataBitMap = win32ui.CreateBitmap()
+        dataBitMap.CreateCompatibleBitmap(dcObj, w, h)
+        cDC.SelectObject(dataBitMap)
+        #First 2 tuples are top-left and bottom-right of destination
+        #Third tuple is the start position in source
+        cDC.BitBlt((0,0), (w, h), dcObj, (self.bl, self.bt), win32con.SRCCOPY)
+        bmInfo = dataBitMap.GetInfo()
+        im = np.frombuffer(dataBitMap.GetBitmapBits(True), dtype = np.uint8)
+        dcObj.DeleteDC()
+        cDC.DeleteDC()
+        win32gui.ReleaseDC(self.hwnd, wDC)
+        win32gui.DeleteObject(dataBitMap.GetHandle())
+        #Bitmap has 4 channels like: BGRA. Discard Alpha and flip order to RGB
+        #For 800x600 images:
+        #Remove 12 pixels from bottom + border
+        #Remove 4 pixels from left and right + border
+        return im.reshape(bmInfo['bmHeight'], bmInfo['bmWidth'], 4)[:, :, -2::-1]</code></pre><br/><hr/><br/>
+<br/>
+<br/>In the <i>GetHWND</i> function above, <i>win32gui.FindWindow(None, wname)</i> is used to get the handle of the game window. In this case, <i>wname</i> should be "Path of Exile" or <i>win32gui.FindWindow(None, "Path of Exile")</i>.
+<br/>
+<br/>With a handle to the game window, <i>win32gui.GetWindowRect(self.hwnd)</i> gives the position of the game window on the screen. These values are necessary for translating mouse movements from within the game window (size 800x600) to an absolute value on the screen (usually something like 1920x1080).
+<br/>
+<br/>The <i>GetScreenImg</i> function above is the code that actually captures an image of the game screen and stores it in a <i>numpy</i> matrix. There are 3 main things to note about the above code. First, windows on the screen have a border that is not useful for the AI and can be discarded. The variables <i>self.bl</i>, <i>self.br</i>, <i>self.bt</i>, and <i>self.bb</i> store the border for the left, right, top, and bottom of the window respectively. Second, some pixels are discarded from the edges of the image so that the height and width of the image are multiples of 7 and 9 respectively. The reason for this is covered in the next post in this series. Third, bitmap data from the Windows API is organized as groups of 4 8-bit integers like <i>BGRA</i> for the blue, green, red, and alpha channels respectively. Most python imaging libraries expect 3 channels like RGB. The final line in <i>GetScreenImg</i> reverses the order of the channels and discards the alpha channel, which is not used here.
+<h1>Using Concurrency</h1>
+Since the game is repeatedly capturing images of the screen, it makes sense to perform the capture in a separate thread and to provide an interface for other threads to read images in an asynchronous and thread-safe manner. This way an image of the screen is always available nearly instantaneously. This can be accomplished using <i>Thread</i> and <i>Lock</i> objects from the <i>threading</i> library.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Begins recording images of the screen
+    def Start(self):
+        #if self.hwnd is None:
+        #    return False
+        self.cl = True
+        thrd = Thread(target = self.ScreenUpdateT)
+        thrd.start()
+        return True
+        
+    #Stop the async thread that is capturing images
+    def Stop(self):
+        self.cl = False
+        
+    #Thread used to capture images of screen
+    def ScreenUpdateT(self):
+        #Keep updating screen until terminating
+        while self.cl:
+            self.i1 = self.GetScreenImg()
+            self.mut.acquire()
+            self.i0 = self.i1               #Update the latest image in a thread safe way
+            self.its = time.time()
+            self.mut.release()</code></pre><br/><hr/><br/>
+<h1>Results</h1>
+In order to time the new code, measurements should be taken in the <i>ScreenUpdateT</i> function. A quick and dirty approach with the final timings follows.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Thread used to capture images of screen
+    def ScreenUpdateT(self):
+        #Keep updating screen until terminating
+        while self.cl:
+            t1 = time.time()
+            self.i1 = self.GetScreenImg()
+            print('Elapsed: ' + str(time.time() - t1))
+            self.mut.acquire()
+            self.i0 = self.i1               #Update the latest image in a thread safe way
+            self.its = time.time()
+            self.mut.release()</code></pre><br/><hr/><br/>
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import time
+from ScreenViewer import ScreenViewer
+
+if __name__ == &quot;__main__&quot;:
+    sv = ScreenViewer()
+    sv.GetHWND('CodeLibrary')
+    sv.Start()
+    time.sleep(1)
+    sv.Stop()
+    
+C:\Users\Public\Python&gt;python SSTime.py
+Elapsed: 0.015668153762817383
+Elapsed: 0.015635251998901367
+Elapsed: 0.015609025955200195
+Elapsed: 0.015636205673217773
+Elapsed: 0.015625
+Elapsed: 0.015612602233886719</code></pre><br/><hr/><br/>
+<br/>
+<br/>The timings are roughly an order of magnitude faster. Now, the AI can process a theoretical maximum of around 64 FPS. The main AI program access images of the screen using a data member of type <i>ScreenViewer</i> similar to the code that follows.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>class Bot:
+
+    def __init__(self, name):
+        self.sv = ScreenViewer()        #For getting screens of the game
+        #...
+        
+    def Run():
+        #...
+        self.sv.Start()
+        #...
+        while True:
+            #...
+            I = self.sv.GetScreen()
+            ProcessScreen(I)
+            #...
+        #...
+        self.sv.Stop()
+        return</code></pre><br/><hr/><br/>
+<br/>
+<br/>The next post in this series will cover using convolutional neural networks (CNN) to process the images of the screen to update the state of the AI.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

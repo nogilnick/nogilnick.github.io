@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Mortality in the United States and Its Causes</h1><h2>Sat, 24 Feb 2018</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Death</i>, <i>Medicine</i>, <i>Statistics</i></h3>In this chapter, vital statistics for the United States of America are explored. The Center for Disease Control maintains several datasets containing vital statistics for the nation. These datasets contain records of deaths organized by year. Each record includes age, gender, race, cause of death, and other details. This chapter explores data for the year 2016.
+<h1>The Human Lifespan</h1>
+Figure 1 shows the distribution of age at death for all records. The plot shows a right-skewed distribution as expected. The leftmost bar stands out somewhat. This bar enumerates infant mortality.<br/>
+<p style="text-align:center;"><img src="../Img/msagedist.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: Distribution of Age at Death</b></p>
+<br/>
+Considering only the data in this first bar, another histogram is constructed. This histogram shows the age in months for these records. Figure 2 shows that infant deaths occur most frequently after birth and sharply decline thereafter.<br/>
+<p style="text-align:center;"><img src="../Img/mschilddeath.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: Infant Mortality</b></p>
+<br/>
+Next, the rightmost bars of the histogram are considered. These bars contain records for those older than 100 years old. The records are grouped by gender and race and displayed in a bar plot. The <i>y</i>-axis represents the percentage of centenarians for each race.<br/>
+<p style="text-align:center;"><img src="../Img/ms100race.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 3: Percentage of Centenarians by Race</b></p>
+<br/>
+Figure 3 shows several things. The first is that the majority of people who live at least 100 years are women. In fact, females account for roughly 82% of this number.  The second is that people of some races are more likely to survive their first century. Japanese and Chinese are significantly more likely to do so.
+<br/>
+<br/>Next, records of all ages are grouped by gender. The distributions for men and women are plotted in both a line and bar chart. Figure 4 shows that men die earlier than women. This trend begins in the late teenage years and continues into adulthood. The count of female records outpaces men only near the end of the human lifespan.<br/>
+<p style="text-align:center;"><img src="../Img/msgenderhistbar.png" height="auto" width="75%" />
+<p style="text-align:center;"><img src="../Img/msgenderhist.png" height="auto" width="75%" /></p></p>
+<p style="text-align:center;"><b>Figure 4: Age Distribution at Death by Gender</b></p>
+<br/>
+The average lifespans of men and women are compared. It is found that men live roughly 6.6 years shorter than women. This difference is highly significant. A Welch's t-test for the difference of means has \(t \approx -303\).
+<br/>
+<br/>Next, the average and standard deviation age at death is computed for each race. The result is shown in a bar plot.<br/>
+<p style="text-align:center;"><img src="../Img/msavgliferace.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 5: Age at Death by Race</b></p>
+<br/>
+Figure 5 shows that white and Asian people live longer than other races on average. Japanese people have the longest average lifespan together with the lowest standard deviation. The low standard deviation suggests fewer Japanese people die early in life.<br/>
+<p style="text-align:center;"><img src="../Img/msracehist.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 6: Distribution of Age at Death by Race</b></p>
+<br/>
+This is confirmed by plotting the distribution of several races side by side. Figure 6 shows that relatively fewer Japanese people die before reaching the end of the human lifespan.
+<h1>Manner of Death</h1>
+Next, the manner of death is explored. The dataset classifies the manner of death into 7 categories. The categories and their counts are listed in Table 1.<br/>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+<tr><th>Description</th><th>Class</th></tr>
+<tr><td>Natural</td><td>2212118</td></tr>
+<tr><td>Unspecified</td><td>294239</td></tr>
+<tr><td>Accident</td><td>160768</td></tr>
+<tr><td>Suicide</td><td>45155</td></tr> 
+<tr><td>Homicide</td><td>20544</td></tr>
+<tr><td>Unknown</td><td>12467</td></tr>
+<tr><td>TBD</td><td>4573</td></tr>
+</table></p>
+<p style="text-align:center;"><b>Table 1: Distribution of Age at Death by Race</b></p>
+<br/>
+The average age at death for each category is shown in Figure 7. Deaths from natural causes have the greatest average age. Homicides have the least.<br/>
+<p style="text-align:center;"><img src="../Img/msavgmandeath.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 7: Average Age at Death by Manner of Death</b></p>
+<br/>
+Next, the records are grouped by manner of death and race. Bar charts for accidents, suicides, and homicides are constructed. The <i>y</i>-axis represents the percentage of all deaths for each race accounted for by a specific manner.<br/>
+<p style="text-align:center;">
+<img src="../Img/msmanaccrace.png" height="auto" width="75%" />
+<p style="text-align:center;"><img src="../Img/msmansuirace.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><img src="../Img/msmanhomrace.png" height="auto" width="75%" /></p></p>
+<p style="text-align:center;"><b>Figure 8: Manner of Death by Race</b></p>
+<br/>
+The chart for homicides show that Japanese and Chinese have the lowest homicide rates among all races. This factor contributes to the longevity of these races as death by homicide typically occurs earlier in life. Conversely, homicide rates are highest among blacks. This factor contributes to the relatively shorter average lifespan of the race.
+<h1>Underlying Cause of Death</h1>
+Next, underlying cause of death is explored. Each record is labeled with an ICD-10 code indicating the underlying cause of death. The cumulative percentage of records accounted for by top diseases is computed and the result is shown in Figure 9. As can be seen, a small number of causes are responsible for a large number of deaths. Well over 60% of all deaths are the result of less than 50 causes of mortality.<br/>
+<p style="text-align:center;"><img src="../Img/mscausedeathcdf.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 9: Cumulative Percentage of Deaths by Top Diseases</b></p>
+<br/>
+Next, the records are grouped by ICD-10 code and the counts of each are computed. The result is shown in a bar chart in Figure 10. The corresponding ICD-10 codes are listed in Table 2.<br/>
+<p style="text-align:center;">
+<img src="../Img/msucodall.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 10: Leading Causes of Death</b></p>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+<tr><th style="width:11%;">ICD-10</th><th style="width:9%;">Age</th><th style="width:9%;">Std. Age</th><th style="width:11%;">Count</th><th style="width:60%;">Desc</th></tr>
+<tr><td style="width:11%;">I251</td><td style="width:9%;">79.9</td><td style="width:9%;">12.9</td><td style="width:9%;">161079</td><td style="width:60%;">Atherosclerotic Heart Disease </td></tr>
+<tr><td style="width:11%;">C349</td><td style="width:9%;">71.7</td><td style="width:9%;">11.0</td><td style="width:9%;">146786</td><td style="width:60%;">Malignant Neoplasm: Bronchus or Lung </td></tr>
+<tr><td style="width:11%;">J449</td><td style="width:9%;">77.2</td><td style="width:9%;">11.0</td><td style="width:9%;">116117</td><td style="width:60%;">Chronic Obstructive Pulmonary Disease</td></tr>
+<tr><td style="width:11%;">G309</td><td style="width:9%;">86.9</td><td style="width:9%;">7.7</td><td style="width:9%;">113096</td><td style="width:60%;">Alzheimer Disease</td></tr>
+<tr><td style="width:11%;">I219</td><td style="width:9%;">74.5</td><td style="width:9%;">14.0</td><td style="width:9%;">107594</td><td style="width:60%;">Acute Myocardial Infarction</td></tr>
+<tr><td style="width:11%;">F03</td><td style="width:9%;">87.4</td><td style="width:9%;">7.9</td><td style="width:9%;">100901</td><td style="width:60%;">Dementia</td></tr>
+<tr><td style="width:11%;">I500</td><td style="width:9%;">83.6</td><td style="width:9%;">11.6</td><td style="width:9%;">64439</td><td style="width:60%;">Congestive Heart Failure</td></tr>
+<tr><td style="width:11%;">I250</td><td style="width:9%;">71.9</td><td style="width:9%;">14.8</td><td style="width:9%;">62909</td><td style="width:60%;">Atherosclerotic Cardiovascular Disease</td></tr>
+<tr><td style="width:11%;">I64</td><td style="width:9%;">81.2</td><td style="width:9%;">12.1</td><td style="width:9%;">61818</td><td style="width:60%;">Stroke</td></tr>
+<tr><td style="width:11%;">J189</td><td style="width:9%;">79.7</td><td style="width:9%;">14.3</td><td style="width:9%;">42189</td><td style="width:60%;">Pneumonia</td></tr>
+</table></p>
+<p style="text-align:center;"><b>Table 2: Leading Causes of Death</b></p>
+<br/>
+Heart disease accounts for the largest number of deaths. Atherosclerosis, the build-up of plaque on the arterial walls, is involved in several of the leading causes of death. Lung cancer and COPD are also responsible for a sizable portion of the records. Both of these pulmonary conditions are strongly associated with smoking.
+<br/>
+<br/>Next, causes of death in those under the age of 50 are explored. A similar bar chart and table are constructed from these records.<br/>
+<p style="text-align:center;">
+<img src="../Img/msucod50.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 11: Leading Causes of Death under 50</b></p>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+<tr><th style="width:11%;">ICD-10</th><th style="width:9%;">Age</th><th style="width:9%;">Std. Age</th><th style="width:11%;">Count</th><th style="width:60%;">Desc</th></tr>
+<tr><td style="width:11%;">X42</td><td style="width:9%;">40.8</td><td style="width:9%;">13.0</td><td style="width:9%;">19167</td><td style="width:60%;">Accidental Poisoning by and Exposure to Narcotics</td></tr>
+<tr><td style="width:11%;">X44</td><td style="width:9%;">42.2</td><td style="width:9%;">13.5</td><td style="width:9%;">16872</td><td style="width:60%;">Accidental Poisoning by and Exposure to Unspecified Drugs</td></tr>
+<tr><td style="width:11%;">X95</td><td style="width:9%;">32.3</td><td style="width:9%;">13.3</td><td style="width:9%;">11466</td><td style="width:60%;">Assault by Unspecified Firearm Discharge </td></tr>
+<tr><td style="width:11%;">X70</td><td style="width:9%;">40.0</td><td style="width:9%;">16.7</td><td style="width:9%;">8425</td><td style="width:60%;">Intentional Self-Harm by Hanging Strangulation and Suffocation </td></tr>
+<tr><td style="width:11%;">V892</td><td style="width:9%;">43.0</td><td style="width:9%;">21.5</td><td style="width:9%;">7900</td><td style="width:60%;">Person Injured in a Motor-Vehicle Accident</td></tr>
+<tr><td style="width:11%;">X74</td><td style="width:9%;">50.1</td><td style="width:9%;">19.6</td><td style="width:9%;">6826</td><td style="width:60%;">Intentional Self-Harm by Unspecified Firearm Discharge </td></tr>
+<tr><td style="width:11%;">I219</td><td style="width:9%;">74.5</td><td style="width:9%;">14.0</td><td style="width:9%;">5375</td><td style="width:60%;">Acute Myocardial Infarction </td></tr>
+<tr><td style="width:11%;">C509</td><td style="width:9%;">68.7</td><td style="width:9%;">14.9</td><td style="width:9%;">4880</td><td style="width:60%;">Malignant Neoplasm: Breast</td></tr>
+<tr><td style="width:11%;">R99</td><td style="width:9%;">55.9</td><td style="width:9%;">28.8</td><td style="width:9%;">4873</td><td style="width:60%;">Other Ill-Defined and Unspecified Causes of Mortality </td></tr>
+<tr><td style="width:11%;">I250</td><td style="width:9%;">71.9</td><td style="width:9%;">14.8</td><td style="width:9%;">4284</td><td style="width:60%;">Atherosclerotic Cardiovascular Disease</td></tr>
+</table></p>
+<p style="text-align:center;"><b>Table 3: Leading Causes of Death Under 50</b></p>
+<br/>
+The leading causes of death in those under 50 are not due to disease processes. Drug overdose, homicide, and suicide lead. The only diseases present in the top 10 leading causes of death are breast cancer and heart disease.
+<br/>
+<br/>Next, deaths caused by cancer are considered for all ages. Lung cancer accounts for a clear majority of deaths due to cancer. The large number of deaths due to pancreatic cancer are presumed due to the present difficulty in treating it. The prognosis for breast cancer is better, though it is a more common disease.<br/>
+<p style="text-align:center;">
+<img src="../Img/msucodcancer.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 12: Leading Causes of Death by Cancer</b></p>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+<tr><th style="width:11%;">ICD-10</th><th style="width:9%;">Age</th><th style="width:9%;">Std. Age</th><th style="width:11%;">Count</th><th style="width:60%;">Desc</th></tr>
+<tr><td style="width:11%;">C349</td><td style="width:9%;">71.7</td><td style="width:9%;">11.0</td><td style="width:9%;">146786</td><td style="width:60%;">Malignant Neoplasm: Bronchus or lung </td></tr>
+<tr><td style="width:11%;">C259</td><td style="width:9%;">71.8</td><td style="width:9%;">11.9</td><td style="width:9%;">42121</td><td style="width:60%;">Malignant Neoplasm: Pancreas </td></tr>
+<tr><td style="width:11%;">C509</td><td style="width:9%;">68.7</td><td style="width:9%;">14.9</td><td style="width:9%;">41913</td><td style="width:60%;">Malignant Neoplasm: Breast </td></tr>
+<tr><td style="width:11%;">C189</td><td style="width:9%;">72.0</td><td style="width:9%;">14.0</td><td style="width:9%;">39249</td><td style="width:60%;">Malignant Neoplasm: Colon </td></tr>
+<tr><td style="width:11%;">C61</td><td style="width:9%;">78.6</td><td style="width:9%;">10.5</td><td style="width:9%;">30396</td><td style="width:60%;">Malignant Neoplasm: Prostate </td></tr>
+<tr><td style="width:11%;">C80</td><td style="width:9%;">72.4</td><td style="width:9%;">13.4</td><td style="width:9%;">27845</td><td style="width:60%;">Malignant Neoplasm: Unspecified Site</td></tr>
+<tr><td style="width:11%;">C679</td><td style="width:9%;">77.7</td><td style="width:9%;">11.6</td><td style="width:9%;">16586</td><td style="width:60%;">Malignant Neoplasm: Bladder</td></tr>
+<tr><td style="width:11%;">C719</td><td style="width:9%;">64.1</td><td style="width:9%;">16.1</td><td style="width:9%;">15303</td><td style="width:60%;">Malignant Neoplasm: Brain</td></tr>
+<tr><td style="width:11%;">C159</td><td style="width:9%;">69.5</td><td style="width:9%;">11.9</td><td style="width:9%;">15285</td><td style="width:60%;">Malignant Neoplasm: Esophagus</td></tr>
+<tr><td style="width:11%;">C56</td><td style="width:9%;">69.8</td><td style="width:9%;">13.0</td><td style="width:9%;">14242</td><td style="width:60%;">Malignant Neoplasm: Ovary </td></tr>
+</table></p>
+<p style="text-align:center;"><b>Table 4: Leading Causes of Death by Cancer</b></p>
+<br/>
+Next, methods of suicide are considered. A similar table and bar chart are constructed only from records due to suicide.<br/>
+<p style="text-align:center;"><img src="../Img/msucddsd.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 13: Most Common Methods of Suicide</b></p>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+<tr><th style="width:11%;">ICD-10</th><th style="width:9%;">Age</th><th style="width:9%;">Std. Age</th><th style="width:11%;">Count</th><th style="width:60%;">Desc</th></tr>
+<tr><td style="width:11%;">X74</td><td style="width:9%;">50.1</td><td style="width:9%;">19.6</td><td style="width:9%;">13948</td><td style="width:60%;">Intentional Self-Harm by Unspecified Firearm Discharge </td></tr>
+<tr><td style="width:11%;">X70</td><td style="width:9%;">40.0</td><td style="width:9%;">16.7</td><td style="width:9%;">11682</td><td style="width:60%;">Intentional Self-Harm by Hanging Strangulation and Suffocation </td></tr>
+<tr><td style="width:11%;">X72</td><td style="width:9%;">50.3</td><td style="width:9%;">19.8</td><td style="width:9%;">6116</td><td style="width:60%;">Intentional Self-Harm by Handgun Discharge </td></tr>
+<tr><td style="width:11%;">X64</td><td style="width:9%;">50.3</td><td style="width:9%;">15.1</td><td style="width:9%;">3241</td><td style="width:60%;">Intentional Self-Poisoning by and Exposure to Unspecified Drugs</td></tr>
+<tr><td style="width:11%;">X73</td><td style="width:9%;">47.7</td><td style="width:9%;">19.5</td><td style="width:9%;">2892</td><td style="width:60%;">Intentional Self-Harm by Rifle, Shotgun and Larger Firearm Discharge </td></tr>
+<tr><td style="width:11%;">X67</td><td style="width:9%;">47.9</td><td style="width:9%;">16.7</td><td style="width:9%;">1369</td><td style="width:60%;">Intentional Self-Poisoning by Exposure to Gases (CO2, Helium, etc)</td></tr>
+<tr><td style="width:11%;">X80</td><td style="width:9%;">43.3</td><td style="width:9%;">18.0</td><td style="width:9%;">1123</td><td style="width:60%;">Intentional Self-Harm by Jumping from a High Place</td></tr>
+<tr><td style="width:11%;">X61</td><td style="width:9%;">49.1</td><td style="width:9%;">15.5</td><td style="width:9%;">1064</td><td style="width:60%;">Intentional Self-Poisoning by Exposure to Sedatives</td></tr>
+</table></p>
+<p style="text-align:center;"><b>Table 5: Most Common Methods of Suicide</b></p>
+<br/>
+The most common method of suicide, by a significant margin, is via firearm. Hanging is also prevalent. Intentional poisoning is a distant third.
+<h1>Education Levels</h1>
+Finally, records are grouped by education level. Education level is recorded as a categorical variable with 9 categories based on different educational milestones. The descriptions for each of the categories are shown in Table 5.<br/>
+<p style="text-align:center;"><table style="margin: 0px auto;"><tr><th style="width:15%;">Category</th><th style="width:85%;">Description</th></tr>
+<tr><td style="width:15%;">1</td><td style="width:85%;">8th grade or less</td></tr>
+<tr><td style="width:15%;">2</td><td style="width:85%;">9 - 12th Grade, No Diploma</td></tr>
+<tr><td style="width:15%;">3</td><td style="width:85%;">High School Graduate or GED Completed</td></tr>
+<tr><td style="width:15%;">4</td><td style="width:85%;">Some College Credit, but No Degree</td></tr>
+<tr><td style="width:15%;">5</td><td style="width:85%;">Associate Degree</td></tr>
+<tr><td style="width:15%;">6</td><td style="width:85%;">Bachelors Degree</td></tr>
+<tr><td style="width:15%;">7</td><td style="width:85%;">Masters Degree</td></tr>
+<tr><td style="width:15%;">8</td><td style="width:85%;">Doctorate or Professional Degree</td></tr>
+<tr><td style="width:15%;">9</td><td style="width:85%;">Unknown</td></tr>
+</table></p>
+<p style="text-align:center;"><b>Table 6: Education Levels with Categorical Labels</b></p>
+<br/>
+The categories increase with level of education. Records with unknown education level are discarded; they account for less than 2% of all records.
+<br/>
+<br/>A bar chart is constructed of the average age of each group. The result is shown in Figure 14. People who complete at least a bachelor's degree live longer on average.<br/>
+<p style="text-align:center;"><img src="../Img/msedudeathbar.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 14: Average Age at Death by Education Level</b></p>
+<br/>
+The bar chart also suggests a modest increasing trend with education. To further explore this trend, a scatter plot is constructed from the data points. A trend line is fit to the data and the coefficient of determination is computed.<br/>
+<p style="text-align:center;"><img src="../Img/msedudeath.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 15: Relationship Between Education and Lifespan</b></p>
+<br/>
+The \(R^{2}\) of the fit is 0.641, the general F-statistic of the model is 12.512 with a corresponding p-value = 0.008. The coefficient of age is 0.907 and is significant. The coefficient indicates that average lifespan increases by roughly 1 year for each educational milestone completed.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>ShortX: A Hotkey Program for Windows</h1><h2>Tue, 21 Feb 2017</h2><h3><i>Golang</i>, <i>Hotkeys</i>, <i>Macros</i>, <i>Shortcuts</i>, <i>Software</i>, <i>Windows</i></h3>This post introduces a new program I wrote in <a href="https://golang.org/">Go</a> and C named <em>ShortX</em>. <em>ShortX</em> allows for the creation of keyboard shortcuts that can be used to trigger other keys or commands. The program runs in the background and triggers shortcuts that are specified in a simple <a href="https://en.wikipedia.org/wiki/INI_file">ini</a> file.
+<br/>
+<br/>Expansion is accomplished using low-level Windows API calls so that resource utilization is kept low. <em>ShortX</em> is useful for launching program in Windows, for custom macros in games, and more. Program executables are available on <a href="">the Software page.</a>
+<br/>
+<br/>To run the program simply double-click the exe file or run at the command prompt using:
+<br/>
+<br/>shortx [flags]
+<br/>
+<br/>where the available flags are as follows:
+<br/>
+<br/>-c: Non-shortcut keystrokes are consumed.
+<br/>
+<br/>-e: Expand macros using other macro definitions provided.
+<br/>
+<br/>-h: Display help information.
+<br/>
+<br/>-i: Specify path to the ini configuration file.
+<br/>
+<br/>-s: Make ShortX start when the computer starts. If run as admin
+<br/>
+<br/>this installs a registry key for all users (in HKEY_LOCAL_MACHINE).
+<br/>
+<br/>-t: Amount of time to depress triggered keys. Note: key patterns
+<br/>
+<br/>separated by a comma are triggered subsequently.
+<br/>
+<br/>-u: Uninstall <em>ShortX</em> from the registry (stops <em>ShortX</em> from starting
+<br/>
+<br/>at system start-up).
+<br/>
+<br/>-v: Verbose mode. Display key names and codes to command window.
+<br/>
+<br/>Please let me know what you think and if you have any requests, comments, or suggestions!
+<br/>
+<br/><em>N</em><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

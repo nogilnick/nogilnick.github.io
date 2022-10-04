@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Visualizing Neural Network Performance on High-Dimensional Data</h1><h2>Mon, 13 Mar 2017</h2><h3><i>Computer Science</i>, <i>Deep Learning</i>, <i>Machine Learning</i>, <i>Matplotlib</i>, <i>Neural Networks</i>, <i>Python</i>, <i>Software</i>, <i>Tensorflow</i></h3>This post presents a short script that plots neural network performance on high-dimensional binary data using <a href="http://matplotlib.org/">MatPlotLib</a> in Python. Binary vectors, or vectors only containing 0 and 1, can be useful for representing categorical data or discrete phenomena. The code in this post is <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFPlot.py">available on GitHub.</a>
+<br/>
+<br/>
+<h1>Encoded Binary Vectors</h1>
+The data set is assumed to contain \(m\)-dimensional sample vectors associated with \(n\)-dimensional target vectors. As these vectors contain only 1s and 0s, the sample and target vectors can be considered as bit strings of length \(m\) and \(n\) respectively. These bit strings can then be thought of as unsigned integers. The following code converts a bit vector into its integer representation and back:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Converts a binary vector (left to right format) to an integer
+#x:            A binary vector
+#return:    The corresponding integer
+def BinVecToInt(x):
+    #Accumulator variable
+    num = 0
+    #Place multiplier
+    mult = 1
+    for i in x:
+        #Cast is needed to prevent conversion to floating point
+        num = num + int(i) * mult
+        #Multiply by 2
+        mult = len(v):
+            break
+        #Test if the LSB is set
+        if(x &amp; 1 == 1):
+            #Set the bits in right-to-left order
+            v[c] = 1
+        #Onto the next column and bit
+        c += 1
+        x &gt;&gt;= 1
+    return v</code></pre><br/><hr/><br/>
+<br/>
+<br/>The above code works for arbitrary size binary vectors as Python's built-in integer type can be of arbitrary size.
+<h1>Animated Learning</h1>
+Now the \(m\)-dimensional sample and \(n\)-dimensional target vectors can be transformed into integers. Using the above code, the original data-set can be condensed into 2 dimensions and can be plotted on the standard Cartesian coordinate plane using MatPlotLib. In the above transformation, the x-axis corresponds to the sample vectors and the y-axis corresponds to the target vectors. The following code uses MatPlotLib to produce an animation showing the target data and the model's prediction as successive training iterations pass.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Plot the model R learning the data set A, Y
+#R: A regression model
+#A: The data samples
+#Y: The target vectors
+def PlotLearn(R, A, Y):
+    intA = [BinVecToInt(j) for j in A]
+    intY = [BinVecToInt(j) for j in Y]
+    fig, ax = mpl.subplots(figsize=(20, 10))
+    ax.plot(intA, intY, label ='Orig')
+    l, = ax.plot(intA, intY, label ='Pred')
+    ax.legend(loc = 'upper left')
+    #Updates the plot in ax as model learns data
+    def UpdateF(i):
+        R.fit(A, Y)
+        YH = R.predict(A)
+        S = MSE(Y, YH)
+        intYH = [BinVecToInt(j) for j in YH]
+        l.set_ydata(intYH)
+        ax.set_title('Iteration: ' + str(i * 64) + ' - MSE: ' + str(S))
+        return l,
+
+    ani = mpla.FuncAnimation(fig, UpdateF, frames = 2000, interval = 128, repeat = False)
+    #ani.save('foo.mp4') #ffmpeg is required to save the animation to an mp4
+    mpl.show()
+    return ani</code></pre><br/><hr/><br/>
+<br/>
+<br/>In the above code, the nested function <i>UpdateF</i> is known as a <a href="https://en.wikipedia.org/wiki/Closure_%28computer_programming%29">closure</a>. Since functions are <a href="https://en.wikipedia.org/wiki/First-class_citizen">first-class citizens</a> in Python, they can be created as local-variables inside a function. This is useful in the above code as <i>UpdateF</i> can reference the MatPlotLib object in order to update the prediction data. Closures are a powerful if under-looked portion of Python that will be explored in a later topic.
+<br/>
+<br/>Notice that the animation object is returned from the function. This is due to <a href="http://stackoverflow.com/questions/21099121/python-matplotlib-unable-to-call-funcanimation-from-inside-a-function">an issue in MatPlotLib</a> resulting from <a href="https://en.wikipedia.org/wiki/Garbage_collection_%28computer_science%29">garbage collection</a>.
+<h1>Results</h1>
+Finally, the performance of the network can be visualized in real-time as the network is trained. In practice, the above code could be used to identify the point at which performance becomes satisfactory.<br/>
+<p style="text-align:center;"><iframe src="https://www.youtube-nocookie.com/embed/fc64hto75w8" title="YouTube video player" frameborder="0" allow="accelerometer;autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+<p style="text-align:center;"><strong>Figure 1: Video of Neural Network Performance over Time</strong></p>
+<br/>
+Once the animation window is closed, execution begins after the call to <i>PlotLearn</i>. At this point, the model could be written to a file, or used to perform prediction, etc.
+<br/>
+<br/><b>Note:</b> Spikes in the prediction graph are due to the fact that the <a href="https://en.wikipedia.org/wiki/Hamming_distance">Hamming distance</a> between two vectors \(\hat{x}\) and \(\hat{y}\) between two vectors can be small while the <a>Euclidean distance</a> in the above encoding can be arbitrarily large. For example, \(0\) and \(2^{n}\) only differ in only one bit position.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

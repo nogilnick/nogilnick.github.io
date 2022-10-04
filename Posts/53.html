@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>The Shooting Regressor; Randomized Gradient-Based Ensembles</h1><h2>Wed, 16 Sep 2020</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></h3>Gradient boosting stands apart from many other supervised learning approaches in some regard. It is an ensemble method, However, the ensemble is constructed sequentially. It estimates a target value. But, it does so indirectly through the gradient.
+<br/>
+<br/>The gradient boosting machine makes an initial guess that is subsequently refined by a sequence of weak estimators. The <i>i</i>-th estimator in the sequence crudely approximates the gradient at the <i>i</i>-th step of a gradient descent process. The final prediction is then the initial guess after refinement by the ensemble.
+<br/>
+<br/>Consider a gradient boosting machine that minimizes the mean squared error. The error function may be defined as
+<p style="text-align:center;">\[\displaylines{L(\hat{Y})= \frac{1}{2}\left\lVert \hat{Y} - Y \right\rVert _ 2 ^ 2 }\ .\]</p>
+The gradient of this loss function with respect to the current estimate \(\hat{Y}\) is simply
+<p style="text-align:center;">\[\displaylines{G_L(\hat{Y})= \hat{Y} - Y }\ .\]</p>
+Note that this is nothing more than the current residual. If the current residual can be estimated with accuracy, then estimation of the true target value is trivial; simply add the initial prediction to the estimated gradient. This suggests that estimation of the gradient is likely to be at least as difficult as estimation of the original target.
+<br/>
+<br/>Consider an initial guess. Given a target matrix with <i>m</i> samples, this initial guess is an <i>m</i>x1 vector. The point \((I, L(I))\) is a point on a surface of an <i>(n+1)</i>-dimensional paraboloid with a vertex at \((Y, 0)\). The gradient boosting machine attempts to move down the gradient on the surface of this paraboloid towards the vertex.
+<br/>
+<br/>An alternative approach is presented here. A cloud of initial values surrounding the vertex are sampled. From each of these positions, the gradient is approximated. A vector in this direction is shot out from each initial position arriving in a terminal position near the vertex. This "shooting regressor" then aggregates these multiple solutions into a final solution. Figures 1 and 2 respectively depict this process with 1D and 2D projections of the initial and terminal vectors using PCA.
+<p style="text-align:center;"><img src="../Img/shootproj.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: 1D Projection of Initial and Terminal Values</b></p>
+<p style="text-align:center;"><img src="../Img/shootproj3d.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: 2D Projection of Initial and Terminal Values</b></p>
+The shooting regressor leverages the gradient in order to obtain an ensemble of weakly correlated estimators. By approaching the loss function minimum from multiple initial positions, a diversity of solutions is provided that help reduce error due to variance. The scale of the gradient vectors controls the amount of correlation in the ensemble. This parameter gives direct control over a trade-off between correlation in the ensemble and precision in estimating the gradient. Methods to estimate optimal values for this parameter are discussed in the paper.
+<br/>
+<br/>Please refer to the paper and source code for more details.
+<b><a href="https://arxiv.org/abs/2009.06172"><u>Link to Paper</u></a>.</b>
+<b><a href="https://github.com/nicholastoddsmith/ShootingML"><u>Source Code</u></a>.</b><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

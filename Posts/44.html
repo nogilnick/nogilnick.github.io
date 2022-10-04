@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>On the Influence of Recessions on the S&amp;P 500 Index</h1><h2>Sat, 21 Mar 2020</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>Statistics</i></h3>The following plots explore the influence of two economic factors during recessions on the S&amp;P 500 index: unemployment and gross domestic product (GDP). A linear model is constructed to predict the low of the S&amp;P 500 index during a given recession using two transformed variables derived from the maximum unemployment and GDP differentials for that recession.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/rescscatter.png"><img src="../Img/rescscatter.png" /></a></td><td><a href="../Img/rescscatterwgd.png"><img src="../Img/rescscatterwgd.png" /></a></td></tr><tr><td><a href="../Img/spres.png"><img src="../Img/spres.png" /></a></td><td><a href="../Img/sppred.png"><img src="../Img/sppred.png" /></a></td></tr><tr><td colspan="2"><a href="../Img/rescscatterwpre.png"><img src="../Img/rescscatterwpre.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 1: Multiple Regression Analysis of Past Recessions</b></p>
+<br/>
+Predictions for the decrease in GDP and unemployment levels are taken to be 25% and 20% respectively. These are taken from Goldman Sachs predictions and estimates from Mnuchin respectively. A ridge regression model is fit with regularization weight chosen using grid search and leave one out validation.
+<br/>
+<br/>Past recessions with more similarity both temporally and in terms of the current estimates are given more weight. By so doing, the model focuses on past recessions that are more similar in nature to the current situation. In the above plots, the weight of each recession is indicated by the size of the scatter plot marker.
+<br/>
+<br/><b>Note:</b> This post is for informational purposes only and does not constitute financial, professional, or any other form of advice.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

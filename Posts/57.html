@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Analysis of the Preliminary 2020 Election Results</h1><h2>Sat, 14 Nov 2020</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Election</i>, <i>Election2020</i>, <i>Statistics</i>, <i>Voting</i></h3>The 2020 general election in the U.S.A. is interesting in several regards. Perhaps chief among these is the influence of the COVID-19 pandemic on voting patterns and the subsequent shift to more reliance on mail-in voting. This post presents analysis of the preliminary election results and attempts to explain some of the observed trends.
+
+Figure 1 compares the counts of votes received by the two leading candidates in 2016 and 2020. The total number of votes shared by the two in 2020 is roughly 148.2 million, up 20% (24.7 million) from 2016. At the same time, estimates constructed from the U.S. Census Bureau indicate the population grew by roughly 2% (7 million) during this same period. Assuming the number of population members that are eligible to vote is proportional to the size of the population itself, the percentage change in voter turnout is crudely approximated to be about 15%.
+<p style="text-align:center;"><a href="../Img/ge20popvote.png"><img src="../Img/ge20popvote.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: Popular Vote Results in 2016 and 2020</b></p>
+The distribution of candidate support by county is similar to that from the 2016 election. Additionally, the relationship between population size and party support is slightly stronger in the 2020 election than in the 2016 election. Namely, <i>R²=0.26</i> in 2016 and <i>R²=0.29</i> in 2020, an increase of 11.5%.
+<table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/ge20clntrmpcthist.png"><img src="../Img/ge20clntrmpcthist.png" /></a></td><td><a href="../Img/ge20clntrmscatter.png"><img src="../Img/ge20clntrmscatter.png" /></a></td></tr></table>
+<p style="text-align:center;"><b>Figure 2: Candidate Support by County in 2020</b></p>
+Again, the charts in Figure 2 suggest that, in general, Republicans win a larger number of counties by wide margins. At the same time, from Figure 1, the Democratic candidate is favored in the popular vote with roughly 76.4 million votes compared to 71.8 million votes for the Republican. Taken in conjunction, this once again suggests that Democrats lead in counties with larger populations and this is corroborated by the modest <i>R²</i> that is observed.
+<br/>
+<br/>A choropleth chart is created which compares voter turnout in the 2016 election to the preliminary results from 2020. The numbers are adjusted using approximate population estimates provided by the U.S. Census Bureau.
+<p style="text-align:center;"><a href="../Img/turnoutchng20.png"><img src="../Img/turnoutchng20.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: Change in Voter Turnout in (2016 to 2020)</b></p>
+Next, change in support is considered for the two leading parties: Republican and Democrat. The influence of party candidates in other parties is neglected such that <i>x = (1 - y)</i>, where <i>x</i> is the ratio support for the Republican candidate and <i>y</i> is the support for the Democratic candidate.
+<p style="text-align:center;"><a href="../Img/partychng20.png"><img src="../Img/partychng20.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 4: Change in Party Support (2016 to 2020)</b></p>
+Figure 5 shows the counties that exhibit the greatest magnitude of change in support for either party. The color axis may be used to identify the direction of the change: Republican to Democrat or vice versa.
+<p style="text-align:center;"><a href="../Img/20topmoving.png"><img src="../Img/20topmoving.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 5: Top Moving Counties (2016 to 2020)</b></p>
+Next, counties that flipped party when compared with the result from 2016 are explored. For the sake of comparison, counties that did not change their party between the two elections are differentiated with lighter colors.
+<p style="text-align:center;"><a href="../Img/flippedchng20.png"><img src="../Img/flippedchng20.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 6: Counties that Changed Party Support (2016 to 2020)</b></p>
+In Figure 6, each county is colored with one of four colors which correspond to one of the following four statuses:
+<ul>
+ 	<li>Dark Red: Democrat Majority (2016) and Republican Majority (2020)</li>
+ 	<li>Light Red: Republican Majority (2016) and Republican Majority (2020)</li>
+ 	<li>Light Blue: Democrat Majority (2016) and Democrat Majority (2020)</li>
+ 	<li>Dark Blue: Republican Majority (2016) and Democrat Majority (2020)</li>
+</ul>
+Sixty counties flipped from supporting the Republican candidate in 2016 to supporting the Democratic one in 2020 and 19 flipped the other way. In total, the Republican candidate won 83.5% (2625) of counties in 2016 and 82.2% (2584) in 2020, down 1.5% (41) counties from 2016.
+<br/>
+<br/>Finally, predictive models are constructed which attempt to estimate support for each candidate using the data <a href="Posts/56.html">from the previous post</a>. In this way, a model uses historical information about counties to predict support for a specific candidate in the 2020 election.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/factorimpactbiden20.png"><img src="../Img/factorimpactbiden20.png" /></a></td><td><a href="../Img/factorimpacttrump20.png"><img src="../Img/factorimpacttrump20.png" /></a></td><td><a href="../Img/factorimpactvoterturnout20.png"><img src="../Img/factorimpactvoterturnout20.png" /></a></td></tr></table>
+<p style="text-align:center;"><b>Figure 7: County Historical Factors Influencing the 2020 Election</b></p>
+Figure 7 shows the most influential factors in determining candidate support for Trump, support for Biden, and overall voter turnout. The results obtained from these models are similar to those from the previous post, though there are a number of differences. The "White or Asian" demographic category became more influential in driving voter turnout, suggesting that these groups were partially responsible for the increase in turnout in 2020. With respect to support for the Democratic candidate, county population and the percentage of residents with graduate degrees became relatively more important in 2020.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

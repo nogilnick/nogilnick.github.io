@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>A Brief Analysis of Survey Data from a Speed Dating Event</h1><h2>Sat, 05 May 2018</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Human Behavior</i>, <i>Statistics</i></h3>In this post, survey data collected from several speed dating events is analyzed. The events were conducted between 2002 and 2004 by two professors from Columbia University: Ray Fisman and Sheena Iyengar. In addition to questions about personal interests, the survey includes academic and occupational questions as well.
+<br/>
+<br/>The survey results are contained in a CSV file. Each row in the data set represents a pairing of two partners during the event. The rows contains information about both individuals as well as several computed interaction values.
+<h1>Analysis by Field</h1>
+First, the data is grouped by field of study and averaged. A chord chart is constructed showing the number of matches between different fields of study.<br/>
+<p style="text-align:center;">
+<a href="../Img/chordmatch2.png"><img src="../Img/chordmatch2.png" alt="ChordMatch" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 1: Matches Between Fields of Study</b></p>
+<br/>
+Next, the averaged data is shown in a column and line chart. The columns display the average ratio of partners expressing interest to total partners for each field. The line represents the number of participants in each field.<br/>
+<p style="text-align:center;">
+<a href="../Img/studybar2.png"><img src="../Img/studybar2.png" alt="StudyBar" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 2: Average Interest and Count by Field</b></p>
+<br/>
+The majority of participants are within the Business/Economics/Finance column. Participants from <i>languages</i> and <i>medical</i> match with the largest ratio of their partners. However, the sample size from these fields is quite small. Since there is only one participant in each of the <i>architecture</i> and <i>undecided</i> columns, these fields are filtered in later graphs.
+<br/>
+<br/>With a ratio of 0.31, engineers match with the smallest ratio of their partners. To formally compare the difference between business and engineering, a Welch's t-test for the difference of two means is conducted. The difference between these two fields is found to be significant (p &lt; 1e-11).
+<br/>
+<br/>In the event, participants are asked to rate their interest on a scale from 1 to 10 in several areas. These areas include art, music, gaming, hiking, and others. By grouping participants by field, average interest in these areas per field is explored.
+<br/>
+<br/>The data for each field is aggregated and the average interest per field is computed. Figure 3 shows a scatter plot of interest in gaming, movies, and music by field. Larger plot markers indicate more interest in music.<br/>
+<p style="text-align:center;">
+<a href="../Img/gamovefield2.png"><img src="../Img/gamovefield2.png" alt="GamoveField" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 3: Average Interest in Gaming, Movies, and Music</b></p>
+<br/>
+Engineers have above average interest in gaming and below average interest in movies. The opposite is true for English, creative writing, or journalism majors. Scatter plots are also constructed for interest in yoga, clubbing, and hiking as well as shopping, museums, and theater.<br/>
+<p style="text-align:center;">
+<a href="../Img/shoeumsfield2.png"><img src="../Img/shoeumsfield2.png" alt="ShoeumsField" height="auto" width="75%" /></a>
+<br/>
+<p style="text-align:center;"><a href="../Img/clubgafield2.png"><img src="../Img/clubgafield2.png" alt="ClubgaField" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><a href="../Img/callfield2.png"><img src="../Img/callfield2.png" alt="CallField" height="auto" width="75%" /></a></p>
+</p>
+<p style="text-align:center;"><b>Figure 4: Average Interest in Other Areas</b></p>
+<br/>
+The results appear mostly in line with intuition. There are two clusters of fields that are divided over interest in yoga. The group on the left includes medicine, law, math, and the sciences. The group on the left includes the humanities, social science, and languages. The group on the left is significantly less interested in yoga than the one on the right.<br/>
+<p style="text-align:center;">
+<a href="../Img/racerelig2.png"><img src="../Img/racerelig2.png" alt="RaceRelig" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 5: Importance of Race and Religion</b></p>
+<br/>
+The survey asks participants to rate the importance of religion and race in finding a match. The scale ranges from 1 to 7 with 7 indicating the highest importance. Another scatter plot is constructed from the results of these questions. The result is shown in Figure 5.
+<h1>Gender Differences</h1>
+The participants are divided by gender and interest in gaming. The results are displayed in a column chart along with the ratio of partners matched.<br/>
+<p style="text-align:center;">
+<a href="../Img/gamebar2.png"><img src="../Img/gamebar2.png" alt="GameBar" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 6: Participants by Interest in Gaming</b></p>
+<br/>
+The more central values of interest elicit similar responses. The extreme values tend to elicit stronger positive or negative responses. The single largest group of women indicate the least amount of interest in gaming.
+<br/>
+<br/>Next, average interest in all areas is computed for each gender and the result is displayed in a clustered column chart.<br/>
+<p style="text-align:center;">
+<a href="../Img/activitypop2.png"><img src="../Img/activitypop2.png" alt="ActivityPop" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 7: Average Interest by Gender</b></p>
+<br/>
+Movies, music, and dining are rated the highest with yoga and gaming rated the lowest. It is likely that participation bias is influencing these results somewhat. Movies, music, and dining are classic dating activities and interest in them is likely higher in those who participate in speed dating events than in the general population.
+<br/>
+<br/>Next, the gender balance in each field of study is explored. A chord diagram is constructed which shows the gender balance in different fields of study. The top three fields for men are business, engineering, and the natural sciences. The top three fields for women are social science, education/academia, and the natural sciences.<br/>
+<p style="text-align:center;">
+<a href="../Img/fieldgendbal3.png"><img src="../Img/fieldgendbal3.png" alt="FieldGenderBal" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 8: Gender Counts by Field of Study</b></p>
+<br/>
+Men comprise the majority in business, engineering, and law. Women make up a majority in social science, education/academia, English, and several of the other less populous fields. The distribution of men is more imbalanced; the majority of men reside within a minority of the fields. The distribution of women is more balanced.
+<h1>Analysis by Career</h1>
+Next, a scatter plot is constructed that plots the ratio of partners expressing interest to the ratio of participants expressing interest. The size represents the average number of matches for each field (a match occurs when both partners are interested).<br/>
+<p style="text-align:center;">
+<a href="../Img/matchcareer2.png"><img src="../Img/matchcareer2.png" alt="MatchCareer" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 9: Match Decisions by Career</b></p>
+<br/>
+Engineers are interested in the largest number of partners but elicit the least amount of interest. The converse is true for those in the field of international affairs and humanitarian causes.
+<br/>
+<br/>Next, a Sankey diagram is constructed showing the relationship between field of study and career. The nodes on the left represent field of study and those on the right indicate career.<br/>
+<p style="text-align:center;">
+<a href="../Img/studysankey3.png"><img src="../Img/studysankey3.png" alt="StudySankey" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 10: Field of Study to Current Career</b></p>
+<br/>
+Most of the results make sense, though there are some interesting points. For instance, more engineers desire careers in business, finance, and academia than actual engineering jobs. This result is most likely affected by participation bias as well.
+<h1>Analysis by Age Group</h1>
+Next, the participants are grouped into bins by age. A scatter plot is constructed plotting average interest in theater against average interest in gaming for each age group.<br/>
+<p style="text-align:center;">
+<a href="../Img/gametheatage2.png"><img src="../Img/gametheatage2.png" alt="GameTheatAge" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 11: Interest in Theater and Gaming by Age Group</b></p>
+<br/>
+Older participants are less interested in gaming but only slightly more interested in theater. The plot marker size indicates the number of participants in each age group.
+<br/>
+<br/>The dataset contains many other interesting features. Unfortunately, a large number of these features have a large amount of missing values.
+<br/>
+<br/>The charts in this post were made using Microsoft PowerBI.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Binary Classification with Artificial Neural Networks using Python and TensorFlow</h1><h2>Sat, 09 Dec 2017</h2><h3><i>Classification</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i>, <i>Python</i>, <i>Tensorflow</i></h3>This post is an introduction to using the <i>TFANN</i> module for classification problems. The TFANN module is <a href="https://github.com/nicholastoddsmith/pythonml">available here on GitHub</a>. The name TFANN is an abbreviation for <i>TensorFlow Artificial Neural Network</i>. <a href="https://www.tensorflow.org/">TensorFlow</a> is an open-source library for data flow programming. Due to the nature of computational graphs, using TensorFlow can be challenging at times. The TFANN module provides several classes that allow for interaction with the TensorFlow API using familiar object-oriented programming paradigms.
+<h1>The Setup</h1>
+First, the required modules are installed and imported. This code requires <i>numpy</i>, <i>tensorflow</i>, and <i>TFANN</i>.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import numpy as np
+from TFANN import ANNC</code></pre><br/><hr/><br/>
+<br/>
+<br/><i>TFANN</i> can be installed via <i>pip</i> or by copying the source code into a file named <i>TFANN.py</i>.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>pip install TFANN</code></pre><br/><hr/><br/>
+<br/>
+<br/>Next, an \((n, 2)\) matrix of random data points \(\textbf{A}\) is generated using <i>numpy</i>. Class labels are created following a polynomial inequality. The polynomial used is<br/>
+<p style="text-align:center;">\(F(x, y) = -x^{2}+0.1x-0.6y+0.20\).</p>
+<br/>
+The inequality used to generate class labels is<br/>
+<p style="text-align:center;">\(F(x, y) &gt; 0\).</p>
+<br/>
+The equation \(F(x,y)=0\) is a downwards facing parabola centered on the y axis. Points below the parabola satisfy the inequality and are labeled as 1. Points above the curve are labeled as 0. Code to generate the data matrix and class labels follows.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>def F(x, y):
+    return - np.square(x) + .1 * x - .6 * y + .2
+
+#Training data
+A1 = np.random.uniform(-1.0, 1.0, size = (1024, 2))
+Y1 = (F(A1[:, 0], A1[:, 1]) &gt; 0).astype(np.int)
+#Testing data
+A2 = np.random.uniform(-1.0, 1.0, size = (1024, 2))
+Y2 = (F(A2[:, 0], A2[:, 1]) &gt; 0).astype(np.int)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The function curve is shown in Figure 1 along with a scatter plot of the generated data matrix.<br/>
+<p style="text-align:center;"><img src="../Img/polyineq1.png" alt="PolyIneq" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: The Generated Data</b></p>
+<br/>
+The color indicates the value of \(F(x,y)\) and the curve is \(F(x,y)=0\). The same plot colored instead with class labels in shown in Figure 2.<br/>
+<p style="text-align:center;"><img src="../Img/polyclass.png" alt="PolyClass.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: Generated Data with Class Labels</b></p>
+<br/>
+As can be seen above, the data is divided into two classes: <i>0</i> and <i>1</i>. The goal is to create a model which can determine if a data point belongs to class <i>0</i> or to class <i>1</i>. This is known as <i>binary classification</i> as there are two class labels.
+<h1>Multi-Layer Perceptron Classification</h1>
+Next, a multi-layer perceptron (MLP) network is fit to the data generated earlier. In this example, the function used to generate class labels is known. This is typically not the case. Instead, the model iteratively updates its parameters so as to reduce the value of a <i>loss function</i>.
+<br/>
+<br/>A two layer MLP is constructed. The activation function <i>tanh</i> is used after the first hidden layer and the output layer uses linear activation (no activation function). The architecture of the network is illustrated in Figure 3.<br/>
+<p style="text-align:center;"><img src="../Img/annna.png" alt="ANNNA" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 3: MLP Network Architecture</b></p>
+<br/>
+The green dots on the neurons in the hidden layer indicate <i>tanh</i> activation. Next, this network architecture is specified in a format that TFANN accepts and an ANN classifier is constructed.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>NA = [('F', 4), ('AF', 'tanh'), ('F', 2)]</code></pre><br/><hr/><br/>
+<br/>
+<br/>The list of tuples is the network architecture. <i>F</i> indicates a fully-connected layer and the following number indicates the number of neurons in the layer. <i>AF</i> indicates an activation function and the following string indicates the name of the function. As can be seen, the network architecture specifies a fully-connected layer with 4 neurons which is followed by <i>tanh</i> which is followed by another fully-connected layer with 2 neurons. The final layer is the output layer.
+<br/>
+<br/>The docstring for the <i>_CreateANN</i> function provides detailed information on the types of network operations that are currently supported by <i>TFANN</i>.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>In [109]: help(TFANN._CreateANN)
+Help on function _CreateANN in module TFANN:
+
+_CreateANN(PM, NA, X)
+    Sets up the graph for a convolutional neural network from 
+    a list of operation specifications like:
+    
+    [('C', [5, 5, 3, 64], [1, 1, 1, 1]), ('AF', 'tanh'), 
+     ('P', [1, 3, 3, 1], [1, 2, 2, 1]), ('F', 10)]
+    
+    Operation Types:
+    
+        AF:     ('AF', &lt;name&gt;)  Activation Function 'relu', 'tanh', etc
+        C:      ('C', [Filter Shape], [Stride])     2d Convolution
+        CT:     2d Convolution Transpose
+        C1d:    ('C1d', [Filter Shape], Stride)     1d Convolution
+        C3d:    ('C3d', [Filter Shape], [Stride])   3d Convolution
+        D:      ('D', Probability)                  Dropout Layer
+        F:      ('F', Output Neurons)               Fully-connected
+        LRN:    ('LRN')                             
+        M:      ('M', Dims)                         Average over Dims
+        P:      ('P', [Filter Shape], [Stride])     Max Pool
+        P1d:    ('P1d', [Filter Shape], Stride)     1d Max Pooling
+        R:      ('R', shape)                        Reshape
+        S:      ('S', Dims)                         Sum over Dims
+    
+    [Filter Shape]: (Height, Width, In Channels, Out Channels)
+    [Stride]:       (Batch, Height, Width, Channel)
+    Stride:         1-D Stride (single value)
+    
+    PM:     The padding method
+    NA:     The network architecture
+    X:      Input tensor</code></pre><br/><hr/><br/>
+<br/>
+<br/>The final layer of a classification network requires that class labels be encoded as 1-hot vectors along the final axis of the output. Since the network predicts a single binary class label for each sample, the final layer should have 2 neurons. In this way, the final layer outputs a matrix of dimension \((n, 2)\). The function <i>argmax</i> is applied along the final dimension of the output matrix to obtain the index of the class label.
+<br/>
+<br/>Next the network architecture is passed to the constructor of the <i>ANNC</i> class, along with the input shape and other parameters. ANNC is an abbreviation for <i>Artificial Neural Network for Classification</i>.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>annc = ANNC(A1.shape[1:], NA, batchSize = 1024, 
+       maxIter = 4096, learnRate = 1e-3, verbose = True)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The first arguments to the <i>ANNC</i> constructor is the shape of a single input sample. In this case, the shape is a vector of length <i>2</i>. The <i>batchSize</i> argument indicates the number of samples to use at a time when training the network. The batch indices are selected randomly for each training iteration. The <i>learnRate</i> parameter specifies the learning rate used by the training method (which is the <a href="https://www.tensorflow.org/api_docs/python/tf/train/AdamOptimizer">adam</a> method by default). The <i>maxIter</i> argument limits the number of training iterations to some fixed amount. Finally, <i>verbose</i> controls whether the loss is displayed after each iteration of training. Detailed descriptions for the constructor arguments are available using <i>help(ANNC)</i>.
+<br/>
+<br/><i>TFANN</i> follows the <i>fit</i>, <i>predict</i>, <i>score</i> interface used by <a href="http://scikit-learn.org/">scikit-learn</a>. Thus, fitting and scoring the network can be accomplished as follows.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>annc.fit(A1, Y1)            #Fit using training data only
+s1 = annc.score(A1, Y1)     #Performance on training data
+s2 = annc.score(A2, Y2)     #Testing data
+print('Train: {:04f}\tTest: {:04f}'.format(s1, s2))
+YH = annc.predict(A2)       #Predicted labels</code></pre><br/><hr/><br/>
+<br/>
+<br/>The <i>score</i> method uses <i>accuracy</i> as the metric for classification models. This is the number of samples labeled correctly divided by the number of samples. Some care should be used with this metric in problems where class labels are imbalanced.
+<h1>Results</h1>
+Due to the simple nature of the problem, the network is able to achieve very high accuracy on the cross-validation data. After <i>4096</i> iterations, the network achieves roughly <i>98%</i> accuracy. The predictions on the testing data are plotted below in Figure 4.<br/>
+<p style="text-align:center;"><img src="../Img/polypred.png" alt="PolyPred" height="auto" width="75%" /></a><br/>
+<p style="text-align:center;"><b>Figure 4: Model Cross-Validation Predictions (Accuracy = <i>98.4%</i>)</b></p>
+<br/>
+The reader is encouraged to modify the data, network architecture, and parameters to explore the features provided by <i>TFANN</i>.
+<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

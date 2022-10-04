@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Multi-Layer Perceptron Networks in Theano and TensorFlow: An Implementation and Benchmark</h1><h2>Sat, 15 Apr 2017</h2><h3><i>Ai</i>, <i>Ann</i>, <i>Benchmark</i>, <i>Computer Science</i>, <i>Machine Learning</i>, <i>Mlp</i>, <i>Python</i>, <i>Tensorflow</i>, <i>Theano</i></h3>A <a href="Posts/5.html">past blog post</a> explored using multi-layer-perceptrons (MLP) to predict stock prices using Tensorflow and Python. This post introduces another common library used for artificial neural networks (ANN) and other numerical purposes: <a href="http://deeplearning.net/software/theano/">Theano</a>. An MLP Python class is created implemented using Theano, and then the performance of the class is compared with the <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFANN.py">TFANN</a> class in a benchmark.
+<h1>Installing Theano on Windows</h1>
+An easy way to get Theano working quickly is to first install <a href="https://www.continuum.io/downloads">Anaconda</a>. Anaconda is packaged with Python, NumPy, and several other of the installation requirements bundled together in a convenient installer (see Figure 1). This guide recommends using Anaconda3-4.2.0 for 64-bit Windows for simultaneous compatibility with TensorFlow.<br/>
+<p style="text-align:center;"><img src="../Img/screenshot-131.png" alt="SystemEnvVars" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: Anaconda Python Installer</b></p>
+<br/>
+An additional dependency that is required is a GCC toolchain. If the computer has an existing version of GCC or G++ installed, environment variables may need to be set to ensure Theano uses the appropriate tool chain. In Windows, environment variables can be viewed by typing <i>set</i> at the command prompt. System environment variables can be modified under <i>System</i> -&gt; <i>Change Settings</i> -&gt; <i>Advanced</i> -&gt; <i>Environment Variables</i> (on Server 2012 R2). User environment variables are set under <i>User Accounts</i> -&gt; <i>Change my environment variables</i>. If there are no conflicting GCC toolchains (mingw, mingw64, etc), the m2w64-toolchain can be installed by typing: <i>conda install m2w64-toolchain</i> at an Anaconda Command Prompt. This will make G++ in the Anaconda Prompt (a special command prompt including extra environment variables that is bundled with Anaconda).<br/>
+<p style="text-align:center;"><img src="../Img/screenshot-11.png" alt="SystemEnvVars" height="auto" width="75%" />
+<p style="text-align:center;"><b>Figure 2: Setting System Environment Variables in Windows</b></p>
+<br/>
+If the computer has an NVidia GPU with CUDA Compute Capability of 1.2 or greater, Theano can be configured to run on the GPU. NVidia's website has <a href="https://developer.nvidia.com/cuda-gpus">a page</a> that lists the Compute Capability for each of their supported cards. CUDA can be downloaded <a href="https://developer.nvidia.com/cuda-downloads">here</a>. <b>Note</b>: CUDA recommends installing Visual Studio for full support. Visual Studio 2010 was used for this guide.
+<br/>
+<br/>With the above dependencies installed, Theano can be installed by typing: <i>conda install theano pygpu</i> at an Anaconda Command Prompt. <b>Note</b>: At the time of writing this post, there is a memory leak issue in Theano 0.9.0 causing memory consumption to grow without bound. Version 0.8.2 does not have this issue and can be installed using <i>conda install theano=0.8.2</i>.
+<h1>An MLP Class Using Theano</h1>
+Similar to TensorFlow, most Theano functions create graph operations that are not immediately performed. This computation graph is later evaluated to perform the actual desired operations.
+<br/>
+<br/>In this class, the MLP network is constructed using the typical matrix multiplication representation. The output of a layer is the matrix product of the input matrix with the weight matrix. A bias term is added to the output and then an activation function is applied element-wise on the result. For more details about the math behind MLP networks, see <a href="Posts/3.html">a past blog post</a>. Code to setup the MLP class is as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Create an MLP: A sequence of fully-connected layers with an activation
+#function AF applied at all layers except the last.
+#X:		The input tensor
+#W:		A list of weight tensors for layers of the MLP
+#B:		A list of bias tensors for the layers of the MLP
+#AF: 	The activation function to be used at hidden layers
+#Ret:	The network output 
+def CreateMLP(X, W, B, AF):
+	n = len(W)
+	for i in range(n - 1):
+		X = AF(X.dot(W[i]) + B[i])
+	return X.dot(W[n - 1]) + B[n - 1]
+
+#Creates weight and bias matrices for an MLP network
+#given a list of the layer sizes.
+#L:		A list of the layer sizes
+#Ret:	The lists of weight and bias matrices (W, B)
+def CreateMLPWeights(L):
+	W, B = [], []
+	n = len(L)
+	for i in range(n - 1):
+		#Use Xavier initialization for weights
+		xv = np.sqrt(6. / (L[i] + L[i + 1]))
+		W.append(theano.shared(np.random.uniform(-xv, xv, [L[i], L[i + 1]])))
+		#Initialize bias to 0
+		B.append(theano.shared(np.zeros([L[i + 1]])))
+	return (W, B)  
+
+#Given a string of the activation function name, return the
+#corresponding Theano function.
+#Ret:	The Theano activation function handle
+def GetActivationFunction(name):
+	if name == 'tanh':
+		return T.tanh
+	elif name  == 'sig':
+		return T.nnet.sigmoid
+	elif name == 'fsig':
+		return T.nnet.ultra_fast_sigmoid
+	elif name == 'relu':
+		return T.nnet.relu
+	elif name == 'softmax':
+		return T.nnet.softmax
+
+class TheanoMLPR:
+
+	def __init__(self, layers, actfn = 'tanh', batchSize = None, learnRate = 1e-3, maxIter = 1000, tol = 5e-2, verbose = True):
+		self.AF = GetActivationFunction(actfn)
+		#Batch size
+		self.bs = batchSize
+		self.L = layers
+		self.lr = learnRate
+		#Error tolerance for early stopping criteron
+		self.tol = tol
+		#Toggles verbose output
+		self.verbose = verbose
+		#Maximum number of iterations to run
+		self.nIter = maxIter
+		#List of weight matrices
+		self.W = []
+		#List of bias matrices
+		self.B = []
+		#Input matrix
+		self.X = T.matrix()
+		#Output matrix
+		self.Y = T.matrix()
+		#Weight and bias matrices
+		self.W, self.B = CreateMLPWeights(layers)
+		#The result of a forward pass of the network
+		self.YH = CreateMLP(self.X, self.W, self.B, self.AF)
+		#Use L2 loss for network
+		self.loss = ((self.YH - self.Y) ** 2).mean()
+		#Function for performing a forward pass
+		self.ffp = theano.function([self.X], self.YH)
+		#For computing the loss
+		self.fcl = theano.function([self.X, self.Y], self.loss)
+		#Gradients for weight matrices
+		self.DW = [T.grad(self.loss, Wi) for Wi in self.W]
+		#Gradients for bias
+		self.DB = [T.grad(self.loss, Bi) for Bi in self.B]
+		#Weight update terms
+		WU = [(self.W[i], self.W[i] - self.lr * self.DW[i]) for i in range(len(self.DW))]
+		BU = [(self.B[i], self.B[i] - self.lr * self.DB[i]) for i in range(len(self.DB))]
+		#Gradient step
+		self.fgs = theano.function([self.X, self.Y], updates = tuple(WU + BU))</code></pre><br/><hr/><br/>
+<br/>
+<br/>As can be seen above, the network graph is created in the constructor for the TheanoMLPR class. Note that <i>self.X</i> and <i>self.Y</i> are placeholders for the input matrices, similar to TensorFlow. <i>theano.function</i> is used to create a function in the computation graph which is used to provide input and get output from the graph itself. For instance, <i>self.ffp = theano.function([self.X], self.YH)</i> creates a function that takes as input <i>self.X</i> and performs the necessary operations to get <i>self.YH</i> using <i>self.X</i> as input. <i>self.YH</i> is defined as the feedforward step (see <i>CreateMLP</i>), so <i>self.ffp</i> therefore performs the feedforward process in the MLP.
+<br/>
+<br/>Fitting the network is done similar to the corresponding MLPR TensorFlow class. On each training iteration the gradients are computed for the network and then applied to the weight and bias matrices using <i>self.fgs</i>. Prediction and scoring are simple applications of the function defined in the constructor. The remaining code for the class is as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Initializes the weight and bias matrices of the network
+def Initialize(self):
+	n = len(self.L)
+	for i in range(n - 1):
+		#Use Xavier initialization for weights
+		xv = np.sqrt(6. / (self.L[i] + self.L[i + 1]))
+		self.W[i].set_value(np.random.uniform(-xv, xv, [self.L[i], self.L[i + 1]]))
+		#Initialize bias to 0
+		self.B[i].set_value(np.zeros([self.L[i + 1]]))		
+		
+#Fit the MLP to the data
+#A: 	numpy matrix where each row is a sample
+#Y: 	numpy matrix of target values
+def fit(self, A, Y):
+	self.Initialize()
+	m = len(A)
+	for i in range(self.nIter):
+		if self.bs is None: #Use all samples
+			self.fgs(A, Y)			#Perform the gradient step
+		else: 	#Train m samples using random batches of size self.bs
+			for _ in range(0, m, self.bs):
+				#Choose a random batch of samples
+				bi = np.random.randint(m, size = self.bs)
+				self.fgs(A[bi], Y[bi])	#Perform the gradient step on the batch
+		if i % 10 == 9:
+			loss = self.score(A, Y)
+			if self.verbose:
+				print('Iter {:7d}: {:8f}'.format(1 + i, loss))
+			if loss &lt; self.tol:
+				break
+
+#Predict the output given the input (only run after calling fit)
+#A: 	The input values for which to predict outputs
+#Ret: 	The predicted output values (one row per input sample)
+def predict(self, A):
+	return self.ffp(A)
+
+#Predicts the ouputs for input A and then computes the loss term
+#between the predicted and actual outputs
+#A: 	The input values for which to predict outputs
+#Y: 	The actual target values
+#Ret: 	The network loss term
+def score(self, A, Y):
+	return np.float64(self.fcl(A, Y))</code></pre><br/><hr/><br/>
+<br/>
+<br/>The complete code for the class is <a href="https://github.com/nicholastoddsmith/pythonml">available here on GitHub</a>.
+<h1>Tensorflow vs Theano Benchmark</h1>
+Next, a benchmark is constructed to compare the performance of the TheanoMLPR class with that of the MLPR class from TFANN developed earlier. A data set comprised of random data is generated. Target values are taken to be the sum of the corresponding sample vectors squared. The sample matrix is then perturbed by values in [0, 1] and scaled again to the range [0, 1]. The sample and target matrices are written to a file so that both benchmarks can use identical data sets.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Generate data with nf features and ns samples. If new data
+#is generated, write it to file so it can be reused across all benchmarks
+def GenerateData(nf = 256, ns = 16384):
+	try:	#Try to read data from file
+		A = np.loadtxt('bdatA.csv', delimiter = ',')
+		Y = np.loadtxt('bdatY.csv', delimiter = ',').reshape(-1, 1)
+	except OSError:		#New data needs to be generated
+		x = np.linspace(-1, 1, num = ns).reshape(-1, 1)
+		A = np.concatenate([x] * nf, axis = 1)
+		Y = ((np.sum(A, axis = 1) / nf) ** 2).reshape(-1, 1)
+		A = (A + np.random.rand(ns, nf)) / (2.0)
+		np.savetxt('bdatA.csv', A, delimiter = ',')
+		np.savetxt('bdatY.csv', Y, delimiter = ',')
+	return (A, Y)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The benchmark compares the time taken for each model in training and testing. The amount of time to train and test each model is measured as the number of samples in the data set increases. The original data set is divided into <i>n</i> pieces and the training and testing times using the first <i>i</i> chunks are recorded.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#R:		Regressor network to use
+#A:		The sample data matrix
+#Y:		Target data matrix
+#nt:	Number of times to divide the sample matrix
+#fn:	File name to write results
+def MakeBenchDataFeature(R, A, Y, nt, fn):
+	#Divide samples into nt peices on for each i run benchmark with chunks 0, 1, ..., i
+	step = A.shape[1] // nt
+	TT = np.zeros((nt, 3))
+	for i in range(1, nt):
+		#Number of features
+		TT[i, 0] = len(range(0, (i * step)))
+		print('{:8d} feature benchmark.'.format(int(TT[i, 0])))
+		#Training and testing times respectively
+		TT[i, 1], TT[i, 2] = RunBenchmark(R, A[:, 0:(i * step)], Y[:, 0:(i * step)])
+	#Save benchmark data to csv file
+	np.savetxt(fn, TT, delimiter = ',', header = 'Samples,Train,Test')
+	
+#Plots benchmark data on a given matplotlib axes object
+#X:		X-axis data
+#Y:		Y-axis data
+#ax:	The axes object
+#name:	Name of plot for title
+#lab:	Label of the data for the legend
+def PlotBenchmark(X, Y, ax, xlab, name, lab):
+	ax.set_xlabel(xlab)
+	ax.set_ylabel('Avg. Time (s)')
+	ax.set_title(name + ' Benchmark')
+	ax.plot(X, Y, linewidth = 1.618, label = lab)
+	ax.legend(loc = 'upper left')
+	
+#Runs a benchmark on a MLPR model 
+#R:		Regressor network to use
+#A:		The sample data matrix
+#Y:		Target data matrix
+def RunBenchmark(R, A, Y):
+	#Record training times
+	t0 = time.time()
+	R.fit(A, Y)
+	t1 = time.time()
+	trnt = t1 - t0
+	#Record testing time
+	t0 = time.time()
+	YH = R.predict(A)
+	t1 = time.time()
+	tstt = t1 - t0
+	return (trnt, tstt)</code></pre><br/><hr/><br/>
+<br/>
+<br/>To allow for a more fair comparison, the main program performs a single benchmark on each run. This is accomplished by passing a command-line argument to the program to indicate which benchmark to run: <i>tensorflow</i>, <i>theanogpu</i>, or <i>theano</i>. The command-line argument <i>plot</i> will display the generated benchmark data and plot it using MatPlotLib.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>def Main():
+	if len(sys.argv) &lt;= 1:
+		return
+	A, Y = GenerateData(ns = 2048)
+	#Create layer sizes; make 6 layers of nf neurons followed by a single output neuron
+	L = [A.shape[1]] * 6 + [1]
+	print(&#039;Layer Sizes: &#039; + str(L))
+	if sys.argv[1] == &#039;theano&#039;:
+		print(&#039;Running theano benchmark.&#039;)
+		from TheanoANN import TheanoMLPR
+		#Create the Theano MLP
+		tmlp = TheanoMLPR(L, batchSize = 128, learnRate = 1e-5, maxIter = 100, tol = 1e-3, verbose = True)
+		MakeBenchDataSample(tmlp, A, Y, 16, &#039;TheanoSampDat.csv&#039;)
+		print(&#039;Done. Data written to TheanoSampDat.csv.&#039;)
+	if sys.argv[1] == &#039;theanogpu&#039;:
+		print(&#039;Running theano GPU benchmark.&#039;)
+		#Set optional flags for the GPU
+		#Environment flags need to be set before importing theano
+		os.environ[&quot;THEANO_FLAGS&quot;] = &quot;device=gpu&quot;
+		from TheanoANN import TheanoMLPR
+		#Create the Theano MLP
+		tmlp = TheanoMLPR(L, batchSize = 128, learnRate = 1e-5, maxIter = 100, tol = 1e-3, verbose = True)
+		MakeBenchDataSample(tmlp, A, Y, 16, &#039;TheanoGPUSampDat.csv&#039;)
+		print(&#039;Done. Data written to TheanoGPUSampDat.csv.&#039;)
+	if sys.argv[1] == &#039;tensorflow&#039;:
+		print(&#039;Running tensorflow benchmark.&#039;)
+		from TFANN import MLPR
+		#Create the Tensorflow model
+		mlpr = MLPR(L, batchSize = 128, learnRate = 1e-5, maxIter = 100, tol = 1e-3, verbose = True)
+		MakeBenchDataSample(mlpr, A, Y, 16, &#039;TfSampDat.csv&#039;)
+		print(&#039;Done. Data written to TfSampDat.csv.&#039;)
+	if sys.argv[1] == &#039;plot&#039;:
+		print(&#039;Displaying results.&#039;)
+		try:
+			T1 = np.loadtxt(&#039;TheanoSampDat.csv&#039;, delimiter = &#039;,&#039;, skiprows = 1)
+		except OSError:
+			T1 = None
+		try:
+			T2 = np.loadtxt(&#039;TfSampDat.csv&#039;, delimiter = &#039;,&#039;, skiprows = 1)
+		except OSError:
+			T2 = None
+		try:
+			T3 = np.loadtxt(&#039;TheanoGPUSampDat.csv&#039;, delimiter = &#039;,&#039;, skiprows = 1)
+		except OSError:
+			T3 = None
+		fig, ax = mpl.subplots(1, 2)
+		if T1 is not None:
+			PlotBenchmark(T1[:, 0], T1[:, 1], ax[0], &#039;# Samples&#039;, &#039;Train&#039;, &#039;Theano&#039;)
+			PlotBenchmark(T1[:, 0], T1[:, 2], ax[1], &#039;# Samples&#039;, &#039;Test&#039;, &#039;Theano&#039;)
+		if T2 is not None:
+			PlotBenchmark(T2[:, 0], T2[:, 1], ax[0], &#039;# Samples&#039;, &#039;Train&#039;, &#039;Tensorflow&#039;)
+			PlotBenchmark(T2[:, 0], T2[:, 2], ax[1], &#039;# Samples&#039;, &#039;Test&#039;, &#039;Tensorflow&#039;)	
+		if T3 is not None:
+			PlotBenchmark(T3[:, 0], T3[:, 1], ax[0], &#039;# Samples&#039;, &#039;Train&#039;, &#039;Theano GPU&#039;)
+			PlotBenchmark(T3[:, 0], T3[:, 2], ax[1], &#039;# Samples&#039;, &#039;Test&#039;, &#039;Theano GPU&#039;)	
+		mpl.show()</code></pre><br/><hr/><br/>
+<br/>
+<br/>The completed code for the benchmark is <a href="https://github.com/nicholastoddsmith/pythonml/tree/master/NNBench">available here on GitHub</a>.
+<h1>Results</h1>
+The above code was run on a Z800 workstation running Windows Server 2012 R2. The system has the following configuration:
+<ul>
+<li>2x Intel Xeon X5675 Costa Rica @ 3.06Ghz</li>
+<li>96GB PC3-10600R 1333MHz RAM</li>
+<li>4x 300GB 15000RPM SAS Drives in RAID 0</li>
+<li>2x NVidia Quadro 5000 2.5GB</li>
+</ul>
+The system is pictured below in Figure 3.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/20170414_180012.jpg"><img src="../Img/20170414_180012.jpg" /></a></td><td><a href="../Img/z800-4.jpg"><img src="../Img/z800-4.jpg" /></a></td></tr><tr><td><a href="../Img/z800-2.jpg"><img src="../Img/z800-2.jpg" /></a></td><td><a href="../Img/z800-1.jpg"><img src="../Img/z800-1.jpg" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 3: The Benchmark Rig</b></p>
+<br/>
+The following commands can be used to generate the results and plots:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>python Main.py theano
+python Main.py theanogpu
+python Main.py tensorflow
+python Main.py plot</code></pre><br/><hr/><br/>
+<br/>
+<br/><b>Note</b>: For GPU based Theano, both the <i>cl</i> compiler and <i>g++</i> must be in the <i>PATH</i> environment variable for the GPU to be used. This can be accomplished by running the <i>vcvarsall.bat</i> script that comes with Visual Studio inside an Anaconda prompt. The path to <i>vcvarsall.bat</i> may look similar to: <i>C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\vcvarsall.bat</i>. The plot generated by the program is shown below in Figure 4.<br/>
+<p style="text-align:center;"><img src="../Img/nnbenchfig1.png" alt="NNBenchFig1" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 4: TensorFlow vs. Theano Benchmark Results</b></p>
+<br/>
+The above benchmark is constructed in an attempt to give a fair comparison between the two libraries, but it is by no means exhaustive. ANNs have numerous hyper-parameters and more benchmarks can be created to gain a better understanding of the performance trade-offs between TensorFlow and Theano. Due the CUDA Compute Capability of the Quadro 5000 being 2.0, the author is unable to benchmark GPU enabled TensorFlow.
+<br/>
+<br/>The author is more than happy to include your benchmark results in this post if you share them below in a comment.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

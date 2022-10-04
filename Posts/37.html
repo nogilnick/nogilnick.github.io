@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>TVLib: A C++ Text Vectorization Library with Python Bindings</h1><h2>Mon, 09 Jul 2018</h2><h3><i>C++</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Nlp</i>, <i>Python</i>, <i>Sklearn</i>, <i>Software</i>, <i>Sparse Matrices</i></h3>I am a big fan of the <b>CountVectorizer</b> class in <i>scikit-learn</i> [1]. With a robust and easy interface that produces (sparse!) matrices, what’s not to love? Well, it’s… pretty… slow…
+<br/>
+<br/>The performance is okay for 10s of MB of text, but GBs take minutes or more. It terms out that <b>CountVectorizer</b> is implemented in pure Python. The functions are single threaded too. It seems like low-hanging fruit. Just whip up some parallel C++, right? Well, not quite, but I’m getting ahead of myself.
+<h1>Problem Setup</h1>
+A basic approach to the problem is to create a regular expression tokenizer, iterate over the terms, and use a map to count occurrences. My original approach used <i>std::regex_iterator</i> to tokenize the document. Much to my surprise, <i>re</i> in Python is much faster than <i>std::regex_iterator</i>. <i><b>What?!</b></i> Just parsing the text with a <i>regex_iterator</i> was slower than the entire <i>fit_transform</i> operation from <i>sklearn</i>.
+<br/>
+<br/>I guess Python’s slogan could be something like:<br/>
+<p style="text-align:center;"><img src="../Img/slogan.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Python: Fast where it counts. Slow where it doesn’t.</b></p>
+<br/>
+Instead of admitting defeat, I (stubbornly) implemented a small finite state machine (FSM) parser for the default regex pattern in <i>sklearn</i>: <b>\w\w+</b>. Now, just parsing the text was around 10 times faster than <i>fit_transform</i>. Onto the hard part.
+<br/>
+<br/>The problem has a few wrinkles that make it challenging. Unique terms need to be mapped to unique indices. Right away this makes some synchronization necessary. Parsing through text with the FSM is an \(\textbf{O}(n)\) operation. Most of the work involves obtaining an index for each term. This is map lookup. Since all threads need to use this map to lookup and update it is a highly contentious resource. Indeed, a naïve multi-threaded approach is doomed to be much slower than a single threaded one.
+<h1>The Approach</h1>
+To reduce contention, two tools can be used: reader/writer locks and multiple maps/locks. The principal of the first is that lookups can be done in parallel; exclusive access is only needed when updating the map. There is a class <i>std::shared_mutex</i> which does just this. This was, again, slower than a trivial implementation using <i>std:mutex</i>. <i><b>What?!</b></i> And again, instead of admitting defeat, I (stubbornly) implemented a basic reader/write lock using <i>std::mutex</i> and <i>std::atomic</i>.
+<br/>
+<br/>The principal of the second is to use multiple maps and locks and use a secondary mapping strategy to uniquely assign terms to maps. The strategy used is:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>(sum of character in term) % NUM_MAPS</code></pre><br/><hr/><br/>
+<br/>
+<br/>Since a word is always assigned to the same map, it is guaranteed to only be in one place. To make sure the index is unique, each map maintains its own counter \(j\) and the final index is:<br/>
+<p style="text-align:center;">\((j &lt;&lt; k)\ |\ i\) ,</p>
+<br/>
+where \(j\) is the term index for the map, \(k\) is the number of bits in the binary representation of <i>NUM_MAPS</i>, and \(i\) is the index of the map. In this way, terms are uniquely assigned to maps. When producing the final matrix, the above equation is undone so that the optimal number of columns is constructed. If this is not done, the number of columns in the matrix is inflated by a factor of \(2^{k}\).
+<h1>The Result</h1>
+The main body of the loop is shown in the following code block. The index of the map and lock are computed in the same function that performs tokenization: <i>Sit.NextP</i>. With the map and lock identified, the rest is using a reader/writer lock to obtain/update the index.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>CVIter SIt(SP[i], SL[i]);
+while(SIt.NextP(j1, j2, LockInd)) {
+	LockInd %= NLOCK;			//Basic hash function for index of map/lock to use (LockInd)
+	uint SLen = j2 - j1;		//Length of current term
+	if(SLen == 0)
+		continue;
+	char* Term = SP[i] + j1;		//CVIter will make sure this is null-terminated
+	RWMutex&amp; RWLock = Locks[LockInd];			//Mutex lock to use based on word
+	DMap&amp; M = MM[LockInd];	//Map to use based on word
+	ull I;						//Column index of term
+	RWLock.ReadLock();			//Lock map specific to this word
+	auto It = M.find(Term);		//Find index if it exists in map
+	if(It == M.end()) {			//Term is not in map; need to try and add it
+		RWLock.ReadUnlock();	//Avoid deadlock; The race condition is handled by using emplace
+		RWLock.WriteLock();		//Get write access; it is possible another thread beat current one and added same term here
+		auto Pair = M.emplace(Term, TIndex[LockInd]);	//Only map Term-&gt;TIndex[LockInd] if Term does not exist
+		TIndex[LockInd] += Pair.second;					//Only increment if Term was actually added (see race condition above)
+		RWLock.WriteUnlock();							//Done writing
+		I = Pair.first-&gt;second; //Map cells are never modified only created; Safe to do this outside of lock
+	}
+	else {
+		RWLock.ReadUnlock();	    //Cell is never modified only created
+		I = It-&gt;second;				//Map cells are never modified only created; Safe to do this outside of lock
+	}
+	MR[(I &lt;&lt; NLEXP) | LockInd]++;   //Bottom portion of word index is map number</code></pre><br/><hr/><br/>
+<br/>
+<br/>Some care is needed since C++ doesn’t have a built in upgradable reader/writer lock. There is a race condition between <i>ReadUnlock</i> and <i>WriteLock</i>. If another thread reached <i>WriteLock</i> before the current and went to update the index for the same term, then the index might become off by one. A rare situation, but possible nonetheless. The condition is handled by using emplace instead of something like this:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>//Not like this!
+M[Term] = TIndex[LockInd];
+TIndex[LockInd]++;</code></pre><br/><hr/><br/>
+<br/>
+<br/>The race condition still exists, but at worst it results in a wasted <i>emplace</i> operation.
+<h1>Integrating the Result</h1>
+I use the <i>mingw-w64</i> toolchain to build most C++ on my (Windows) system (it works great for CGo!) [2]. I decided to compile the result as a DLL and then call the exported functions in Python using <i>ctypes</i>. The interface for the DLL shown in the following code block. The <i>extern "C"</i> prevents name mangling making it easier to reference the function in Python.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#ifndef TVLIB_H
+#define TVLIB_H
+
+#include "Consts.h"
+
+#ifdef TVLIB_EXPORT
+    #define TVLIB_API __declspec(dllexport)
+#else
+    #define TVLIB_API __declspec(dllimport)
+#endif
+
+/** Vectorize an array of strings
+ *  SF:     String array
+ *  SL:     String lengths (rows)
+ *  LSA:    Length of string array
+ *  RLen:   Result length
+ *  ret:    Pointer to array like 
+ */
+extern "C" TVLIB_API ull* __cdecl Vectorize(char** SF, uint* SL, uint LSA, uint&amp; RLen);
+
+/** Vectorize a numpy array of strings
+ *  SF:     String array (flat)
+ *  RL:     Row length of flat array
+ *  SL:     String lengths (without padding)
+ *  LSA:    Length of string array
+ *  RLen:   Result length
+ *  ret:    Pointer to array like 
+ */
+extern "C" TVLIB_API ull* __cdecl VectorizeF(char* SF, uint RL, uint* SL, uint LSA, uint&amp; RLen);
+
+  
+//  Frees the vector allocated on the last call to Vectorize
+extern "C" TVLIB_API void __cdecl Cleanup();
+#endif</code></pre><br/><hr/><br/>
+<br/>
+<br/>The following script is a batch script to compile the DLL. Oh yeah, I’m calling the library <b>TVLib</b> for <b>T</b>ext <b>V</b>ectorization <b>Lib</b>rary.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>@Echo off
+g++ -Wall -O3 -c -DTVLIB_EXPORT TVLib.cpp
+g++ -shared -o TVLib.dll TVLib.o -Wl,--out-implib,TVLib.lib</code></pre><br/><hr/><br/>
+<br/>
+<br/>Now comes the fun part of figuring out how to pass managed Python objects into native C++. The <i>ctypes</i> library provides functions for loading DLLs and creating C data types. The tricky part is figuring out what the raw memory looks like so that it can be used properly in C++.<br/>
+<p style="text-align:center;">
+<img src="../Img/tvlib.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Okay… Now What?</b></p>
+<br/>
+It turns out that a <i>numpy</i> array of strings is a 2D (conceptually) block of memory. Each row has a fixed length determined by the longest string in the array. The datatype, something like <i>|S22</i>, indicates a string array with 22 columns. Not quite as convenient as a <i>char**</i>, but a little pointer magic can fix that. Instead of <i>Array[i][j]</i>, <i>Array + i * NUM_COL + j</i> is used.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import os
+import numpy as np
+from scipy.sparse import coo_matrix as COOMat
+from ctypes import CDLL, POINTER, byref, c_char, c_ulonglong, c_uint
+
+def TVectorize(A, AL = None, copy = True):
+    '''Vectorizes a document using term frequencies
+    A:    A numpy array of the sentences to vectorize
+    AL:   The lengths of the sentences in characters
+    ret:  A COO Matrix rows corresponding to sentences,
+          columns to terms, and entries to counts.
+    '''
+    global VecF, CleanF
+    if AL is None:
+        AL = np.vectorize(len)(A)
+    #Convert arguments to C++ data types
+    ARL = c_uint(A.nbytes // A.size)
+    AP  = A.ctypes.data_as(POINTER(c_char))
+    ALP = AL.ctypes.data_as(POINTER(c_uint))
+    LSA = c_uint(A.shape[0])
+    RLen = c_uint(0)
+    #Call the C++ function and convert result to COO
+    R = VecF(AP, ARL, ALP, LSA, byref(RLen))
+    nr = np.ctypeslib.as_array(R, (RLen.value,)).reshape(-1, 3)
+    SM = COOMat((nr[:, 2], (nr[:, 0], nr[:, 1])), copy = copy)
+    return SM
+
+dllPath = os.path.join(os.path.dirname(__file__), 'TVLib.dll')
+Dll = CDLL(dllPath)         #Load DLL from same path as code path (be careful)
+VecF = Dll.VectorizeF       #Function for flat numpy arrays
+VecF.argtypes = [POINTER(c_char), c_uint, POINTER(c_uint), c_uint, POINTER(c_uint)]
+VecF.restype  = POINTER(c_ulonglong)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The above code block, gives the Python wrapper for the DLL. The remainder is just construction a <i>scipy.sparse.coo_matrix</i> from the result of the C++ function.
+<h1>Benchmarking the Result</h1>
+My benchmark for the program was the sentences from the Stanford NLP dataset: a collection of sentences and their corresponding audio [3]. The audio was not used; it was just what I had on hand in a nice format. The text document is ~ 28.7MB. Table 1 shows the results on my system: a dual Intel Xeon X5675 @ 3.07 GHz.
+<br/>
+<br/><table align="center" style="margin: 0px auto;">
+<col width="34%"><col width="33%"><col width="33%">
+<tr><th>Library</th><th>Avg. Runtime</th><th>Std. Runtime</th></tr>
+<tr><td><i>sklearn</i></td><td>8.435</td><td>0.354</td></tr>
+<tr><td>TVLib</td><td>0.509</td><td>0.008</td></tr>
+</table>
+<p style="text-align:center;"><b>Table 1: Runtime Results for Benchmark (Seconds)</b></p>
+<br/>
+On this benchmark, TVLib is \(8.435 / 0.509 = 16.572\) times faster than <i>sklearn</i>. Granted, the library comes with a few caveats as of this writing (I will hopefully fix these things):
+
+<ol>
+<li>Unicode is not supported </li>
+<li>Only one regex pattern is supported</li>
+<li><s>Strings need to be null-terminated</s> <b>(Fixed!)</b></li>
+</ol>
+Number 3 can be fixed by explicitly specifying the datatype when creating the original <i>numpy</i> array to be 1 character longer than the string with the longest length. Only the longest string is missing a null.
+<h1>Conclusion</h1>
+This project caused me to reconsider the reputation C++ has for being so performant. The fundamentals are fast, but many of the day-to-day data structures in the standard library come at a heavy cost. The language is also starting to remind me of Frankenstein. Nonetheless, the result is an order of magnitude faster than the <i>sklearn</i>. The full source code is <a href="https://github.com/nicholastoddsmith/TVLib">on my GitHub</a> [4]. Enjoy and please make pull requests.
+<h1>References</h1>
+<table style="margin: 0 auto;border:none;">
+<tr><td style="border:none;" width="5%" valign="top">[1]</td><td style="border:none;" width="95%">Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.</td></tr>
+<tr><td style="border:none;" valign="top">[2]</td><td style="border:none;"><a href="https://mingw-w64.org/doku.php">https://mingw-w64.org/doku.php</a></td></tr>
+<tr><td style="border:none;" width="5%" valign="top">[3]</td><td style="border:none;" width="95%">Learning Spatial Knowledge for Text to 3D Scene Generation. Angel Chang, Manolis Savva, and Christopher D. Manning. In Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP 2014).</td></tr>
+<tr><td style="border:none;" valign="top">[4]</td><td style="border:none;"><a href="https://github.com/nicholastoddsmith/TVLib">https://github.com/nicholastoddsmith/TVLib</a></td></tr>
+</table><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

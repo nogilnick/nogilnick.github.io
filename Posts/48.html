@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Ancestry Determination via Genetic Variant Analysis</h1><h2>Sat, 18 Apr 2020</h2><h3><i>Ancestry</i>, <i>Bioinformatics</i>, <i>Data Science</i>, <i>Genome Sequencing</i>, <i>Medicine</i>, <i>Snp</i>, <i>Statistics</i></h3><h1>Introduction</h1>
+Sequencing of the human genome began in 1990 as part of the Human Genome Project. With the technology available at the time, the project was a substantial undertaking. The human genome contains two sets of 23 chromosomes each with roughly 3.2 billion base pairs. A number of institutions, in countries around the world, participated in the project. Thirteen years later the project was complete at a cost of roughly three billion US dollars. The result was the first reference human genome.
+<br/>
+<br/>Rapid advances in the field of genomics have dramatically lowered the cost of genetic sequencing and have ushered in the age of the once fabled "$1000 genome." Now, a growing list of companies offer whole genome sequencing for hundreds of dollars with turn around time measured in weeks. This technology enables introspection into the sequences of nucleobases that comprise DNA and thus the genes of anyone curious enough to take the plunge.
+<h1>Genetic Sequencing</h1>
+With a reference human genome in place, one motivation for performing genome sequencing on a subject is to identify differences between the DNA of the subject and that of the reference. In this way, differences corresponding to genetic characteristics, diseases, or risk factors can be identified.
+<br/>
+<br/>First, the sequencing data from the subject is aligned to the reference genome. This computationally intensive process involves aligning matching portions of the sample genome to the reference. Once alignment is complete, the <i>i</i>-th base pair in a given reference sequence corresponds to the <i>i</i>-th base pair in the corresponding sequence in the other genome. Alignment allows for more easy comparison of the sample to the reference.
+<br/>
+<br/>Next, the two aligned genomes are compared. There are a variety of ways in which these two sequences of DNA can differ. Bases can be inserted, deleted, or replaced resulting in different types of variants. Several online resources catalogue known variants according to their ID. Many variants have no known clinical significance, however a growing number have been shown to be important in genetic traits, diseases, and predispositions [3].
+<h1>The Dataset</h1>
+The International Genome Sample Resource (IGSR) provides a collection of several thousand genomes in various file formats [1]. In addition to the full sequencing data, the project also provides files encoding the genetic variants each of the subjects possess. Variant call format (VCF) files are used to store information about these genetic variants. An example of several rows from a VCF file are shown in Detail 1.<br/>
+<p style="font-family:monospace;">
+#CHROM POS ID REF ALT QUAL FILTER INFO FORMAT Sample001
+20 14370 rs6054257 G A 29 PASS DP=14;AF=0.5;DB GT:DP 0/1:1
+20 17330 . T A 3 q10 DP=11;AF=0.017 GT:DP 1/1:3</p>
+<p style="text-align:center;"><strong>Detail 1: The VCF File Format</strong></p>
+<br/>
+The first row of the file contains the column names while the next two rows contain information about two genetic variants. Both variants occur in chromosome 20 with one at position 14370 and one at 17330. The first variant has ID <em>rs6054257</em>, while the second has no ID assigned to it. The file contains information for a single sample: <i>Sample001</i>.
+<br/>
+<br/>In addition to the sequencing data, the IGSR also has information about the gender and ethnic origins of each subject [1]. This data is employed later to construct a mathematical model.
+<h1>Data Setup</h1>
+<em>Scikit-allel</em> is used to read the VCF file into memory [2]. The data in the VCF file is loaded into a three-dimensional array where each row corresponds to a variant, each column corresponds to a subject, and the third axis corresponds to ploidy. Since human cells are diploid, the third axis has a length of two.<br/>
+<p style="font-family:monospace;text-align:center;">
+[[[0, 1]],
+[[1, 1]]]</p>
+<p style="text-align:center;"><strong>Detail 2: The Loaded VCF Genotype Array</strong></p>
+<br/>
+Each element in this array is the ID of the allele with 0 being the reference allele ID. This third axis is aggregated by counting the number of non-reference alleles in both pairs of chromosomes. Thus, each element in the reduced matrix is in the set \(\{0, 1, 2\}\). Missing allele cells are assumed to match the reference; they are treated as zero.
+<br/>
+<br/>Now, a new matrix \(\mathbf{A}\) is constructed where every row of the matrix corresponds to a subject and every column corresponds to a variant ID. Due to the number of variants possible, a list of common variants is obtained from the NBHI and this list is further reduced using random sampling and feature selection. Each cell \(\mathbf{A}_{ij}\) of the matrix contains the number of copies of the <em>j</em>-th variant, regardless of allele ID, that sample <em>i</em> possesses. With this arrangement, humans, being diploid, can have a maximum value of two for any cell.
+<h1>Transformation</h1>
+The high dimensional sparse encoding matrix is transformed to a reduced dense matrix using the truncated singular value decomposition algorithm. Using the singular vectors, the data is projected onto a lower dimensional subspace that preserves a large amount of the information content found in the original matrix. Several features are added including the total number of variants, the total number of heterozygous variants, and the total number of homozygous variants.
+<br/>
+<br/>Next, a 26-class classification problem is constructed. A random forest classifier is constructed that attempts to predict the race of the subject given its dense feature vector. Thus, the classifier attempts to predict the race of a subject given information about the genetic variants the subject possesses.
+<h1>Results</h1>
+Next, the performance of the model is estimated. Due to the small number of samples in the dataset, leave-one-out cross-validation is employed to evaluate the performance of the model. Table 1 lists the training and validation performance results as well as the number of nodes in the random forest.<br/>
+<p style="text-align:center;"><table style="width:50%;margin:0 auto;"><tbody>
+<tr><th>Field</th><th>Value</th></tr>
+<tr><td>Train Accuracy</td><td>98.52%</td></tr>
+<tr><td>Test Accuracy</td><td>85.94%</td></tr>
+<tr><td>Node Count</td><td>5974</td></tr>
+</tbody></table></p>
+<p style="text-align:center;"><strong>Table 1: Model Evaluation Results</strong></p>
+<br/>
+Both training score and node count are derived from a model trained on all samples while the validation score is the average of all leave-one-out validation runs. Given the number and granularity of the classes, the discrete accuracy measure is quite an unforgiving measure of model performance. Despite this, the model still performs ably.
+<br/>
+<br/>Figure 1 shows the confusion matrix for the model created using by combining the results of the validation runs. The color of the cell in row <em>i</em> and column <em>j</em> is the percentage of samples of class <em>i</em> predicted to be of class <em>j</em>.<br/>
+<p style="text-align:center;"><a href="../Img/genopredcm.png"><img src="../Img/genopredcm.png" alt="GenoPredCM" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><strong>Figure 1: Model Confusion Matrix</strong></p>
+<br/>
+As can be seen, the mistakes made by the model are frequently between two races that are more genetically similar. For example, the model makes several mistakes in differentiating Han Chinese in southern China from Han Chinese in northern China and in differentiating residents of the US from residents of the UK.
+<br/>
+<br/>Finally, the model is evaluated by viewing a low dimensional projection of the class probabilities. Principal component analysis is performed on the 26 column matrix containing the predicted class probabilities. The two largest components are preserved so that a two-dimensional projection is obtained.<br/>
+<p style="text-align:center;"><a href="../Img/genorace.png"><img src="../Img/genorace.png" alt="GenoRace" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><strong>Figure 2: Projected Model Class Prediction Scores</strong></p>
+<br/>
+The spatial relationships among the projected samples corroborate the positive results of the model. In the plot, races that are intuitively more genetically similar to each other are located closer together. Table 2 provides the definitions for each of the annotations, taken from the IGSR website [1].<br/>
+<p style="text-align:center;"><table style="margin: 0px auto;"><tbody>
+<tr><th style="width:12.5%;">Label</th><th style="width:12.5%;">Count</th><th style="width:75%;">Description</th></tr>
+<tr><td>GBR</td><td>91</td><td>British in England and Scotland</td></tr>
+<tr><td>FIN</td><td>99</td><td>Finnish in Finland</td></tr>
+<tr><td>CHS</td><td>105</td><td>Southern Han Chinese, China</td></tr>
+<tr><td>PUR</td><td>104</td><td>Puerto Rican in Puerto Rico</td></tr>
+<tr><td>CDX</td><td>93</td><td>Chinese Dai in Xishuangbanna, China</td></tr>
+<tr><td>CLM</td><td>94</td><td>Colombian in Medellin, Colombia</td></tr>
+<tr><td>IBS</td><td>107</td><td>Iberian populations in Spain</td></tr>
+<tr><td>PEL</td><td>85</td><td>Peruvian in Lima, Peru</td></tr>
+<tr><td>PJL</td><td>96</td><td>Punjabi in Lahore, Pakistan</td></tr>
+<tr><td>KHV</td><td>99</td><td>Kinh in Ho Chi Minh City, Vietnam</td></tr>
+<tr><td>ACB</td><td>96</td><td>African Caribbean in Barbados</td></tr>
+<tr><td>GWD</td><td>113</td><td>Gambian in Western Division, The Gambia</td></tr>
+<tr><td>ESN</td><td>99</td><td>Esan in Nigeria</td></tr>
+<tr><td>BEB</td><td>86</td><td>Bengali in Bangladesh</td></tr>
+<tr><td>MSL</td><td>85</td><td>Mende in Sierra Leone</td></tr>
+<tr><td>STU</td><td>102</td><td>Sri Lankan Tamil in the UK</td></tr>
+<tr><td>ITU</td><td>102</td><td>Indian Telugu in the UK</td></tr>
+<tr><td>CEU</td><td>99</td><td>Utah residents of Northern &amp; Western European ancestry</td></tr>
+<tr><td>YRI</td><td>108</td><td>Yoruba in Ibadan, Nigeria</td></tr>
+<tr><td>CHB</td><td>103</td><td>Han Chinese in Bejing, China</td></tr>
+<tr><td>JPT</td><td>104</td><td>Japanese in Tokyo, Japan</td></tr>
+<tr><td>LWK</td><td>99</td><td>Luhya in Webuye, Kenya</td></tr>
+<tr><td>ASW</td><td>61</td><td>African Ancestry in Southwest US</td></tr>
+<tr><td>MXL</td><td>64</td><td>Mexican Ancestry in Los Angeles, California</td></tr>
+<tr><td>TSI</td><td>107</td><td>Toscani in Italy</td></tr>
+<tr><td>GIH</td><td>103</td><td>Gujarati Indian in Houston,TX</td></tr>
+</tbody></table></p>
+<p style="text-align:center;"><strong>Table 2: Annotation Label Definitions</strong></p>
+<br/>
+Asians form a cluster near the bottom left of the graph. Those of African descent form a long arm off to the right. The third arm stretching off to the top left contains mostly subjects of northern and western European ancestry.
+<h1>Conclusion</h1>
+In the modern era, genetic sequencing is faster and cheaper than ever. A number of companies offers genetic sequencing services that look for known genetic variants. Further, a number of these companies provide access to raw VCF files. This post shows that VCF files can be used to construct a model that accurately predicts ethnic background. Empirical results suggest that this model is reasonably accurate and captures meaningful variance within the data.
+<h1>References</h1>
+
+[1] https://www.internationalgenome.org/<br/>
+[2] https://scikit-allel.readthedocs.io/en/stable/<br/>
+[3] https://www.snpedia.com/
+ <br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

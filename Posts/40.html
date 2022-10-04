@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Applying Correlation as a Criterion in Hierarchical Decision Trees</h1><h2>Thu, 27 Dec 2018</h2><h3><i>Cython</i>, <i>Data Science</i>, <i>Decision Tree</i>, <i>Machine Learning</i>, <i>Scikit-Learn</i>, <i>Statistics</i></h3>Decision trees are a simple yet powerful method of machine learning. A binary tree is constructed in which the leaf nodes represent predictions. The internal nodes are decision points. Thus, paths from the root to the leafs represent sequences of decisions that result in an ultimate prediction.
+<br/>
+<br/>Decision trees can also be used in hierarchical models. For instance, the leafs can instead represent subordinate models. Thus, a path from the root to a leaf node is a sequence of decisions that result in a prediction made by a subordinate model. The subordinate model is only responsible for predicting samples that fall within the leaf.
+<br/>
+<br/>This post presents an approach for a hierarchical decision tree model with subordinate linear regression models.
+<h2>A More Suitable Criterion</h2>
+Decision trees are constructed in a top-down greedy approach by attempting to minimize the <em>impurity</em> of the leaf nodes. Impure nodes are split into two leafs based on a condition. The condition is typically of the form \(x_i \leq a\) for some feature \(x_i\) and some split point \(a\).  Once split, the parent becomes a decision point. This proceeds until all leafs are <em>pure</em> to within some tolerance or a maximum height is reached. A greedy approach is used as finding a decision tree that optimally minimizes some criterion is <a href="https://en.wikipedia.org/wiki/NP-hardness"><em>NP-Hard</em></a> for most non-trivial criterion.
+<br/>
+<br/>Figure 1 shows a simple decision tree for predicting the MPG of a car based on two features: the number of cylinders and the weight of the car.  The leaf nodes are labeled with the number of training samples in the leaf and the leaf prediction.<br/>
+<p style="text-align:center;"><img src="../Img/DTR.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: Decision Tree for Predicting MPG</b></p>
+<br/>
+In regression models, the prediction at a leaf node is simply the centroid of all target values within the node. Thus, impurity is typically evaluated as the variance around this centroid; all deviation from the centroid is error since the prediction is constant.
+<br/>
+<br/>If the leaf nodes are subordinate linear regression models, this criterion is not effective. The regression models are able to represent an arbitrary amount of linear variance. Instead, the leaf nodes should contain samples with a strong linear relationship to the target values. Variance should not be penalized.
+<br/>
+<br/>A simple approximation for this is the correlation between the samples in the leaf node and the target values. For simplicity and performance, the average correlation between all pairs of the individual features and targets is used. The impurity is<br/>
+<p style="text-align:center;">\[\displaylines{I(\textbf{A}, \textbf{Y})=1 - |\frac{1}{n_1 \times n_2}\sum\limits_{k=1}^{n_2}{\sum\limits_{j=1}^{n_1}{(\textbf{A}_j - \bar{\textbf{A}}_j)(\textbf{Y}_k - \bar{\textbf{Y}}_k)/(s_{\textbf{A}_j}s_{\textbf{Y}_k})}}| }\ ,\]</p>
+<br/>
+where <b>A</b> and <b>Y</b> are data and target matrices containing the samples in the leaf node, \(n_1\) is the number of input features, and \(n_2\) is the number of output features. So that \(I(\textbf{A}, \textbf{Y}) \in [0, 1]\), with 0 representing total purity and 1 representing total impurity as is typical.
+<h2>Implementation in Cython</h2>
+The decision tree class in <em>scikit-learn</em> accepts a criterion parameter. If a string is passed, one of the available criterion classes is used, such as <em>mse</em> for mean-squared error. However, an arbitrary subclass of the <em>Criterion</em> class can be passed. The catch is that <em>Criterion</em> is a Cython class.
+<br/>
+<br/>The custom subclass is implemented in Cython, compiled, and then imported into a Python file. An instance is created and then passed to the <i>DecisionTreeRegressor</i> class using the <i>criterion</i> parameter.
+<br/>
+<br/>A very straightforward implementation of the criterion is provided. It is challenging to precompute some of the values since the means change with the values <i>i1</i> and <i>i2</i>. Further, precomputing all possible means and standard-deviations for <i>i1</i> and <i>i2</i> may be wasteful. A memoization approach is likely more efficient, but is not explored here for simplicity.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>cdef double CCNode(self, SIZE_t i1, SIZE_t i2) nogil:
+	cdef DOUBLE_t* x = self.x
+	cdef SIZE_t xn = self.xn
+	
+	cdef DOUBLE_t* y = self.y
+	cdef DOUBLE_t* sample_weight = self.sample_weight
+	cdef SIZE_t* samples = self.samples
+
+	cdef SIZE_t i
+	cdef SIZE_t p
+	cdef SIZE_t k
+	cdef SIZE_t j
+	cdef DOUBLE_t w = 1.0
+	
+	cdef DOUBLE_t xjm
+	cdef DOUBLE_t ykm
+	cdef DOUBLE_t xjs
+	cdef DOUBLE_t yks
+	cdef DOUBLE_t CC = 0.0
+	cdef DOUBLE_t CCij
+	cdef SIZE_t nSkip = 0
+	
+	cdef DOUBLE_t xt
+	cdef DOUBLE_t yt
+	
+	for k in range(self.n_outputs):  #Loop over target features
+		for j in range(xn):          #Loop over input features
+			xjm = 0.0
+			ykm = 0.0
+			xjs = 0.0
+			yks = 0.0
+			for p in range(i1, i2):  #Mean of samples in node
+				i = samples[p]
+				xjm += x[i * self.x_stride + j]
+				ykm += y[i * self.y_stride + k]
+			xjm /= (i2 - i1)
+			ykm /= (i2 - i1)
+			CCij = 0.0
+			for p in range(i1, i2):  #Std/Cov of samples in node
+				i = samples[p]
+				xt = x[i * self.x_stride + j] - xjm
+				yt = y[i * self.y_stride + k] - ykm
+				xjs += xt * xt
+				yks += yt * yt
+				CCij += xt * yt
+			#No change; No evidence for linear relationship
+			if fabs(xjs) &lt; 1e-15 or fabs(yks) &lt; 1e-15:
+				nSkip += 1
+				continue
+			CC += CCij / sqrt(xjs * yks)
+	#Everything is duplicate
+	if nSkip == (self.n_outputs * xn):
+		CC = 1.0
+			
+	return 1 - fabs(CC) / (self.n_outputs * xn)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The criterion function is evaluated for each potential split point of a feature. The time complexity for finding a split point with this straightforward implementation is roughly \(\textbf{O}(\textbf{m}^2\textbf{n}_1\textbf{n}_2)\), where \(\textbf{m}\) is the number of samples in the node. Nonetheless, the runtime appears to be acceptable for medium size datasets.
+<br/>
+<br/>The two if-statements near the bottom handle cases where the feature does not vary in the samples being evaluated. These also prevent divide-by-zero errors if the leaf node only contains a single sample. Despite these, the <i>min_samples_leaf</i> parameter should be used to help ensure a valid line can be fit in each leaf node.
+<h2>A Brief Example</h2>
+A brief example is presented to explore the behavior of the model. A dataset representing a noisy sine wave is used. A single period of a sine wave is sampled and Gaussian noise is added to the result. A plot of the raw data is shown in Figure 2.<br/>
+<p style="text-align:center;"><img src="../Img/SineWaveData.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: The Example Data</b></p>
+<br/>
+Next, the hierarchical model is fit to the data and used to perform prediction. The result is shown in Figure 3. In the plot, data points are colored based on the leaf node they are assigned to. The dashed black line represents the overall prediction of the model.<br/>
+<p style="text-align:center;"><img src="../Img/HierModFit.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 3: The Hierarchical Model Fit</b></p>
+<br/>
+As can be seen, the leaf nodes group together samples that are correlated. The type of decision point used in the tree cause the leaf nodes to be assigned a specific interval on the number line. Generalizing this to <i>n</i> dimensions, the decision tree can be thought to enclose the dataset in a number of rectangular regions that contain linearly correlated samples. Prediction occurs within this isolated region using a linear regression model.
+<br/>
+<br/>Next the above result is compared with that from a typical decision tree. Figure 4 shows the fit of a decision tree using MSE criterion constrained to four leaf nodes. Notice how the prediction of each leaf is the average <i>y</i>-value within the leaf. In this instance, the hierarchical model provides a better fit.<br/>
+<p style="text-align:center;"><img src="../Img/DTRFit-1.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 4: Decision Tree Fit</b></p>
+<br/>
+Note that in the example above, a far better solution exists; the example is contrived but hopefully thought-provoking.
+<h2>Full Source Code</h2>
+The source code for the sine-wave example is shown in the following block.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import numpy as np
+from LRTree import LRTree
+# %%Setup the data
+nop = 100
+A = np.linspace(0, 2 * np.pi, nop).reshape(-1, 1)
+Y = np.sin(A) + np.random.normal(0, 0.01, A.shape)
+
+m, n1 = A.shape
+_, n2 = Y.shape
+# %%Fit the model and print the results
+lrt = LRTree(0.2, min_samples_leaf=4)
+lrt.fit(A, Y)
+print(lrt.score(A, Y))</code></pre><br/><hr/><br/>
+<br/>
+<br/>The LRTree class uses the new Cython criterion internally. The key function for fitting the <i>DecisionTreeRegressor</i> with the new criterion is <i>FitLRTree.</i>
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#...
+from CorrCrit import CorrCrit
+
+
+def FitLRTree(X, Y, W=None, **kwargs):
+    _, n1 = X.shape
+    _, n2 = Y.shape
+    cc = CorrCrit(n2, n1)
+    cc.AddX(X)
+    dtr = DecisionTreeRegressor(criterion=cc, **kwargs)
+    return dtr.fit(X, Y, W)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The existing <a href="https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/tree/_criterion.pxd"><i>Criterion</i> class in <i>scikit-learn</i></a> does not have access to the data matrix. The <i>AddX</i> function adds attributes to the class so the <i>CCNode</i> function can access them while the class constructor remains unchanged.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>from sklearn.tree._criterion cimport RegressionCriterion
+
+
+cdef class CorrCrit(RegressionCriterion):
+    
+    def __cinit__(self, SIZE_t n_outputs, SIZE_t n_samples):
+        self.x = NULL
+        self.x_stride = 0
+        self.xm = 0
+        self.xn = 0
+#...</code></pre><br/><hr/><br/>
+<br/>
+<br/>The code block above shows the class constructor for the <i>CorrCrit</i> Cython class. The full source for the <i>LRTree</i> class is available <a href="https://github.com/nicholastoddsmith/pythonml">on my GitHub repository</a>
+<br/>
+<br/><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

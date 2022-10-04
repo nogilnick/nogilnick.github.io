@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Precipitation Totals by City in the USA</h1><h2>Fri, 19 Jun 2020</h2><h3><i>Data Visualization</i>, <i>Statistics</i>, <i>Weather</i></h3>The following plots show the average amount of precipitation over the past 70 years for 8 cities in the USA. Each sub-image depicts a hypothetical calendar month and each colored square in a sub-image depicts a single day. The color of a given square describes the amount of precipitation a city receives for the day corresponding to that square on average.
+<br/>
+<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/portlandorus.png"><img src="../Img/portlandorus.png" /></a></td><td><a href="../Img/losangelescaus.png"><img src="../Img/losangelescaus.png" /></a></td></tr><tr><td><a href="../Img/washingtondcus.png"><img src="../Img/washingtondcus.png" /></a></td><td><a href="../Img/miamiflus.png"><img src="../Img/miamiflus.png" /></a></td></tr><tr><td><a href="../Img/raleighncus.png"><img src="../Img/raleighncus.png" /></a></td><td><a href="../Img/austintxus.png"><img src="../Img/austintxus.png" /></a></td></tr><tr><td><a href="../Img/boiseidus.png"><img src="../Img/boiseidus.png" /></a></td><td><a href="../Img/chicagoilus.png"><img src="../Img/chicagoilus.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 1: Precipitation Calendars</b></p>
+The color range is normalized across all eight cities. In this way, the relative average amount of precipitation for each city on any given day may be evaluated by comparing the two corresponding calendar squares.
+<br/>
+<br/>The calendar chart for Portland characterizes its dry summers and long rainy season. Los Angeles typically only receives rain during the winter months and this is reflected in its chart. Finally, Miami appears to receive the most amount of precipitation on average; the majority of this appears to occur in the summer months.
+<p style="text-align:center;"><a href="../Img/rainsums-4.png"><img src="../Img/rainsums-4.png" alt="RainSums" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: Cumulative Precipitation Curves</b></p>
+Figure 2 shows the average cumulative precipitation curves for the same 8 cities. This chart allows more direct comparison of the average yearly quantities of precipitation among the eight cities. The slopes of the curves shed light onto how this precipitation is distributed through the year. The subtle S-shape in the curve for Portland is a reflection of its relatively dry summers. Finally, as suggested by the calendar plots, Miami does indeed receive the greatest amount of yearly precipitation among the 8 selected cities on average.
+<br/>
+<br/>Next, charts describing the average number of rainy days per year for each of the eight cities are computed. A rainy day is taken to be any day where there is some amount of precipitation recorded. That is, any day where the precipitation measure is greater than zero.
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/rdportlandorus.png"><img src="../Img/rdportlandorus.png" /></a></td><td><a href="../Img/rdmiamiflus.png"><img src="../Img/rdmiamiflus.png" /></a></td></tr><tr><td><a href="../Img/rdlosangelescaus.png"><img src="../Img/rdlosangelescaus.png" /></a></td><td><a href="../Img/rdchicagoilus.png"><img src="../Img/rdchicagoilus.png" /></a></td></tr><tr><td><a href="../Img/rdraleighncus.png"><img src="../Img/rdraleighncus.png" /></a></td><td><a href="../Img/rdwashingtondcus.png"><img src="../Img/rdwashingtondcus.png" /></a></td></tr><tr><td><a href="../Img/rdboiseidus.png"><img src="../Img/rdboiseidus.png" /></a></td><td><a href="../Img/rdaustintxus.png"><img src="../Img/rdaustintxus.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 3: Rainy Day Calendars</b></p>
+In Figure 3, the color of a given square denotes the percentage of times in the past 70 years that it has rained on the day corresponding to that square. The chart for Portland is now much more colorful and the extent of the rainy season is more apparent. It is clear that Portland experiences a relatively large number of rainy days. Thus, taken in conjunction with Figures 1 and 2, this implies that each rainy day produces less precipitation than in other cities on average.
+<p style="text-align:center;"><a href="../Img/rdaysums-3.png"><img src="../Img/rdaysums-3.png" alt="RDaySums" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 4: Cumulative Rainy Day Curves</b></p>
+The curves in Figure 4 depict the average cumulative number of rainy days in each of the 8 cities over the past 70 years. Figure 4 confirms that Portland indeed has the most number of rainy days among the eight selected cities on average.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

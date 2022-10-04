@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Eigenfaces versus Fisherfaces on the Faces94 Database with Scikit-Learn</h1><h2>Thu, 18 Feb 2016</h2><h3><i>Biometrics</i>, <i>Computer Science</i>, <i>Facial Recognition</i>, <i>Machine Learning</i>, <i>Mathematics</i></h3>In this post, two basic facial recognition techniques will be compared on the <a href="http://cswww.essex.ac.uk/mv/allfaces/faces94.html" target="_blank">Faces94</a> database. Images from the Faces94 database are 180 by 200 pixels in resolution and were taken as the subjects were speaking to induce variations in the images. In order to train a classifier with the images, the raw pixel information is extracted, converted to grayscale, and flattened into vectors of dimension \(180 \times 200 = 36000\). For this experiment, 12 subjects will be used from the database with 20 files will be used per subject. Each subject is confined to a unique directory that contains only 20 image files.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import cross_validation
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.decomposition import PCA
+from random import randint
+import matplotlib.cm as cm
+from skimage import io, color
+import os
+# %% Read image data
+numImg = 20
+numSbj = 12
+A = np.zeros([numImg * numSbj, 180 * 200])
+y = np.zeros([numImg * numSbj])
+fPath = #Path to face94 database
+j = numSbj
+c = 0
+for i in os.listdir(fPath):
+    if(j &lt;= 0):
+        break
+    j -= 1
+    for f in os.listdir(fPath + &#039;/&#039; + i):
+        imgPath = fPath + &#039;/&#039; + i + &#039;/&#039; + f
+        A[c, :] = color.rgb2gray(io.imread(imgPath)).reshape([1, 180 * 200])
+        y[c] = j
+        c = c + 1</code></pre><br/><hr/><br/>
+Currently, each row in the matrix \(\textbf{A}\) corresponds to a single flattened image. The vector \(\textbf{y}\) indicates the corresponding subject ID (0 - 11).
+<h3>Eigenfaces Based Classification</h3>
+To compute the eigenfaces of these images, principal component analysis (PCA) is performed on the matrix \(\textbf{A}\). The eigenfaces are then the first \(n\) principal components of the matrix \(\textbf{A}\). This can be done in python as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>plt.figure()
+pca = PCA(n_components=4)
+pca.fit(A)
+for i in range(4):
+    ax = plt.subplot(2, 2, i + 1)
+    ax.imshow(pca.components_[i].reshape([200, 180]))
+plt.show()</code></pre><br/><hr/><br/>
+<br/>
+<br/>The plot of the first four eigenfaces of the input data is as follows:<br/>
+<p style="text-align:center;"><img src="../Img/eigenfaces.png" alt="eigenfaces" height="auto" width="75%" /></p>
+<p style="text-align:center;"><strong>Figure 1: Plot of First Four Eigenfaces</strong></p>
+<p style="text-align:left;">Next, the data is approximated as a linear combination of the eigenfaces (principal components); only the weights of the eigenfaces are used to represent the data. Using more eigenfaces results in a better approximation. The following plot shows successively better approximations of an image using 1, 2, 3, and 4 eigenfaces (from top to bottom left to right).</p>
+<p style="text-align:center;"><img src="../Img/eignlc.png" alt="eignLC" height="auto" width="75%" /></p>
+<p style="text-align:center;"><strong>Figure 2: Successive Approximation of Input Image</strong></p>
+<p style="text-align:left;">By preserving a small number of eigenfaces, the dimension of the data can be greatly reduced. Classification can then be performed in this lower-dimensional space. For example, a K Nearest Neighbors classifier could be used. The transformed image data can be computed and plotted as follows (2 eigenfaces are preserved for a 2D plot):</p>
+
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Colors for distinct individuals
+cols = ['#{:06x}'.format(randint(0, 0xffffff)) for i in range(numSbj)]
+pltCol = [cols[int(k)] for k in y]
+# %% Plot 2d PCA data
+drA = pca.transform(A)
+plt.figure()
+plt.scatter(drA[:, 0], drA[:, 1], color=pltCol)
+plt.show()</code></pre><br/><hr/><br/><br/>
+<p style="text-align:center;"><img src="../Img/eigntrnsf.png" alt="eignTrnsf" height="auto" width="75%" /></p>
+<p style="text-align:center;"><strong>Figure 3: Plot of PCA Transformed Image Data
+</strong></p>
+<p style="text-align:left;">Notice in Figure 3 that the green and purple classes in the middle left overlap, however. This is not ideal. PCA finds a projection which maximizes the variability of all the data, but this does not take into account any class information. Linear discriminant analysis (LDA), on the other hand, maximizes the variability between each of the classes while also taking into account the variability within the classes themselves. For classification purposes, this is a better transformation. LDA based facial recognition is known as Fisherfaces.</p>
+<br/>
+<h3>Fisherfaces Based Classification</h3>
+Fisherfaces are similar to eigenfaces, but LDA is performed on the input data matrix. From the last post, the LDA transform can be found by maximizing the <i>Rayleigh quotient</i>:
+<p style="text-align:center;">\[\displaylines{\max\limits_{a}\frac{a^{T}\textbf{B}a}{a^{T}\textbf{W}a}}\ ,\]</p>
+where
+<p style="text-align:center;">\[\displaylines{\textbf{W}=\sum\limits_{i=1}^{m}{\sum\limits_{j \in c_{i}}{(\textbf{x}_{j}-\boldsymbol{\mu}_{c_i})(\textbf{x}_{j}-\boldsymbol{\mu}_{c_i})^{T}}}}\ ,\]</p>
+is the within-class scatter matrix,
+<p style="text-align:center;">\[\displaylines{\textbf{B}=\sum\limits_{i=1}^{m}{N_{i}(\boldsymbol{\mu}_{c_i}-\overline{\textbf{x}})(\boldsymbol{\mu}_{c_i}-\overline{\textbf{x}})^{T}}}\ ,\]</p>
+is the between-class scatter matrix, \(N_{i}\) is the number of samples belonging to class \(c_{i}\), \(m\) is the number of classes, and \(\overline{\textbf{x}}\) is the mean vector of all input vectors.
+<br/>
+<br/>However, with facial recognition the matrix \(\textbf{W}\) is (most likely) singular (and thus not invertible) since the number of samples \(m\) is typically much less than the number of features \(F\). With this experiment, there are \(F = 36,000\) pixels per image and only \(N = 240\) total samples (images). The Fisherfaces technique circumvents this problem by first applying PCA to transform the number of features from \(F\) to \(N-m\) before applying LDA on the transformed data. This can be accomplished in python as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code># %%Compute Fisherfaces
+lda = LinearDiscriminantAnalysis()
+#Use cross validation to check performance
+k_fold = cross_validation.KFold(len(A), 3, shuffle=True)
+for (trn, tst) in k_fold:
+    #Use PCA to transform from dimension F to dimension N-m
+    pca = PCA(n_components=(len(trn) - numSbj))
+    pca.fit(A[trn])
+    #Compute LDA of reduced data
+    lda.fit(pca.transform(A[trn]), y[trn])
+    yHat = lda.predict(pca.transform(A[tst]))
+    #Compute classification error
+    outVal = accuracy_score(y[tst], yHat)
+    print('Score: ' + str(outVal))</code></pre><br/><hr/><br/>
+<br/>
+<br/>Results from this code are given in the Results section. A plot of the Fisherfaces can be done as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code># %% Fit all data for plots
+pca = PCA(n_components=(len(A) - numSbj))
+pca.fit(A)
+pcatA = pca.transform(A)
+lda.fit(pcatA, y)
+ldatA = lda.transform(pcatA)
+#Plot fisherfaces
+plt.figure()
+for i in range(4):
+    ax = plt.subplot(2, 2, i + 1)
+    #Map from PCA space back to the original space (of images)
+    C1 = pca.inverse_transform(lda.scalings_[:, i])
+    C1.shape = [200, 180]
+    ax.imshow(C1)
+plt.show()</code></pre><br/><hr/><br/>
+<br/>
+<br/>The Fisherfaces for this example are as follows:<br/>
+<p style="text-align:center;"><img src="../Img/fisherface.png" alt="fisherFace" height="auto" width="75%" /></p>
+<p style="text-align:center;"><strong>Figure 4: First Four Fisherfaces of Dataset</strong></p>
+<br/>
+<h3>Results and Conclusion</h3>
+The classification accuracies from each of the 3 tests are as follows:
+
+<ul>
+<li>Score: 1.0</li>
+<li>Score: 0.9875</li>
+<li>Score: 1.0</li>
+</ul>
+As can be seen, the classification accuracy is very high. This can be attributed to the well behaved nature of the classes in this instance. There is little variation in lighting and facial orientation which can both hurt performance. It should be noted that the initial PCA transform for Fisherfaces is not strictly necessary when using scikit-learn. Because scikit-learn does not directly invert the matrix \(\textbf{W}\), but instead uses a more sophisticated procedure, LDA can be directly performed on the input matrix, simplifying the code. The simplified code is as follows and plot of the transformed data are as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code># %% simplified LDA
+k_fold = cross_validation.KFold(len(A), 3, shuffle=True)
+for (trn, tst) in k_fold:
+    #Compute LDA of reduced data
+    lda.fit(A[trn], y[trn])
+    #Compute classification error
+    outVal = lda.score(A[tst], y[tst])
+    print('Score: ' + str(outVal))</code></pre><br/><hr/><br/><br/>
+<p style="text-align:center;"><img src="../Img/ldaplt.png" alt="ldaPlt" height="auto" width="75%" /></p>
+<p style="text-align:center;"><strong>Figure 5: Plot of LDA Transformed Images</strong></p>
+<p style="text-align:left;">In the above plot, different colors denote different classes (individuals). Indeed, the above method is preferable as it typically allows for perfect performance (100% accuracy) on this dataset.</p>
+<br/>
+<h3>References</h3>
+<ol>
+	<li>Belhumeur, Peter N., João P. Hespanha, and David J. Kriegman. "Eigenfaces vs. fisherfaces: Recognition using class specific linear projection." Pattern Analysis and Machine Intelligence, IEEE Transactions on 19.7 (1997): 711-720.</li>
+</ol><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

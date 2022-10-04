@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Using Random Forests and Wordclouds to Visualize Feature Importance in Document Classification</h1><h2>Thu, 17 Aug 2017</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i>, <i>Matplotlib</i>, <i>Nlp</i>, <i>Python</i>, <i>Random Forest</i>, <i>Wordcloud</i></h3>What characteristics do the works of famous authors have that make them unique? This post uses ensemble methods and wordclouds to explore just that.
+<h1>Introduction</h1>
+<a href="https://www.gutenberg.org/">Project Gutenberg</a> offers a large number of freely available works from many famous authors. The dataset for this post consists of books, taken from Project Gutenberg, written by each of the following authors:
+
+<ul>
+<li>Austen</li>
+<li>Dickens</li>
+<li>Dostoyevsky</li>
+<li>Doyle</li>
+<li>Dumas</li>
+<li>Stevenson</li>
+<li>Stoker</li>
+<li>Tolstoy</li>
+<li>Twain</li>
+<li>Wells</li>
+</ul>
+The main idea of this post is to do the following:
+<ol>
+<li>Use vectors of word frequencies as features</li>
+<li>Fit a random forest classifier for each author</li>
+<li>Analyze each random forest to determine important features</li>
+<li>Obtain words that correspond to important features</li>
+<li>Create a word cloud with word size determined by importance</li>
+</ol>
+<h1>Data Setup</h1>
+A number of libraries are necessary for this post.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>import numpy as np
+import matplotlib as mpl
+from sklearn.feature_extraction.text import TfidfVectorizer, ENGLISH_STOP_WORDS
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import SelectKBest
+from nltk.corpus import wordnet as wn
+import os
+import roman
+from PIL import Image
+from wordcloud import WordCloud
+from treeinterpreter import treeinterpreter as ti</code></pre><br/><hr/><br/>
+<br/>
+<br/>The books for each author are organized in the following structure:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>Austen/
+    Book1.txt
+    Book2.txt
+    Book3.txt
+    Book4.txt
+Dickens/
+    Book1.txt
+...</code></pre><br/><hr/><br/>
+<br/>
+<br/>The following code loads the books into memory. A number of strings are randomly generated from each book to increase the total number of samples. This prevents trees in the random forest from having height 0; a case which is not handled correctly in the <i>treeinterpreter</i> library. A potential fix for this which eliminates the need for sampling <a href="https://github.com/andosa/treeinterpreter/issues/4">can be found here</a>.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#%% Generate samples from each book
+NWORDS = 2 ** 15
+A = ['Austen', 'Dickens', 'Dostoyevsky', 'Doyle',
+     'Dumas', 'Stevenson', 'Stoker', 'Tolstoy',
+     'Twain', 'Wells']
+tp = r"(?u)\b\w{2,}\b"                                      #Regex for words
+ctp = re.compile(tp)
+SW = GetSW()    #Stop words
+BT = []         #List of randomly generated strings
+AL = []         #Author labels
+W = set()       #Big set of all words
+for i, AFi in enumerate(A):
+    for b in os.listdir(AFi):
+        with open(os.path.join(AFi, b)) as F:
+            ST = ctp.findall(F.read().lower())              #Tokenize book
+        nSamp = np.ceil(len(ST) / NWORDS).astype(int)       #Number of samples
+        for Ri in np.random.choice(ST, (nSamp, NWORDS)):    #Generate samples from book
+            BT.append(' '.join(Ri))                         #Form string from sample
+            W.update(Ri)                                    #Add any new words to vocabulary
+            AL.append(AFi)                                  #Class label for this sample
+#%% Form the vocabulary for Tfidf by removing invalid words/names/etc
+def WordFilter(W):
+    return (W in SW) or (len(wn.synsets(W)) == 0)
+
+W = frozenset(Wi for Wi in W if not WordFilter(Wi))
+AL = np.array(AL)</code></pre><br/><hr/><br/>
+<br/>
+<br/>The <i>WordFilter</i> function utilizes <a href="http://www.nltk.org/howto/wordnet.html">wordnet</a> to filter any invalid words. Wordnet is a very powerful library that can be used to analyze the meaning of natural language. For this code, wordnet is being used like a dictionary; if no entry is found for word <i>W</i> then <i>W</i> is filtered.
+<h1>Tfidf Feature Extraction</h1>
+The next step is to extract numerical features from the strings. For this, a <i>TfidfVectorizer</i> is used. <i>Tfidf</i> stands for: <b>T</b>erm <b>Frequency</b> (times) <b>I</b>nverse <b>Document</b> <b>F</b>requency. In math notation, Tfidf features are computed as<br/>
+<p style="text-align:center;">\(tf(t, d) \times idf(t)\) ,</p>
+<br/>
+where \(t\) is the term (a word in this case), \(d\) is the document (a randomly generated string), and \(tf\) is a function which counts the number of occurences of \(t\) in \(d\). The \(idf\) function is computed as<br/>
+<p style="text-align:center;">\(\log{\frac{1+n_{d}}{1+df(d, t)}}+1\) ,</p>
+<br/>
+where \(n_{d}\) is the total number of documents and \(df(t)\) is the number of documents that contain \(t\).
+<br/>
+<br/>The \(idf(t)\) element aims to reduce the weight of terms which are common to all or most documents. With Tfidf features, <i>idf(t)</i> typically reduces the weight of \(tf(t, d)\) for terms like <i>a</i>, <i>an</i>, <i>he</i>, and <i>she</i> to prevent these terms from dwarfing more useful ones.
+<br/>
+<br/>The following code computes tfidf features using sklearn.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#%% Transform text into numerical features
+cv = TfidfVectorizer(token_pattern = tp, vocabulary = W)
+TM = cv.fit_transform(BT)
+#Lookup word by column index
+IV = np.zeros((len(cv.vocabulary_)), dtype = object)
+for k, v in cv.vocabulary_.items():
+    IV[v] = k</code></pre><br/><hr/><br/>
+<h1>Classification using Random Forest</h1>
+Next, a binary random forest classifier is fit for each author; each classifier determines if a document is sampled from the works of a certain author or it is not. A random forest consists of a collection of decision trees (hence forest). An example of a random forest having 2 decision trees is shown below in Figure 1.<br/>
+<p style="text-align:center;"><a href="../Img/randomforest.png"><img src="../Img/randomforest.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: A Random Forest with 2 Trees</b></p>
+<br/>
+In the above figure, \(V[i]\) denotes the \(i\)-th element of the feature vector. The random forest depicted in Figure 1 predicts one of 3 class labels: <i>A</i>, <i>B</i>, or <i>C</i>.
+<br/>
+<br/>A random forest with \(n\) trees is created by forming \(n\) random samples of size \(m\) from the training data. In this case, each set of random samples consists of \(m\) randomly selected rows of the data matrix <i>TM</i>. For each set, a decision tree is fit. A random forest performs classification by using a voting method. Each tree in the forest produces a class label and the class label that appears most is taken as the final prediction.
+<br/>
+<br/>With a random forest fit to the training data, <i>treeinterpreter</i> is used to obtain the contribution of each feature in determining the predicted class label for each sample. The following code fits a random forest for each author and produces a dictionary which maps words to their importance. <b>Note:</b> It seems <i>treeinterpreter</i> does not use sparse features, so the amount of memory used in this snippet increases greatly with the number of trees in the random forest (<i>n_estimators</i>). Based on the amount of memory available, the number of trees and the number rows to predict per iteration can be adjusted.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#%%
+def SplitArr(n, m):
+    i1, i2 = 0, n % m if (n % m != 0) else m
+    while i1 &lt; n:
+        yield i1, i2
+        i1, i2 = i2, i2 + m
+        
+AW = []
+for i, Ai in enumerate(A):
+    #Use boolean class labels
+    L = AL == Ai
+    #Use an RFC to find most important words for each author
+    C = RandomForestClassifier(n_estimators = 256, n_jobs = -1)
+    C.fit(TM, L)
+    S1 = C.score(TM, L)
+    print(&#039;Accuracy {:10s}: {:.4f}&#039;.format(Ai, S1))
+    #Index of author class
+    ACI = C.classes_.nonzero()[0][0]
+    FR = csr_matrix((1, TM.shape[1]))
+    #Iterate over rows in chunks to prevent out of memory
+    NZR = L.nonzero()[0]
+    for j1, j2 in SplitArr(len(NZR), 2):
+        _, _, F = ti.predict(C, TM[j1:j2])
+        FR += csr_matrix(F[:, :, ACI].sum(axis = 0))
+    FR /= L.sum()
+    AW.append({IV[j]: FR[0, j] for j in FR.nonzero()[1]})</code></pre><br/><hr/><br/>
+<br/>
+<br/>Good results can also be obtained by using other feature selections techniques. <a href="http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.SelectKBest.html"><i>SelectKBest</i></a> from the <i>feature_extraction</i> module of sklearn, in particular, gives good results and is very efficient on sparse features. Code to use <i>SelectKBest</i> follows.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>AW = []
+for i, Ai in enumerate(A):
+    L = AL == Ai
+    C = SelectKBest(k = 1024)
+    C.fit(TM, L)
+    FR = C.scores_
+    AW.append({IV[j]: FR[j] for j in FR.nonzero()[0]})</code></pre><br/><hr/><br/>
+<h1>Visualization of Features using Wordclouds</h1>
+<i>AW</i> now contains a dictionary of words mapped to their importance for each author. Next, a wordcloud is constructed using the <a href="https://github.com/amueller/word_cloud">wordcloud library</a>. The <i>generate_from_frequencies</i> function allows a wordcloud to be constructed from a dictionary. Transparency masks are also used so that the words are filled into a pattern specified by the <i>mask</i> parameter.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>cmi = 0
+def MakeCF():
+    global cmi
+    CM = [mpl.cm.Greens, mpl.cm.Oranges, mpl.cm.Blues][cmi % 3]
+    cmi += 1
+    def color_func(word, font_size, position, orientation, random_state=None, **kwargs):
+        return tuple(int(255 * j) for j in CM(np.random.rand() + .4))
+    return color_func
+    
+#%% Create wordclouds
+fontPath = 'C:\\Windows\\Fonts\\SpecialElite.ttf'
+for i, Ai in enumerate(A):
+    icon = Image.open(os.path.join('Masks', Ai + '.png'))
+    mask = Image.new("RGB", icon.size, (255, 255, 255))
+    mask.paste(icon, icon)
+    mask = np.array(mask)
+    wc = WordCloud(background_color = None, color_func = MakeCF(), 
+         font_path = fontPath, mask = mask, max_font_size = 250, mode = 'RGBA')            
+    wc.generate_from_frequencies(AW[i])
+    wc.to_file(os.path.join('Wordclouds', Ai + '.png'))</code></pre><br/><hr/><br/>
+<br/>
+<br/>In the above code, the word color is randomly chosen using <a href="https://matplotlib.org/examples/color/colormaps_reference.html">colormaps from MatPlotLib</a>. The font used is a Google Font called: <i>Special Elite</i>. The font is available for download <a href="https://fonts.google.com/specimen/Special+Elite">here</a>. The resulting wordclouds are shown below in Figures 2 and 3.<br/>
+<p style="text-align:center;">
+<table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/austen.png"><img src="../Img/austen.png" /></a></td><td><a href="../Img/dostoyevsky.png"><img src="../Img/dostoyevsky.png" /></a></td></tr><tr><td><a href="../Img/twain.png"><img src="../Img/twain.png" /></a></td><td><a href="../Img/dickens.png"><img src="../Img/dickens.png" /></a></td></tr><tr><td><a href="../Img/doyle.png"><img src="../Img/doyle.png" /></a></td><td><a href="../Img/tolstoy.png"><img src="../Img/tolstoy.png" /></a></td></tr><tr><td><a href="../Img/stevenson.png"><img src="../Img/stevenson.png" /></a></td><td><a href="../Img/stoker.png"><img src="../Img/stoker.png" /></a></td></tr><tr><td><a href="../Img/dumas.png"><img src="../Img/dumas.png" /></a></td><td><a href="../Img/wells.png"><img src="../Img/wells.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 2: Generated Wordclouds</b></p>
+<br/>
+In order to prevent the wordclouds from being dominated by character names, a wide variety of books and authors should be used. The wordcloud for Doyle shows an example of this. Since Doyle writes almost exclusively about Sherlock Holmes, the classifier identifies words like <i>Sherlock</i>, <i>Holmes</i>, <i>Watson</i> as strong features. Authors that have different character names in their books do not suffer (or benefit) from this.<br/>
+<p style="text-align:center;">
+<a href="../Img/wordclouds.png"><img src="../Img/wordclouds.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: Full Version of Featured Image</b></p>
+<br/>
+A takeaway from the above is that gathering works from a wide variety of authors can improve results by making these types of uninteresting relationships more rare. For example, if only one author has a character named Tom, then the classifier may identify Tom as a strong feature for the author. This is technically correct, but probably not very interesting if the goal is to gain a deeper understanding of an author's style. Introducing more authors and books makes it more likely that multiple authors have a character named Tom, thus decreasing the importance of Tom as a feature for any one author.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

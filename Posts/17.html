@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Introducing GopherJoy: A Controller Input Application</h1><h2>Fri, 21 Jul 2017</h2><h3><i>Gaming</i>, <i>Golang</i>, <i>Path Of Exile</i>, <i>Pc Controller</i>, <i>Software</i>, <i>Windows</i></h3>So, I was looking for a way to use my XBox 360 Controller for Windows to browse the web and play games without built-in controller support. After searching for a while, I found most existing applications were either not free or did not work very well. Some required extra dll files (pro-tip DON'T search for "<i>[insert name].dll missing</i>" and download the first thing you find), or were not fully functional. Having experience handling mouse and keyboard input using Windows API, I decided to see if I could come up with something better. The result: <em>GopherJoy</em>.
+<br/>
+<br/>In short, GopherJoy is a controller input application that allows for mouse and keyboard input to be triggered by a game controller or joystick. GopherJoy:
+<ul>
+<li>Is a self-contained native application written in Go and C (hence the name <i>Gopher</i>Joy and logo)</li>
+<li>Uses a simple but highly customizable ini file</li>
+<li>Offers intuitive sensitivity that allows both speed and precision</li>
+<li>Features a straightforward command-line interface</li>
+</ul>
+I think its great for playing games without built-in controller support or for browsing the web from the couch (or exercise bike)!
+<br/>
+<br/>GopherJoy is available for free on <a href="">the software page</a> of this site. Currently there are two ini configuration included with the executable: GopherJoy and PoE. The first ini file is a configuration I use for browsing the web and the second is for playing the game Path of Exile (which doesn't have controller support). The zip file comes with a README file with further details. I also made an installation guide video.<br/>
+<p style="text-align:center;"><iframe src="https://www.youtube-nocookie.com/embed/rOhxrkmFnMY" title="YouTube video player" frameborder="0" allow="accelerometer;autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+<br/>
+<b>Note:</b> I only have 2 Xbox 360 PC controllers available to test the application presently. In theory, GopherJoy should work with other controllers as long as the driver is installed. Depending on the controller layout, the ini file will probably need to be modified. Full verbose output (flag <i>-v 3</i>) will most likely be useful for configuring a new controller. Depending on interest, I may upload additional ini files for different controllers/games. Or if you make a great ini file, let me know and I'll make it available for download! Gopher it. Get it? Okay, I'll stop now.
+<br/>
+<br/><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

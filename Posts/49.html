@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Visualizing Coronavirus Phylogenies with Genome Mutation Analysis</h1><h2>Sun, 26 Apr 2020</h2><h3><i>Bioinformatics</i>, <i>Coronavirus</i>, <i>Covid-19</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Medicine</i></h3>In this post, the severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) responsible for the recent pandemic is analyzed. Several attributes about the presently recorded virus genomes are plotted and genetic mutations in the sequences are traced to identify probable phylogenies among the samples.
+<h1>Introduction</h1>
+The first discovery of a coronavirus occurred in the 1930s. Two researchers isolated a virus causing infectious bronchitis, initially reported among a flock of chickens [1]. The subsequent discovery of coronaviruses capable of infecting humans came about thirty years later. The name coronavirus comes from the distinctive appearance of the virus in electron micrographs, arising from the many characteristic proteins protruding from its surface.
+<h1>Metadata Analysis</h1>
+The National Center for Biotechnology Information (NCBI) Virus maintains a database of sequence and associated metadata for a large variety of viruses. At the time of this writing, NCBI Virus has over one thousand SARS-CoV-2 genomes and this number is growing daily. The number of samples collected per week is shown in Figure 1.<br/>
+<p style="text-align:center;"><a href="../Img/cvsampperweek.png"><img src="../Img/cvsampperweek.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: Samples Collections per Week</b></p>
+<br/>
+In the early stages of the pandemic, relatively few virus variants are collected.<br/>
+<p style="text-align:center;"><a href="../Img/cvsampprev.png"><img src="../Img/cvsampprev.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: Number of Samples Collected by Country</b></p>
+<br/>
+Figure 2 shows the number of samples collected in each country along with the average number of days since collection. The majority of samples are collected recently in the USA. However, these results are likely influenced by the fact that the NCBI is a US organization.
+<h1>Sequence Data</h1>
+SARS-CoV-2 is an RNA virus in the family coronaviridae. With a genome composed of roughly 30 kilobases, the virus is one of the larger known RNA viruses. The sequences for over one thousand variants of SAR-CoV-2 are obtained in FASTA format from NCBI Virus. A histogram of the genome lengths for each of the coronavirus variants is shown in Figure 3.<br/>
+<p style="text-align:center;"><a href="../Img/cvseqlen.png"><img src="../Img/cvseqlen.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: Coronavirus Genome Length Distribution</b></p>
+<br/>
+The average length of the virus is 29,833 nucleobases with a standard deviation of 69.1 bases. The virus labeled <i>MT121215</i> has the longest genome with a length of 29945 bases.
+<br/>
+<br/>Next, the samples are aligned to the reference sequence: <i>NC_045512</i> [2]. By aligning samples to the reference sequences, discrepancies in the lengths and bases of the various sequences are addressed and the variants can be compared for differences. The FASTA files are aligned to the reference using <i>bwa</i> and the resulting BAM files are indexed. Finally, <i>bcftools</i> is used to perform variant calling on the aligned files against the reference sequence.<br/>
+<p style="text-align:center;"><a href="../Img/workflow.png"><img src="../Img/workflow.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 4: Variant Calling Workflow</b></p>
+<br/>
+Figure 4 shows the workflow for performing alignment and variant calling on the various virus genomes. This process is repeated for each of the 1112 FASTA files. The result of the process is a variant call format (VCF) file for each virus genome. Each VCF file contains variants that the corresponding virus genome possess with respect to the reference sequence: <i>NC_045512</i>.
+<br/>
+<br/>The average number of mutations per virus genome is roughly 7.1. The virus <i>MT372482</i>, collected in Malaysia, possess 37 mutations, the maximum number observed.<br/>
+<p style="text-align:center;"><a href="../Img/cvnummut.png"><img src="../Img/cvnummut.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 5: Distribution of Mutation Count</b></p>
+<br/>
+Figure 6 lists the most common mutations observed among the 1112 SARS-CoV-2 variants. The labels indicate the aligned position in the virus genome of the mutation along with the allele.<br/>
+<p style="text-align:center;"><a href="../Img/cvmutprev.png"><img src="../Img/cvmutprev.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 6: Most Common Mutations</b></p>
+<br/>
+The majority of the most common mutations are single nucleotide polymorphisms (SNP). An SNP occurs when one base is substituted for another. Some of the most common mutations are present in more than half of all the virus genomes.
+<h1>Mutation Analysis</h1>
+Next, the VCF files are loaded into memory using <i>sckit-allel</i>. An encoded matrix is created where every row corresponds to a virus genome and every column to one of the observed mutations. Using this encoded matrix, both the average and maximum similarity between the virus genomes collected in each represented country is computed.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/cvavgvirsim.png"><img src="../Img/cvavgvirsim.png" /></a></td><td><a href="../Img/cvmaxvirsim-1.png"><img src="../Img/cvmaxvirsim-1.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 7: Virus Genome Similarity by Origin</b></p>
+<br/>
+Figure 7 shows the symmetric similarity matrix. A cell at row <i>i</i> and column <i>j</i> in this plot contains the average or maximum pairwise similarity of all virus genomes found in the countries denoted by the <i>i</i>-th and <i>j</i>-th axis labels respectively.
+<br/>
+<br/>Next, both unique mutations and genomes possessing only unique mutations are filtered to produce a reduced matrix. Then, this encoded submatrix is projected into a lower dimensional subspace using the truncated singular value decomposition. Finally, a t-distributed stochastic neighbor embedding (TSNE) is fit and the resulting 2D plot is shown in Figure 8.<br/>
+<p style="text-align:center;"><a href="../Img/cvgenorace.png"><img src="../Img/cvgenorace.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 8: Embedding of Virus Genomes</b></p>
+<br/>
+By using TSNE, virus genomes that are close together in the higher dimensional space are closer together in the two-dimensional embedding. The color and marker of each point denote the country where each sample was collected.
+<br/>
+<br/>Finally, an attempt is made to construct a phylogenetic tree from the virus genomes. SARS-CoV-2 is a single-stranded positive sense RNA virus. Similar viruses exhibit mutation rates in the range of <i>1e-6</i> to <i>1e-4</i> substitutions per nucleotide per cell infection. However, coronaviruses are thought to have lower mutation rates due to the size of their genomes [3].
+<br/>
+<br/>As SARS-CoV-2 has a genome with roughly 30kb and a relatively low mutation rate, a simple, and perhaps somewhat naive, statistical argument is made. The argument is that it is likely for two viruses sharing a common mutation to be in the same lineage. Namely, it is more likely that one virus is descended from the other than for the two to merely share a common ancestor. For in the first case, the mutation occurs once and is passed down via viral replication, while, in the second, two mutations in the same position and of the same allele must occur independently.
+<br/>
+<br/>With these assumptions in place, a plot is produced that attempts to reconstruct the partial lineage of the viruses. The <i>x</i>-axis is a 1D TSNE embedding of the projected virus genomes. Thus, the horizontal direction provides a rough estimate as to how similar the viruses are to each other. The <i>y</i>-axis contains the collection date of the sample, represented as days since the present.<br/>
+<p style="text-align:center;"><a href="../Img/cvmutlineage.png"><img src="../Img/cvmutlineage.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 9: SARS-CoV-2 Lineage Reconstruction</b></p>
+<br/>
+In Figure 9, the color and style of the plot marker indicate the country of collection. The thickness of the lines corresponds to the Jaccard index between the two encoded vectors of the samples. For each sample, a likely ancestor virus is identified. This likely ancestor is an older sample with the maximum Jaccard index, at least one common mutation, and no less than 35% similarity overall.
+<br/>
+<br/>Finally, Figure 10 attempts to quantify the lateral movement of the virus. The ancestor relationships are recorded in a matrix. For each sample collected in the <i>i</i>-th country with a descendant in the <i>j</i>-th country, the cell at row <i>i</i> and column <i>j</i> is incremented. Finally, the columns are normalized so they sum to one.<br/>
+<p style="text-align:center;"><a href="../Img/cvinfectors.png"><img src="../Img/cvinfectors.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 10: Tracing Viral Spread</b></p>
+<br/>
+By reading down a column, the distribution of imported infections is obtained. Reading across the row for China, there appears to be evidence that viruses with origins in China spread to Colombia, Hong Kong, India, and the USA. Looking at the column for Pakistan, it appears that viruses in Iran may have spread to Pakistan, which is plausible given their proximity. Finally, in the last row, viruses from the USA appear to have spread to many other countries.
+<h1>Conclusion</h1>
+Analysis of mutations in viral samples collected in a pandemic offers insight into the mutation rate and behavior of the underlying pathogen. Statistical techniques can be used to approximately reconstruct the movement of the virus and identify likely phylogenetic trees among the viral genomes.
+<h1>References</h1>
+<table style="margin: 0 auto;border:none;">
+<tr><td style="border:none;" width="5%" valign="top">[1]</td><td style="border:none;" width="95%">Beaudette F., Hudson C. "Cultivation of the virus of infectious bronchitis." <i>Journal of the American Veterinary Medical Association.</i> 1937;90:51–60.</td></tr>
+<tr><td style="border:none;" valign="top">[2]</td><td style="border:none;">Baranov, Pavel V., et al. "Programmed ribosomal frameshifting in decoding the SARS-CoV genome." <i>Virology</i> 332.2 (2005): 498-510.</td></tr>
+<tr><td style="border:none;" width="5%" valign="top">[3]</td><td style="border:none;" width="95%">Sanjuán, Rafael, et al. "Viral mutation rates." <i>Journal of virology</i> 84.19 (2010): 9733-9748.</td></tr>
+</table><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Decorrelation Redux</h1><h2>Sat, 26 Dec 2020</h2><h3><i>Data Science</i>, <i>Mathematics</i>, <i>Statistics</i></h3>Consider the typical statement of the least squares problem.
+<p style="text-align:center;">\[\displaylines{\mathbf{A}\mathbf{x}=\mathbf{y}}\ ,\]</p>
+where \(\mathbf{A}\) is the <i>m</i> x <i>n</i> data matrix, \(\mathbf{x}\) is the <i>n</i> x <i>1</i> vector of regression coefficients, and \(\mathbf{y}\) is the <i>m</i> x <i>1</i> vector of target values.
+
+As discussed <a href="Posts/38.html">in a previous post</a>, estimation and interpretation of this problem is made difficult if the matrix \(\mathbf{A}\) suffers from multi-colinearity. Unfortunately, this is frequently found to be the case in practical problems.
+<br/>
+<br/>Ideally, the columns of the matrix \(\mathbf{A}\) are uncorrelated. For this to be the case, it is sufficient that
+<p style="text-align:center;">\[\displaylines{\mathbf{A}^{T}\mathbf{A}=\mathbf{I}_n}\ ,\]</p>
+where \(\mathbf{I}_n\) is the <i>n</i> x <i>n</i> identity matrix. Consider an <i>n</i> x <i>n</i> transformation matrix that is capable of decorrelating the columns of \(\mathbf{A}\). That is, consider a matrix \(\mathbf{W}\) such that
+<p style="text-align:center;">\[\displaylines{(\mathbf{A}\mathbf{W})^{T}(\mathbf{A}\mathbf{W})=\mathbf{I}_n}\ .\]</p>
+Using properties of the matrix transpose, this is equivalent to
+<p style="text-align:center;">
+\[\displaylines{\mathbf{W}^T\mathbf{A}^{T}\mathbf{A}\mathbf{W}
+=\mathbf{W}^T\mathbf{X}\mathbf{W}=\mathbf{I}_n}\ .\]</p>
+Now, consider the <i>n</i> x <i>n</i> matrix \(\mathbf{X}=\mathbf{A}^{T}\mathbf{A}\). It can be shown that this matrix is at least positive semi-definite.
+<p style="text-align:center;">\[\displaylines{\mathbf{a}^T\mathbf{X}\mathbf{a}}\]</p>
+<p style="text-align:center;">\[\displaylines{=\mathbf{a}^T\mathbf{A}^T\mathbf{A}\mathbf{a}}\]</p>
+<p style="text-align:center;">\[\displaylines{=(\mathbf{A}\mathbf{a})^T\mathbf{A}\mathbf{a}}\]</p>
+<p style="text-align:center;">\[\displaylines{=\mathbf{b}^T\mathbf{b} &gt;=0 }\ ,\]</p>
+where the substitution \(\mathbf{b}=\mathbf{A}\mathbf{a}\) has been made. Thus, \(\mathbf{X}\) may be re-written as the product of an <i>n</i> x <i>n</i> triangular matrix with its transpose:
+<p style="text-align:center;">\[\displaylines{\mathbf{X}=\mathbf{L}\mathbf{L}^{T}}\ .\]</p>
+This decomposition is known as the Cholesky decomposition (*) and it is guaranteed to exist for all real-valued symmetric positive semidefinite matrices.
+<br/>
+<br/>Since the matrix \(\mathbf{X}\) is symmetric, the above equation may be further rewritten as follows:
+<p style="text-align:center;">\[\displaylines{\mathbf{I}_n=\mathbf{W}^T\mathbf{X}\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{=\mathbf{W}^T\mathbf{X}^{T}\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{=\mathbf{W}^T(\mathbf{L}\mathbf{L}^T)^{T}\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{=\mathbf{W}^T\mathbf{L}^{T}\mathbf{L}\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{=(\mathbf{L}\mathbf{W})^{T}\mathbf{L}\mathbf{W}}\ .\]</p>
+Thus, the matrix \((\mathbf{L}\mathbf{W})\) is also an orthogonal matrix. However, in the above equation, all matrices are now of dimension <i>n</i> x <i>n</i>, and further, the matrix \(\mathbf{L}\) is a lower triangular matrix. From this, a convenient solution for performing decorrelation is apparent. It is sufficient to let \(\mathbf{W}=\mathbf{L}^{-1}\) as
+<p style="text-align:center;">\[\displaylines{(\mathbf{A}\mathbf{W})^{T}(\mathbf{A}\mathbf{W})}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{W}^T\mathbf{A}^{T}\mathbf{A}\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{W}^T\mathbf{X}\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{W}^T\mathbf{X}^T\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{W}^T(\mathbf{L}\mathbf{L}^{T})^T\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{W}^T\mathbf{L}^T\mathbf{L}\mathbf{W}}\]</p>
+<p style="text-align:center;">\[\displaylines{(\mathbf{L}\mathbf{W})^T(\mathbf{L}\mathbf{W})}\]</p>
+<p style="text-align:center;">\[\displaylines{(\mathbf{L}^{-1}\mathbf{L})^T(\mathbf{L}\mathbf{L}^{-1})}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{I}_n^T\mathbf{I}_n=\mathbf{I}_n}\]</p>
+produces the desired result. Thus, the inverse of the Cholesky decomposition of the correlation matrix decorrelates the input matrix. Further, this approach is also convenient as \(\mathbf{L}\) is triangular.
+<br/>
+<br/>It is interesting to consider the decorrelated matrix \(\mathbf{B}=\mathbf{A}\mathbf{W}\). Consider the least squares problem
+<p style="text-align:center;">\[\displaylines{\mathbf{B}\mathbf{\tilde{x}}=\mathbf{y}}\ .\]</p>
+The scalar loss of the least squares formulation can be written as:
+<p style="text-align:center;">\[\displaylines{L=(\mathbf{y}-\mathbf{B}\mathbf{\tilde{x}})^{T}(\mathbf{y}-\mathbf{B}\mathbf{\tilde{x}})}\ .\]</p>
+Setting the derivative of this expression to zero produces:
+<p style="text-align:center;">\[\displaylines{\frac{\partial L}{\partial \mathbf{\tilde{x}}}=-2\mathbf{B}^Ty+2\mathbf{B}^T\mathbf{B}\mathbf{\tilde{x}}=0}\]</p>
+Now, from above, \(\mathbf{B}^T\mathbf{B}=\mathbf{I}_n\) and so this equation simplifies as follows:
+<p style="text-align:center;">\[\displaylines{\frac{\partial L}{\partial \mathbf{\tilde{x}}}=-2\mathbf{B}^Ty+2\mathbf{B}^T\mathbf{B}\mathbf{\tilde{x}}=0}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{B}^T\mathbf{B}\mathbf{\tilde{x}}=\mathbf{B}^T\mathbf{y}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{I}_n\mathbf{\tilde{x}}=\mathbf{B}^T\mathbf{y}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{\tilde{x}}=\mathbf{B}^T\mathbf{y}}\]</p>
+Thus, the least squares coefficients are simply the dot product of the transformed matrix with the target values. Substituting this into the original equation gives the linear least square approximation:
+<p style="text-align:center;">\[\displaylines{\mathbf{B}\mathbf{B}^T\mathbf{y}=\mathbf{\hat{y}}}\ .\]</p>
+From this, it is apparent that the quality of the approximation improves the closer that the scatter matrix \(\mathbf{B}\mathbf{B}^T\) is to the identity matrix. This occurs when the rows of \(\mathbf{B}\) are uncorrelated with each other.
+<br/>
+<br/>The least squares coefficients in the transformed space can be used in the original space by first transforming the input:
+<p style="text-align:center;">\[\displaylines{\mathbf{B}\mathbf{\tilde{x}}=\mathbf{\hat{y}}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{A}\mathbf{W}\mathbf{\tilde{x}}=\mathbf{\hat{y}}}\]</p>
+<p style="text-align:center;">\[\displaylines{\mathbf{A}\mathbf{x}=\mathbf{\hat{y}}}\ .\]</p>
+From the above, it is apparent that the coefficients in the original space may be recovered using the following equation:
+<p style="text-align:center;">\[\displaylines{\mathbf{x}=\mathbf{W}\mathbf{\tilde{x}}}\ .\]</p>
+In summary, among other things, this approach may be used to orthogonalize the columns of a matrix and for least-squares approximation. In total, it requires computing one Cholesky decomposition, one inverse of a triangular matrix, and several matrix multiplications.
+<br/>
+<br/><b>Note: (*)</b> The Cholesky decomposition is named after André-Louis Cholesky, a French geodesist and artillery officer who perished in the first World War. The now well-known decomposition was published by one of Cholesky's fellow officers after his death [<a href="https://en.wikipedia.org/wiki/Andr%C3%A9-Louis_Cholesky">1</a>].<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

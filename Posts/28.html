@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Visualizing Bitcoin Wealth Distribution</h1><h2>Wed, 27 Dec 2017</h2><h3><i>Bitcoin</i>, <i>Cryptocurrency</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Statistics</i></h3>This post explores the distribution of wealth among nonempty addresses on the Bitcoin network.
+<br/>
+<br/>All addresses on the Bitcoin network are queried. The number of addresses with at least one satoshi is 24,473,765 at the time of the query. The resulting addresses are sorted by the amount of Bitcoin they contain. The list is divided into quantiles and the wealth of each quantile is plotted in a bar plot.<br/>
+<p style="text-align:center;"><a href="../Img/percentiles.png"><img src="../Img/percentiles.png" alt="Percentiles" height="auto" width="75%" /></a></p>
+<br/>
+Next, the wealth of the top \(n\) percent is computed for several values of \(n\). The result is shown in a bar plot, along with the number of addresses in each group.<br/>
+<p style="text-align:center;"><a href="../Img/addrpercent2.png"><img src="../Img/addrpercent2.png" alt="AddrPercent" height="auto" width="75%" /></a></p>
+<br/>
+Then, the number of addresses with at least \(m\) satoshi is computed for several values of \(m\). The result is shown in a bar plot along with the corresponding percentiles.<br/>
+<p style="text-align:center;"><a href="../Img/coinpercent1.png"><img src="../Img/coinpercent1.png" alt="CoinPercent" height="auto" width="75%" /></a></p>
+<br/>
+Finally, the addresses are grouped by their first character and the result is displayed in a pie chart.<br/>
+<p style="text-align:center;"><a href="../Img/firstchar.png"><img src="../Img/firstchar.png" alt="FirstChar" height="auto" width="75%" /></a></p>
+<br/>
+As can be seen, there is a large imbalance of wealth among Bitcoin addresses. However, the true balance of wealth is obscured by the fact that a single wallet can generate multiple addresses.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Malware Detection and Classification using Logistic Regression</h1><h2>Mon, 02 Apr 2018</h2><h3><i>Anti-Virus</i>, <i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Malware</i>, <i>Security</i>, <i>Windows</i></h3>In this post, an approach to detecting malware using machine learning is presented. System call activity is processed and analyzed by a classification model to detect the presence of malicious applications.
+<h1>Introduction</h1>
+Traditional virus scanners use file <i>signatures</i> to detect malware. When a file is scanned, its signature is computed and this signature is compared to a database of known malicious file signatures. If there is a match, the file is flagged as being malicious. However, this approach may fail to detect newly created malware; it depends upon having an up-to-date database of signatures. By using machine learning, malicious applications can be detected without the need for a database of signatures.
+<br/>
+<br/>Applications use system calls to interact with the operating system. These calls provide details about what applications are doing. Now, operating system hooks allow for applications to intercept system calls on the system. These intercepted calls can be passively logged. Process Monitor is an application created by Windows Sysinternals that does just this. Process Monitor intercepts and logs system calls that are being made on the system. A screenshot of Process Monitor is shown in Figure 1. Process monitor is available <a href="https://docs.microsoft.com/en-us/sysinternals/downloads/procmon">for download here.</a><br/>
+<p style="text-align:center;">
+<a href="../Img/procmonfull.png"><img src="../Img/procmonfull.png" alt="ProcmonFull" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 1: Windows Sysinternals Process Monitor</b></p>
+<br/>
+The volume of information produced by Process Monitor can be overwhelming. Machine learning is applied to analyze these logs and detect anomalies. In this post, Process Monitor is used to generate data for the model. However, this process can be automated by installing hooks on the system and sending the data directly to the classifer.
+<h1>Setup</h1>
+A virtual machine running Windows 7 32-bit is created to collect training data. A keylogger is placed on the system. The keylogger intercepts key strokes using a hook installed with the system call <i>SetWindowsHookEx</i>. The application then logs the VK code of each keystroke to a file. Logging samples are taken from the infected machine using Process Monitor. These logs are exported to a CSV file.<br/>
+<p style="text-align:center;">
+<a href="../Img/procmon.png"><img src="../Img/procmon.png" alt="Procmon" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 2: Keylogger Process Monitor Logs</b></p>
+<br/>
+Inspecting the log file, the calls to CreateFile and WriteFile made by the keylogging application can be seen. These logs are shown in Figure 2.
+<h1>Training the Model</h1>
+This training log file is read into pandas using <i>read_csv</i>. Next the logs are grouped by process name and the individual fields are concatenated together. The following columns are used from the Process Monitor logs:
+
+<ul>
+    <li>Operation</li>
+    <li>Path</li>
+    <li>Result</li>
+    <li>Detail</li>
+    <li>Integrity</li>
+    <li>Parent PID</li>
+    <li>PID</li>
+</ul>
+Next, the logging calls are grouped into a blocks and the resulting strings are vectorized using a TfidfVectorizer. These vectors encode information about the number, type, and details of the system calls made on the computer. Tfidf vectorization is explained <a href="Posts/22.html">in further detail in this earlier blog post</a>.
+<br/>
+<br/>The rational behind this approach is that malware uses system calls to operate on a system. For example, accessing or modifying files or registry keys. Sending or receiving data over the network. By analyzing the frequencies of these actions, malicious behavior can be detected.
+<br/>
+<br/>Next the vectors are assigned target values. A value of 1 indicates the application is malicious. A value of 0 indicates the application is not.
+<br/>
+<br/>A binary label is chosen, though, with sufficient data, programs could be grouped into types. Labels for common types of malware could be constructed: keylogger, Trojan, virus, etc.
+<h1>Classification using Logistic Regression</h1>
+Next, a logistic regression model is fit to the data. Logistic regression is a method of performing regression on a dataset that has categorical target values. The logistic function is used to transform linear combinations of the explanatory variables into probabilities. The definition of the logistic function is as follows:<br/>
+<p style="text-align:center;">\[\displaylines{\sigma(t)=\frac{1}{1+e^{-t}}}\]</p>
+<p style="text-align:center;"><b>Equation 1: The Logistic Function</b></p>
+<br/>
+This function is used to transform the typical linear regression formula:<br/>
+<p style="text-align:center;">\[\displaylines{f(x) = \beta_{0} + \beta_{1}x}\]</p>
+<p style="text-align:center;"><b>Equation 2: Linear Regression Equation</b></p>
+<br/>
+The resulting equation is shown in Equation 3. In this formula, \(p(x)\) represents the probability that an input sample belongs to the target \(1\). That is, the probably that an application is malicious given that it is making the observed system calls.<br/>
+<p style="text-align:center;">\[\displaylines{p(x)=\frac{1}{1+e^{-\beta_{0}-\beta_{1}x}}}\]</p>
+<p style="text-align:center;"><b>Equation 3: Logistic Regression</b></p>
+<br/>
+In this model, the target samples are the rows of a sparse matrix with a large number of columns. These columns encode the counts of all of the possible system calls, operations, paths, and results that can occur. Using sparse matrices improves the performance and memory consumption of the model. With sparse matrices, the runtime and memory usage is bound by the number of non-zero entries of the matrix and not the dimensions of the matrix.
+<br/>
+<br/>Due to there only being 1 malicious application on the computer, the classes 0 and 1 are imbalanced. To improve the <i>recall</i> of the classifier, the classes are assigned the following weights:
+
+<ul>
+    <li>Class 0: 0.1</li>
+    <li>Class 1: 0.9</li>
+</ul>
+This weighting scheme increases the importance of samples in the target class 1.<br/>
+<p style="text-align:center;">
+<a href="../Img/flowchart.png"><img src="../Img/flowchart.png" alt="Flowchart" height="auto" width="75%" /></a>
+</p>
+<p style="text-align:center;"><b>Figure 3: Malware Detection System Flowchart</b></p>
+<br/>
+To summarize, system calls are intercepted and passed to a pre-processor. The pre-processed data is vectorized and the resulting matrix is provided as input to a logistic regression model. The model decides if the process making the system calls is malicious or not. Figure 3 describes the system at a high level using a flowchart.
+<h1>Results</h1>
+To test the model, another virtual machine is setup. Another keylogger is created which functions similarly to the first, with two main differences. The first difference is that the keylogger writes to a different log file. The second is that the keylogger is named differently.
+<br/>
+<br/>Process Monitor logs are collected on the test machine. The logs are vectorized and target labels are predicted for the resulting samples. The accuracy of the model is evaluated. Samples belonging to the process <i>KeyLogger.exe</i> should be assigned a label of 1, while other processes should be assigned a label of 0.
+<br/>
+<br/>The <i>confusion matrix</i> for the cross-validation data is shown below in Equation 4. The confusion matrix shows the true negatives, false positives, false negatives, and true positives from left to right and top to bottom.<br/>
+<p style="text-align:center;">
+\[\displaylines{\left(\begin{array}{cc}416&amp;0\\1&amp;97\end{array}\right)}\]</p>
+<p style="text-align:center;"><b>Equation 4: Classification Model Confusion Matrix</b></p>
+<br/>
+The overall accuracy of the model on this test data is:<br/>
+<p style="text-align:center;">
+\[\displaylines{(416 + 97) / (416 + 0 + 1 + 97) = 0.998054}\].
+</p>
+<br/>
+<h1>Next Steps</h1>
+This post presents a proof-of-concept way to detect and classify malware using vectorization and logistic regression. This process can be improved by gathering Process Monitor logs for a large amount of malware. Malware can be assigned more detailed labels based on its category. Further, hooks can be installed which directly forward system call information to the model to remove the need for Process Monitor.
+<h2>Disclaimer</h2>
+Process Monitor is the property of Windows Sysinternals. The author is not in any way affiliated with Windows Sysinternals. The views of the author do not reflect those of Windows Sysinternals.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>A Statistical Analysis of Facial Attractiveness</h1><h2>Tue, 02 Jan 2018</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Facial Attractiveness</i>, <i>Machine Learning</i>, <i>Statistics</i></h3><p style="text-align:center;"><img src="../Img/faactivation1.png" height="auto" width="75%" /></p>
+<em>An intermediate activation volume produced by a convolutional neural network predicting the attractiveness of a person.</em>
+<br/>
+<br/><hr>
+<br/>
+<br/>Does beauty truly lie in the eye of its beholder? This chapter explores the complex array of factors that influence facial attractiveness to answer that question or at least to understand it better.
+<br/>
+<br/>
+<h2>The Dataset</h2>
+The Chicago Face Database is a dataset created at the University of Chicago by Debbie S. Ma, Joshua Correll, and Bernd Wittenbrink [1]. It consists of portrait photos of several hundred participants along with corresponding measurement and questionnaire data. Each of the participants had several of their facial features measured. For example, the measurements include:
+<ul>
+ 	<li>The distance between the outer edge of the subject's nostrils at the widest point.</li>
+ 	<li>The average distance between the inner and outer corner of the subject's eye.</li>
+ 	<li>The distance between the subject's pupil center to hairline.</li>
+</ul>
+<p style="text-align:center;"><img src="../Img/faam2381.jpg" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: Chicago Face Dataset Subject AM 238</b></p>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<tbody>
+<tr>
+<th>Subject</th>
+<th>Attractive</th>
+<th>Feminine</th>
+<th>Masculine</th>
+<th>Face Width Cheek</th>
+<th>Average Eye Height</th>
+</tr>
+<tr>
+<td>AM-238</td>
+<td>3.120</td>
+<td>1.769</td>
+<td>4.292</td>
+<td>634</td>
+<td>46.250</td>
+</tr>
+<tr>
+<td>AF-200</td>
+<td>4.111</td>
+<td>5.630</td>
+<td>1.357</td>
+<td>676</td>
+<td>65.250</td>
+</tr>
+<tr>
+<td>LM-243</td>
+<td>2.778</td>
+<td>1.179</td>
+<td>4.857</td>
+<td>653</td>
+<td>48.750</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 1: Chicago Face Dataset Sample Data</b></p>
+In addition to the numerical data, a questionnaire was given to another set of participants along with the images. The participants were asked to rate several qualities of each subject on a scale from 1 to 7. These qualities include:
+<ul>
+ 	<li>How attractive the subject is with respect to people of the same race and gender.</li>
+ 	<li>How feminine the subject is with respect to people of the same race and gender.</li>
+ 	<li>How masculine the subject is with respect to people of the same race and gender.</li>
+</ul>
+An example of an image from the dataset is shown in Figure 1. A sample of several rows and columns of the dataset is listed in Table 1.
+<h2>Existing Work</h2>
+The literature often quotes facial symmetry, averageness, and secondary sexual characteristics as influencing attractiveness. In an often-cited paper, Little et. al describe plausible reasons why these particular features are considered attractive from an evolutionary perspective [2]. Further, they claim that despite there being cultural differences to facial attractiveness, favorable cross-cultural traits exist.
+<br/>
+<br/>Symmetry is stated to be attractive as it represents the ideal outcome of development. Asymmetry is asserted to arise from both genetic and environmental issues. The issues cited include genetic defects, mutations, nutrition, and infections. Humans are claimed to have evolved to find these features less attractive as they suggest less than ideal fitness.
+<br/>
+<br/>Averageness is stated to be found attractive as an indicator of genetic diversity. Genetic diversity improves fitness in regards to immunity and reduced risk of genetic issues in offspring. Again, humans are claimed to have evolved to find averageness to be more attractive.
+<br/>
+<br/>Secondary sexual characteristics represent the features that distinguish male faces from female faces. These traits develop in part due to hormonal differences between men and women. Again, these differences are declared to be found attractive in that they indicate genetic robustness. Little et al. state that there is a solid evidence for a positive relationship between femininity and attractiveness in women. The link between masculinity and attractiveness in men is claimed to be less pronounced.
+<h2>Analysis of Facial Measurements</h2>
+The effect of averageness is examined in the Chicago Face Dataset. The matrix of measurement data is normalized so that each column has mean 0 and variance 1. Next, the L2 norm of each sample is computed. The result is a single value representing the total irregularity of a subject with respect to all facial measurements. Next, linear regression is used to analyze the relationship between attractiveness and irregularity.
+<br/>
+<br/>The purpose of linear regression is to find a vector of coefficients \(\mathbf{x}\) together with a bias \(\mathbf{b}\) that minimize the prediction error of the model. The formulas for linear regression and prediction error are shown in Equations 1 and 2. In these equations, \(\mathbf{A}\) is the matrix of sample data, \(\mathbf{Y}\) is the matrix of targets, \(\mathbf{\hat{Y}}\) are the predictions, and \(\lVert \cdot \rVert\) denotes the L2 norm.
+<p style="text-align:center;">\[\displaylines{\mathbf{\hat{Y}}=\mathbf{A} \mathbf{x} + \mathbf{b}}\]</p>
+<p style="text-align:center;"><b>Equation 1: Linear Regression</b></p>
+<p style="text-align:center;">\[\displaylines{E(\mathbf{x}, \mathbf{b})=\lVert \mathbf{A}\mathbf{x}+\mathbf{b} - \mathbf{Y}\rVert^{2}}\]</p>
+<p style="text-align:center;"><b>Equation 2: Linear Regression Error Term</b></p>
+A linear regression model is fit which regresses the attractiveness rating against irregularity. The result is shown in Figure 2.
+<p style="text-align:center;"><img src="../Img/fairregularity.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: Irregularity Scatter Plot and Trend Line</b></p>
+ target variable that is explained by the regular variable(s). Its formula is shown in Equation 3, with \(n\) being the number of data points, \(\mathbf{Y_{i}}\) the \(i\)-th target vector, and \(\mathbf{\bar{Y}}\) the vector of target column means.
+<p style="text-align:center;">\[\displaylines{R^{2}=1-\frac{\sum\limits_{i=1}^{n}{\lVert \mathbf{Y}_{i} - \mathbf{\hat{Y}}_{i}} \rVert^{2}}{\sum\limits_{i=1}^{n}{\lVert \mathbf{Y}_{i} - \mathbf{\bar{Y}} \rVert^{2}}}}\]</p>
+<p style="text-align:center;"><b>Equation 3: The Coefficient of Determination</b></p>
+As can be seen, there is a minor negative relationship between irregularity and attractiveness. However, an \(R^{2}\) of 0.052 does not provide substantial evidence for a relationship between the two variables. This number implies that only 5% of variation in attractiveness can be explained by averageness. It is important to note that the relationship is inverted here as the \(x\)-axis represents distance from average or irregularity. A negative relationship shows that attractiveness increases as the feature measurements move closer to average.
+<br/>
+<br/>Two sorted lists are constructed from the sample data. In one list, the samples are sorted by their averageness. In the other list, the samples are sorted by their attractiveness. The average absolute difference between these two orderings is 175.7 with a standard deviation of 126.9. If the subjects stand in a line ordered by averageness, each subject would move past 175 people on average to re-order the line by attractiveness. In a dataset of roughly 600 people, this is anything but impressive. Figure 3 shows the distance each subject needs to move to reorder the line.
+<p style="text-align:center;"><img src="../Img/faavgmixup.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 3: Averageness Ordering to Attractiveness Ordering</b></p>
+Next, the effect of symmetry is evaluated. The dataset contains several separate measurements for the left and right portions of the face. The absolute differences between the left and right measurements are computed. The result is 6 features measuring facial asymmetry. A multiple regression model is constructed which predicts attractiveness from these 6 derived features. Figure 4 shows a scatter plot of the target values against the predictions.
+<p style="text-align:center;"><img src="../Img/fasymmetry.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 4: Scatter Plot of Predictions for Symmetry Model</b></p>
+The plot is labeled with the adjusted \(R^{2}\) of the fit. The adjustment to \(R^{2}\) is made to account for the fact that models with more dependent variables spuriously obtain higher \(R^{2}\) values. The formula is shown in Equation 4, where \(p\) is the number of parameters in the model. In this case, the model has 6 parameters. \(\bar{R}^{2}\) is a more robust estimate of model performance when multiple explanatory variables are involved.
+<p style="text-align:center;">\[\displaylines{\bar{R}^{2}=1-(1-R^{2})\frac{n-1}{n-p-1}}\]</p>
+<p style="text-align:center;"><b>Equation 4: The Adjusted Coefficient of Determination</b></p>
+The scatter plot does not show a clear relationship between the predictions and attractiveness. This is reflected in the negative \(\bar{R}^2\). An \(\bar{R}^{2}\) of -0.006 implies that the model has no explanatory power in predicting attractiveness.
+<br/>
+<br/>This model is compared to a baseline model that always predicts the mean standardized attractiveness: 0. The general linear <i>F-statistic</i> is used to perform the comparison. The F-statistic and associated <i>p-value</i> quantify the amount of additional variance in attractiveness that is explained by a model that is not explained by a baseline model. The formula for the F-statistic is shown in Equation 5 with \(n\) the number of samples and \(p\) the degrees of freedom for the model. The computed F-statistic is 0.42 with an associated <i>p-value</i> of 0.87. There is no evidence that the model provides a better fit than one that merely predicts the mean standardized attractiveness.
+<p style="text-align:center;">\[\displaylines{F = \frac{n - p}{p} \times \frac{\sum\limits_{i=1}^{n}{\lVert \mathbf{\hat{Y}}_{i} - \mathbf{\bar{Y}} \rVert^{2}}}{\sum\limits_{i=1}^{n}{\lVert \mathbf{\hat{Y}}_{i} - \mathbf{Y}_{i}} \rVert^{2}}}\]</p>
+<p style="text-align:center;"><b>Equation 5: The F-Statistic for Multiple Regression</b></p>
+The lack of a significant relationship here does not prove that symmetry is useless in predicting attractiveness. There are many other possible explanations for this lack including poor features, poor data, or even random variation. Regardless, the lack of strong relationships in the above models demonstrates the notion that there are many aspects to facial attractiveness. Relying too heavily on any one aspect can affect model performance. The reality is that real world data is often noisy and full of complex and unintuitive relationships.
+<br/>
+<br/>
+<table width="100%" bgcolor="3379b8" style="margin: 0px auto;">
+<tbody>
+<tr align="left">
+<td><b>Insight:</b>
+The effects of symmetry and averageness appear overstated.</td>
+</tr>
+</tbody>
+</table>
+<br/>A multiple regression model is constructed which predicts the attractiveness of a sample given the 40 facial measurement features. This model is subsequently analyzed to gain insight about facial features which affect attractiveness. In order to fairly compare the effects of each variable, each measurement is first standardized. If this is not performed, then measurements with larger values may appear to be weighted less heavily. For example, the measurements for facial width at the cheek are much larger than those for eye height. Thus, each column is centered by subtracting its mean and then scaled by its standard deviation. The result is that each entry is now a t-score for that column.
+<br/>
+<br/>A baseline model is first constructed for the sake of comparison. The baseline model always predicts the mean standardized attractiveness: 0. The baseline model achieves a <i>root mean squared error</i> (RMSE) of 0.77. The formula the RMSE is shown in Equation 6.
+<p style="text-align:center;">\[\displaylines{L(\mathbf{Y}, \mathbf{\hat{Y}})=\frac{\lVert \mathbf{Y} - \mathbf{\hat{Y}} \rVert}{\sqrt{n}}}\]</p>
+<p style="text-align:center;"><b>Equation 6: The Root Mean Squared Error</b></p>
+<i>Cross-validation</i> is used to further access the performance of the model. Figure 5 shows a depiction of a train/test cross-validation split on a hypothetical dataset of 100 samples.
+<p style="text-align:center;"><img src="../Img/facvsplit.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 5: Cross-Validation Split</b></p>
+In Figure 5, each cell represents an entry in the dataset. By dividing the dataset into training and testing sets, the performance of the model can be evaluated on samples with which it has not been trained. This validation is needed to ensure the model is not simply memorizing the target values and has the ability generalize. When performing both standardization and cross-validation, care must be taken to prevent <i>data leakage</i>. Data leakage is providing your model with information about the cross-validation data. To avoid this, the column means and standard deviations must only be computed on the training data.
+<br/>
+<br/>The dataset is repeatedly divided into training and testing sets and then standardized. The model is fit using the training set and then scored using the testing set. Scoring is accomplished by taking the predicted value of the model and comparing it to the real value from the dataset. Performing training and testing 512 times, the average cross-validation loss is 0.691 with a standard deviation of 0.054. An additional model is fit to the entire data set. The target values are plotted against the predictions of this model and the result is shown in Figure 6. The \(\bar{R}^{2}\) of the fit is 0.247.
+<p style="text-align:center;"><img src="../Img/falrpredscatter.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 6: Scatter Plot of Predictions for Facial Measurement Model</b></p>
+The coefficient vectors of each of the 512 linear regression models are recorded and analyzed. The average and standard deviation for each coefficient value is computed and the results of the top 6 most influential positive and negative features are listed in Table 2.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:22%;">
+<col style="width:14%;">
+<col style="width:14%;">
+<col style="width:22%;">
+<col style="width:14%;">
+<col style="width:14%;">
+</colgroup>
+<tbody>
+<tr>
+<th colspan="3">Positive Feature Weights</th>
+<th colspan="3">Negative Feature Weights</th>
+</tr>
+<tr>
+<th>Name</th>
+<th>Avg.</th>
+<th>Std.</th>
+<th>Name</th>
+<th>Avg.</th>
+<th>Std.</th>
+</tr>
+<tr>
+<td>L Eye H</td>
+<td>+8.09%</td>
+<td>+2.93</td>
+<td>Avg Eye Height</td>
+<td>-14.48%</td>
+<td>+5.67%</td>
+</tr>
+<tr>
+<td>R Eye H</td>
+<td>+7.69%</td>
+<td>+2.88</td>
+<td>Lip Fullness</td>
+<td>-4.89%</td>
+<td>+2.15%</td>
+</tr>
+<tr>
+<td>Lip Thickness</td>
+<td>+4.42%</td>
+<td>+2.13</td>
+<td>Chin Length</td>
+<td>-4.27%</td>
+<td>+2.02%</td>
+</tr>
+<tr>
+<td>Cheekbone Height</td>
+<td>+3.82%</td>
+<td>+1.55</td>
+<td>Forehead</td>
+<td>-4.18%</td>
+<td>+2.30%</td>
+</tr>
+<tr>
+<td>Midface Length</td>
+<td>+3.76%</td>
+<td>+1.88</td>
+<td>Pupil Lip L</td>
+<td>-3.47%</td>
+<td>+1.29%</td>
+</tr>
+<tr>
+<td>Upper Head Length</td>
+<td>+2.98%</td>
+<td>+1.60</td>
+<td>Faceshape</td>
+<td>-2.79%</td>
+<td>+1.75%</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 2: Most Influential Linear Regression Coefficients</b></p>
+Features with negative coefficients decrease attractiveness as they increase in value; those with positive coefficients do the opposite. The complicated relationship amongst the variables is illustrated in the table. Individual eye height measurements positively affect attractiveness while average eye height negatively affects it. It appears that the effects of these two coefficients cancel out at least somewhat. A similar paradox is apparent with lip fullness and lip thickness. Due to this, it is difficult to determine the true importance of the various features.
+<br/>
+<br/>This situation arises from <i>multicollinearity</i> in the input data. Multicollinearity exists when there are strong linear relationships between the explanatory variables. When this occurs, the related variables do not change in isolation. Change in one variable typically results in a proportional change in the related variables. These proportional changes can have additive or subtractive effects to the change induced by the original variable. It is this behavior that makes interpretation difficult.
+<br/>
+<br/>With facial measurements, the cause of this behavior is intuitive. If the height of the left eye increases, then the measurements for the average height also increases. Lip fullness and thickness are similarly defined. A table of the top negative and positive correlation among facial measurements is shown in Table 3.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:11%;">
+<col style="width:19.5%;">
+<col style="width:19.5%;">
+<col style="width:11%;">
+<col style="width:19.5%;">
+<col style="width:19.5%;">
+</colgroup>
+<tbody>
+<tr>
+<th colspan="3">Positive Correlations</th>
+<th colspan="3">Negative Correlations</th>
+</tr>
+<tr>
+<th><i>R</i></th>
+<th>Feature <i>i</i></th>
+<th>Feature <i>j</i></th>
+<th><i>R</i></th>
+<th>Feature <i>i</i></th>
+<th>Feature <i>j</i></th>
+</tr>
+<tr>
+<td>+0.985</td>
+<td>Midcheek Chin R</td>
+<td>Cheeks avg</td>
+<td>-0.825</td>
+<td>Face Width Mouth</td>
+<td>Heart Shapeness</td>
+</tr>
+<tr>
+<td>+0.984</td>
+<td>Midcheek Chin L</td>
+<td>Cheeks avg</td>
+<td>-0.811</td>
+<td>Cheekbone Prominence</td>
+<td>Face Roundness</td>
+</tr>
+<tr>
+<td>+0.977</td>
+<td>L Eye H</td>
+<td>Avg Eye Height</td>
+<td>-0.783</td>
+<td>Face Length</td>
+<td>Faceshape</td>
+</tr>
+<tr>
+<td>+0.976</td>
+<td>R Eye H</td>
+<td>Avg Eye Height</td>
+<td>-0.761</td>
+<td>Face Width Mouth</td>
+<td>Cheekbone Prominence</td>
+</tr>
+<tr>
+<td>+0.975</td>
+<td>R Eye W</td>
+<td>Avg Eye Width</td>
+<td>-0.752</td>
+<td>Heart Shapeness</td>
+<td>Face Roundness</td>
+</tr>
+<tr>
+<td>+0.973</td>
+<td>L Eye W</td>
+<td>Avg Eye Width</td>
+<td>-0.731</td>
+<td>Nose Length</td>
+<td>Noseshape</td>
+</tr>
+<tr>
+<td>+0.969</td>
+<td>Pupil Lip R</td>
+<td>Pupil Lip L</td>
+<td>-0.697</td>
+<td>Pupil Lip L</td>
+<td>f WHR</td>
+</tr>
+<tr>
+<td>+0.954</td>
+<td>Lip Thickness</td>
+<td>Lip Fullness</td>
+<td>-0.695</td>
+<td>Pupil Lip R</td>
+<td>fWHR</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 3: Most Correlated Measurement Features</b></p>
+A <i>lasso regression</i> model is used to address the multicollinearity. The term lasso is an abbreviation for "least absolute shrinkage and selection operator." Lasso regression penalizes the absolute value of the regression coefficients to help prevent situations where one coefficient cancels the effect of another. The error term for lasso regression is shown in Equation 7. The error term is the same as that for linear regression with the addition of an L1 regularization term.
+<p style="text-align:center;">\[\displaylines{E(\mathbf{x},\mathbf{b})=\lVert \mathbf{A}\mathbf{x}+\mathbf{b} - \mathbf{Y}\rVert^{2}+\lVert \mathbf{\Gamma} \mathbf{x} \rVert_{1}}\]</p>
+<p style="text-align:center;"><b>Equation 7: Lasso Regression Error Term</b></p>
+As \(\mathbf{\Gamma}\) increases, the coefficients of the model are forced to 0. An appropriate value of \(\mathbf{\Gamma}\) can remove collinear variables from the model while maximizing model performance. A large number of models are created as \(\mathbf{\Gamma}\) is varied from 0 to 1. Several of the coefficient values are plotted against \(\mathbf{\Gamma}\) and the result is shown in Figure 6.
+<p style="text-align:center;"><img src="../Img/faridgezerocoef.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 6: Lasso Coefficient Shrinkage</b></p>
+The number of non-zero coefficients in the model is shown in Figure 7 for various values of \(\mathbf{\Gamma}\). The color represents the \(R^{2}\) of the fit. As the number of non-zero coefficients decreases, the prediction power of the model steadily worsens.
+<p style="text-align:center;"><img src="../Img/fagammanonzero.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 7: Number of Nonzero Lasso Regression Coefficients</b></p>
+\(\mathbf{\Gamma}\) is chosen to be 0.02. Performing training and testing 512 times, the average cross-validation loss is 0.689 with a standard deviation of 0.054. Lower \(\mathbf{\Gamma}\) values exist that further improve performance, but the introduction of more collinear terms makes interpretation more difficult. By further tuning \(\mathbf{\Gamma}\), an average cross-validation loss of 0.680 with a standard deviation of 0.053 is achieved.
+<br/>
+<br/>One additional model is fit to the entire dataset. The target values are plotted against the predicted values and the result is shown in Figure 8. The \(\bar{R}^{2}\) of the fit is 0.246.
+<p style="text-align:center;"><img src="../Img/fameasclassoscatter.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 8: Predictions of the Facial Measurement Model</b></p>
+The cross-validation loss suggests the model is able to predict the attractiveness score of a subject to roughly ± 0.68 of its true value (from 1-7). If a subject had an attractiveness score of 6.2, for instance, the model might predict a value between 5.52 and 6.88. An individual prediction might well fall outside of this range, but the number is descriptive of the overall performance of the model. The ability of a relatively simple linear model to predict attractiveness based on facial measurements is suggestive that objective measures of facial attractiveness may exist.
+<br/>
+<br/>Again, the coefficient vectors of each of the 512 lasso regression models are recorded and analyzed. The average and standard deviation for each coefficient value is computed. In addition, the intervals between the minimum and maximum value for each coefficient are computed. The coefficients whose intervals do not contain 0 are listed for \(\mathbf{\Gamma} = 0.0012\) in Table 4.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:36%;">
+<col style="width:16%;">
+<col style="width:16%;">
+<col style="width:16%;">
+<col style="width:16%;">
+</colgroup>
+<tbody>
+<tr>
+<th>Feature</th>
+<th>Avg.</th>
+<th>Std.</th>
+<th>Min</th>
+<th>Max</th>
+</tr>
+<tr>
+<td>Pupil Lip L</td>
+<td>-0.092</td>
+<td>+0.017</td>
+<td>-0.137</td>
+<td>-0.035</td>
+</tr>
+<tr>
+<td>Noseshape</td>
+<td>-0.072</td>
+<td>+0.012</td>
+<td>-0.116</td>
+<td>-0.036</td>
+</tr>
+<tr>
+<td>Chin Length</td>
+<td>-0.055</td>
+<td>+0.009</td>
+<td>-0.081</td>
+<td>-0.002</td>
+</tr>
+<tr>
+<td>Lip Fullness</td>
+<td>-0.047</td>
+<td>+0.025</td>
+<td>-0.141</td>
+<td>-0.012</td>
+</tr>
+<tr>
+<td>Midbrow Hairline L</td>
+<td>-0.037</td>
+<td>+0.014</td>
+<td>-0.089</td>
+<td>-0.003</td>
+</tr>
+<tr>
+<td>Asymmetry Pupil Lip</td>
+<td>-0.015</td>
+<td>+0.002</td>
+<td>-0.021</td>
+<td>-0.010</td>
+</tr>
+<tr>
+<td>Luminance Median</td>
+<td>+0.021</td>
+<td>+0.003</td>
+<td>+0.012</td>
+<td>+0.031</td>
+</tr>
+<tr>
+<td>Cheekbone Prominence</td>
+<td>+0.021</td>
+<td>+0.005</td>
+<td>+0.006</td>
+<td>+0.040</td>
+</tr>
+<tr>
+<td>Pupil Top L</td>
+<td>+0.028</td>
+<td>+0.007</td>
+<td>+0.007</td>
+<td>+0.046</td>
+</tr>
+<tr>
+<td>Nose Width</td>
+<td>+0.054</td>
+<td>+0.009</td>
+<td>+0.027</td>
+<td>+0.086</td>
+</tr>
+<tr>
+<td>Midface Length</td>
+<td>+0.077</td>
+<td>+0.027</td>
+<td>+0.001</td>
+<td>+0.142</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 4: Non-Zero Lasso Regression Coefficients for Γ = 0.0012</b></p>
+Even using lasso regression, the effects of multicollinearity can still be seen. The correlation between pupil to lip length and midface length is 0.638. However, both features appear in the model with opposite signs. Gamma can be further increased to remove these counteracting effects, though model performance begins to suffer.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:36%;">
+<col style="width:16%;">
+<col style="width:16%;">
+<col style="width:16%;">
+<col style="width:16%;">
+</colgroup>
+<tbody>
+<tr>
+<th>Feature</th>
+<th>Avg.</th>
+<th>Std.</th>
+<th>Min</th>
+<th>Max</th>
+</tr>
+<tr>
+<td>Asymmetry Pupil Lip</td>
+<td>-0.062</td>
+<td>+0.006</td>
+<td>-0.082</td>
+<td>-0.044</td>
+</tr>
+<tr>
+<td>Pupil Lip L</td>
+<td>-0.050</td>
+<td>+0.014</td>
+<td>-0.080</td>
+<td>-0.001</td>
+</tr>
+<tr>
+<td>Face Width Cheeks</td>
+<td>-0.033</td>
+<td>+0.008</td>
+<td>-0.053</td>
+<td>-0.010</td>
+</tr>
+<tr>
+<td>Luminance Median</td>
+<td>+0.082</td>
+<td>+0.008</td>
+<td>+0.055</td>
+<td>+0.106</td>
+</tr>
+<tr>
+<td>Cheekbone Height</td>
+<td>+0.104</td>
+<td>+0.022</td>
+<td>+0.035</td>
+<td>+0.142</td>
+</tr>
+<tr>
+<td>Nose Length</td>
+<td>+0.151</td>
+<td>+0.011</td>
+<td>+0.119</td>
+<td>+0.193</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 5: Non-Zero Lasso Regression Coefficients for Γ = 0.02</b></p>
+As seen in Table 5, the larger value of \(\mathbf{\Gamma}\) force more coefficients towards 0, resulting in a simpler model. The model appears to rate subjects with wider faces and longer pupil to lip length as being less attractive. Interestingly, the asymmetry measurement for the pupil to lip length has a significant negative effect. This provides some support for the influence of symmetry, though its effect is overshadowed by other variables. In the positive direction, the model appears to favor high cheekbones, longer noses, and more luminous faces. The distributions of these coefficients for each of the 512 lasso regression models are shown in Figures 9 and 10 along with the intervals containing their values.
+<p style="text-align:center;"><img src="../Img/fameascposfeatdist.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 9: Significant Positive Measurement Features</b></p>
+<p style="text-align:center;"><img src="../Img/fameascnegfeatdist.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 10: Significant Negative Measurement Features</b></p>
+In this case, there is a tradeoff between a higher performance model and one that is easy to interpret. Though few of the individual coefficients are significant, the model is able to acheive modest performance by combining a larger number of features. If only coefficients that are significant at the 95% confidence level are used, the \(\bar{R}^{2}\) of the fit decreases to 0.110. An intuitive explanation for this may be that facial attractiveness is a result of the combination of a wide variety of facial features.
+<br/>
+<br/>
+<table width="100%" bgcolor="3379b8" style="margin: 0px auto;">
+<tbody>
+<tr align="left">
+<td><b>Insight:</b>
+Objective measures of attractiveness appear to exist.</td>
+</tr>
+</tbody>
+</table>
+<br/>Regardless of the features that are most important, the lasso regression model is able to make a substantial improvement over the baseline model. This is reflected in the F-statistic for the model. For \(\Gamma = 0.0012\), the F-statistic is 6.48 with a corresponding \(p &lt; 1e-22\). This suggests that facial measurements provide useful information in predicting attractiveness.
+<h2>Analysis of Subjective Feature</h2>
+Next, the subjective features of the dataset are analyzed. These features are scores from 1 to 7 on a variety of perceived qualities such as attractiveness, masculinity, and femininity. Scores represent averages over a number of participants evaluating the images of the dataset. For instance, subject AF-200 has a masculinity score of 1.357 which is her average score given by 28 evaluators for that quality.
+<br/>
+<br/>A lasso regression model is constructed which predicts attractiveness based on all other subjective features. Attractiveness is excluded for obvious reasons. Care must again be taken to account for multicollinearity. The top positive and negative correlations among the subjective features are shown in Table 6.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:11%;">
+<col style="width:19.5%;">
+<col style="width:19.5%;">
+<col style="width:11%;">
+<col style="width:19.5%;">
+<col style="width:19.5%;">
+</colgroup>
+<tbody>
+<tr>
+<th colspan="3">Positive Correlations</th>
+<th colspan="3">Negative Correlations</th>
+</tr>
+<tr>
+<th><i>R</i></th>
+<th>Feature <i>i</i></th>
+<th>Feature <i>j</i></th>
+<th><i>R</i></th>
+<th>Feature <i>i</i></th>
+<th>Feature <i>j</i></th>
+</tr>
+<tr>
+<td>+0.843</td>
+<td>Angry</td>
+<td>Disgusted</td>
+<td>-0.952</td>
+<td>Feminine</td>
+<td>Masculine</td>
+</tr>
+<tr>
+<td>+0.834</td>
+<td>Angry</td>
+<td>Threatening</td>
+<td>-0.683</td>
+<td>Age</td>
+<td>Babyface</td>
+</tr>
+<tr>
+<td>+0.734</td>
+<td>Dominant</td>
+<td>Threatening</td>
+<td>-0.631</td>
+<td>Threatening</td>
+<td>Trustworthy</td>
+</tr>
+<tr>
+<td>+0.725</td>
+<td>Afraid</td>
+<td>Sad</td>
+<td>-0.606</td>
+<td>Angry</td>
+<td>Happy</td>
+</tr>
+<tr>
+<td>+0.687</td>
+<td>Disgusted</td>
+<td>Threatening</td>
+<td>-0.587</td>
+<td>Angry</td>
+<td>Trustworthy</td>
+</tr>
+<tr>
+<td>+0.683</td>
+<td>Happy</td>
+<td>Trustworthy</td>
+<td>-0.573</td>
+<td>Happy</td>
+<td>Sad</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 6: Most Correlated Subjective Features</b></p>
+Thankfully and intuitively the correlations among the variables are weaker than those among the measurement variables.
+<br/>
+<br/>Using the subjective features alone, the lasso regression model achieves an average cross-validation accuracy 0.459 with a standard deviations of 0.040. An additional model is fit to the entire dataset. The target values are plotted against the model predictions and the plot is labeled with the \(\bar{R}\) of the fit: 0.653. The result is shown in Figure 11.
+<p style="text-align:center;"><img src="../Img/fasubjcpredscatter.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 11: Predictions of the Subjective Feature Model</b></p>
+Interestingly, this is a substantial improvement over the accuracy of the regression model based on the facial measurements. This implies subjective features are more useful overall in predicting attractiveness.
+<br/>
+<br/>
+<table width="100%" bgcolor="3379b8" style="margin: 0px auto;">
+<tbody>
+<tr align="left">
+<td><b>Insight:</b>
+Subjective features are better predictors of attractiveness than facial measurements.</td>
+</tr>
+</tbody>
+</table>
+<br/>Next, the coefficient vector \(\mathbf{x}\) of the regression model is analyzed in the same fashion as earlier. 512 lasso regression models are fit using separate cross-validation splits and the average and standard deviation of each feature coefficient is computed. The weights of the top positive and negative subjective features are shown in Table 7 along with their sign.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:22%;">
+<col style="width:14%;">
+<col style="width:14%;">
+<col style="width:22%;">
+<col style="width:14%;">
+<col style="width:14%;">
+</colgroup>
+<tbody>
+<tr>
+<th colspan="3">Positive Feature Weights</th>
+<th colspan="3">Negative Feature Weights</th>
+</tr>
+<tr>
+<th>Name</th>
+<th>Avg.</th>
+<th>Std.</th>
+<th>Name</th>
+<th>Avg.</th>
+<th>Std.</th>
+</tr>
+<tr>
+<td>Feminine</td>
+<td>+34.34%</td>
+<td>+0.64%</td>
+<td>Age</td>
+<td>-7.37%</td>
+<td>+0.31%</td>
+</tr>
+<tr>
+<td>Masculine</td>
+<td>+26.34%</td>
+<td>+0.65%</td>
+<td>Sad</td>
+<td>-5.54%</td>
+<td>+0.33%</td>
+</tr>
+<tr>
+<td>Trustworthy</td>
+<td>+5.99%</td>
+<td>+0.48%</td>
+<td>Threatening</td>
+<td>-3.84%</td>
+<td>+0.50%</td>
+</tr>
+<tr>
+<td>Dominant</td>
+<td>+3.87%</td>
+<td>+0.47%</td>
+<td>Unusual</td>
+<td>-3.06%</td>
+<td>+0.24%</td>
+</tr>
+<tr>
+<td>Afraid</td>
+<td>+3.04%</td>
+<td>+0.36%</td>
+<td>Babyface</td>
+<td>-2.41%</td>
+<td>+0.30%</td>
+</tr>
+<tr>
+<td>Angry</td>
+<td>+0.35%</td>
+<td>+0.47%</td>
+<td>Surprised</td>
+<td>-1.66%</td>
+<td>+0.24%</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 7: Most Influential Subjective Features</b></p>
+The model scores people who appear old, sad, and threatening as being less attractive. It is important to note that the age variable represents the average age estimate made by the participant evaluators and not the true age of the subject. This implies that people perceived as youthful are also perceived as attractive. Somewhat paradoxically, subjects are rated as being less attractive for having a "babyface." Nevertheless, there is a subtle distinction between the appearance of youth and having a babyface.
+<br/>
+<br/>The model scores people who appear more feminine, masculine, and trustworthy as appearing more attractive. The relationship between femininity, masculinity, and attractiveness are more easily visualized using scatter plots. Figure 12 shows femininity plotted against attractiveness with separate trend lines for men and women.
+<p style="text-align:center;"><img src="../Img/faattractivefeminine.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 12: Relationship Between Attractive and Feminine</b></p>
+There is a large difference between the femininity scores of men and women. There is also a large difference between the relationship of femininity and attractiveness between men and women. Attractiveness in women is very highly correlated with femininity. This intuitively makes sense, though deeper interpretation is somewhat ambiguous. Depending on the evaluator, femininity might be perceived as being attractive or attractiveness might be perceived as a quality of femininity. The subjective nature of these features make interpretation more difficult. In regards to men, femininity has little effect on attractiveness.
+<p style="text-align:center;"><img src="../Img/faattractivemasculine.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 13: Relationship Between Attractive and Masculine</b></p>
+Figure 13 shows masculinity plotted against attractiveness with separate trend lines for men and women. Interestingly, masculinity has a stronger negative effect on attractiveness in women than it has a positive effect on men. From the coefficients seen earlier, the regression model appears to miss this effect. The above plots are combined into a 3D scatter plot which shows the interactions between the 3 variables and age.
+<p style="text-align:center;"><img src="../Img/famascfemattr.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 14: Relationship Between Attractive, Masculine, and Feminine</b></p>
+Another important aspect of these figures is that there are fewer men who are rated as being attractive. This is despite the fact that the number male and female subjects is nearly equal with 290 male and 307 female samples. The majority of the data points for men are clustered in the first half of the range of attractiveness. This effect confounds the relationships presented in Table 7.
+<p style="text-align:center;"><img src="../Img/famfattrhist.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 15: Distribution of Attractiveness Scores for Men and Women</b></p>
+The distribution of attractiveness scores for men and women are shown in Figure 15 along with their corresponding sampling distributions. Due to the large number of participants, there is almost no overlap between the sampling distributions. Performing a Welch's t-test to compare the two means, \(p &lt; 1e-12\).  It appears that despite being asked to control for gender, the evaluators still rated men as being less attractive on average.
+<br/>
+<br/>
+<table width="100%" bgcolor="3379b8" style="margin: 0px auto;">
+<tbody>
+<tr align="left">
+<td><b>Insight:</b>
+Men are rated as being less attractive than women on average.</td>
+</tr>
+</tbody>
+</table>
+<br/>Statistically significant differences between men and women exist in several of the other subjective features. Men are more likely to be perceived as being masculine, threatening or dominant. Women are more likely to be perceived as being feminine, trustworthy, unusual, or sad. The distributions for several other of these features are shown in Figure 16.
+<p style="text-align:center;"><img src="../Img/famfdifhist.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 16: Distribution Differences for Men and Women</b></p>
+The effects of several of the other subjective features are irrespective of gender. The appearance of trustworthiness, for example, is correlated with attractiveness in both genders. Figure 17 presents a scatter plot of attractiveness and trustworthiness with a single trend line for men and women.
+<p style="text-align:center;"><img src="../Img/faattractivetrustworthy.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 17: Relationship Between Attractive and Trustworthy</b></p>
+It appears there is a modest positive relationship between appearing trustworthy and appearing attractive. This effect ties together the two observations that men are more likely to be rated both less attractive and less trustworthy than women.
+<h2>Combining Facial Measurements and Subjective Features</h2>
+A lasso regression model is constructed using both the facial measurements and the subjective features. \(\mathbf{\Gamma}\) is chosen to be 0.0075. The model achieves an average cross-validation loss of 0.427 with a standard deviation of 0.035. The \(\bar{R}^{2}\) of the fit is 0.672. If both dummy variables for race and gender and the subjective race and gender estimates are introduced, model accuracy is again improved.
+<br/>
+<br/>To further improve performance, seperate models for men and women are constructed and the results of each are synthesized together. Finally cubic polynomial interaction terms for the measurement data are introduced. Cubic terms are used due to the cubic relationship between measurement length and 3D facial structure. The target values are plotted against the predictions of the final model and the result is shown in Figure 18.
+<p style="text-align:center;"><img src="../Img/faallcpredscatter.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 18: Final Model Prediction Scatter Plot</b></p>
+Again, cross-validation splits are repeatedly formed and the performance of each model is evaluated. This process is repeated 512 times. In addition, one model is fit to the entire dataset to evaluate the overall goodness of fit. The results for each of the feature sets is shown in Table 8. The minimum cross-validation loss is 0.373 with a standard deviation of 0.036. The corresponding \(\bar{R}^2\) is 0.823.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:40%;">
+<col style="width:20%;">
+<col style="width:20%;">
+<col style="width:20%;">
+</colgroup>
+<tbody>
+<tr>
+<th>Feature Set</th>
+<th>Avg. Loss</th>
+<th>Std. Loss</th>
+<th>Adj. R²</th>
+</tr>
+<tr>
+<td>Baseline</td>
+<td>0.770</td>
+<td>0.060</td>
+<td>0.000</td>
+</tr>
+<tr>
+<td>Measurements</td>
+<td>0.680</td>
+<td>0.053</td>
+<td>0.246</td>
+</tr>
+<tr>
+<td>Subjective</td>
+<td>0.459</td>
+<td>0.040</td>
+<td>0.626</td>
+</tr>
+<tr>
+<td>Measurement + Subjective</td>
+<td>0.427</td>
+<td>0.035</td>
+<td>0.672</td>
+</tr>
+<tr>
+<td>All</td>
+<td>0.397</td>
+<td>0.040</td>
+<td>0.718</td>
+</tr>
+<tr>
+<td>All Seperate Gender</td>
+<td>0.380</td>
+<td>0.036</td>
+<td>0.802</td>
+</tr>
+<tr>
+<td>All Seperate Gender + Cubic</td>
+<td>0.373</td>
+<td>0.035</td>
+<td>0.823</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 8: Lasso Regression Cross-Validation Performance</b></p>
+As can be seen, the addition of each feature set provides more power in predicting attractiveness. This shows that the feature sets compliment each other, at least partially. For example, by using the facial measurements in addition to the subjective features, the model is able to achieve a substantial improvement in performance. This may suggest that while the majority of attractiveness is subjective, there are anatomical characteristics which are perceived as being attractive. For although the majority of variation in attractiveness is explained by the subjective features, facial measurements present additional useful information.
+<br/>
+<br/>This explanation intuitively makes sense, though some caution should be exercised. There are correlations amongst the subjective features and facial measurements. For example, the correlation between the subjective feature "Surprised" and eye size is 0.348. This is less of a profound insight and more a description of a biological function. Nevertheless, the effect of eye size on attractiveness may be overshadowed by the effect of "Surprised," though the measurement seems to be closer to the root cause.
+<h2>Differences Between Genders</h2>
+The differences between attractiveness in men and women are explored further. The subjects are divided into two groups and 512 pairs of regression models are created with one model fit to men and one to women. The mean and standard deviation of each coefficient is computed separately for each group. The mean coefficient weights for men and women are shown in Figure 19 in two pie charts. Features with a positive effect are shown in blue while those with a negative effect are shown in red.
+<p style="text-align:center;"><img src="../Img/famenwomenpie1.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 19: Coefficient Effect Weights for Men and Women</b></p>
+The influence of femininity dominates with women. This result agrees with the earlier seen scatter plot comparing femininity and attractiveness. The most influential effect for men is the appearance of trustworthiness. Masculinity is also of importance, but the effect is weaker than that of femininity on women. Also of note is that the most important features are all subjective. This reinforces the notion that the subjective features are better predictors of attractiveness than the facial measurements. In order to explore the differences among the measurement features, separate models are fit only to the measurement data. The results are shown in Figure 20.
+<p style="text-align:center;"><img src="../Img/famenwomendifbc.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 20: Measurement Feature Differences Between Men and Women </b></p>
+From the plot, nose width is more important in determining attractiveness in men than in women. The converse is true with facial luminance. It is important to note that the bar plot only shows the magnitude of the effect and not the sign. The top 10 most influential features are listed for men and women in Table 9 along with their sign.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<colgroup>
+<col style="width:22%;">
+<col style="width:14%;">
+<col style="width:14%;">
+<col style="width:22%;">
+<col style="width:14%;">
+<col style="width:14%;">
+</colgroup>
+<tbody>
+<tr>
+<th colspan="3">Weights for Men</th>
+<th colspan="3">Weights for Women</th>
+</tr>
+<tr>
+<th>Name</th>
+<th>Avg.</th>
+<th>Std.</th>
+<th>Name</th>
+<th>Avg.</th>
+<th>Std.</th>
+</tr>
+<tr>
+<td>Cheekbone Height</td>
+<td>+16.12%</td>
+<td>+3.82%</td>
+<td>Nose Length</td>
+<td>+17.34%</td>
+<td>+2.58%</td>
+</tr>
+<tr>
+<td>Nose Width</td>
+<td>+14.86%</td>
+<td>+3.16%</td>
+<td>Bottom Lip Chin</td>
+<td>-12.97%</td>
+<td>+5.46%</td>
+</tr>
+<tr>
+<td>Nose Length</td>
+<td>+11.69%</td>
+<td>+2.93%</td>
+<td>Luminance Median</td>
+<td>+11.54%</td>
+<td>+1.86%</td>
+</tr>
+<tr>
+<td>Bottom Lip Chin</td>
+<td>-9.88%</td>
+<td>+5.93%</td>
+<td>Cheekbone Height</td>
+<td>+7.99%</td>
+<td>+3.38%</td>
+</tr>
+<tr>
+<td>Midcheek Chin L</td>
+<td>+7.70%</td>
+<td>+4.08%</td>
+<td>Pupil Top R</td>
+<td>+7.63%</td>
+<td>+3.43%</td>
+</tr>
+<tr>
+<td>Forehead Height</td>
+<td>+5.20%</td>
+<td>+2.33%</td>
+<td>Face Width Cheeks</td>
+<td>-6.85%</td>
+<td>+1.72%</td>
+</tr>
+<tr>
+<td>Lip Fullness</td>
+<td>-5.01%</td>
+<td>+2.70%</td>
+<td>L Eye W</td>
+<td>+6.21%</td>
+<td>+2.33%</td>
+</tr>
+<tr>
+<td>Asymmetry Pupil Lip</td>
+<td>-4.99%</td>
+<td>+1.59%</td>
+<td>Asymmetry Pupil Lip</td>
+<td>-5.93%</td>
+<td>+1.33%</td>
+</tr>
+<tr>
+<td>Chin Length</td>
+<td>-4.32%</td>
+<td>+5.36%</td>
+<td>Chin Length</td>
+<td>-4.38%</td>
+<td>+5.36%</td>
+</tr>
+<tr>
+<td>Asymmetry Pupil Top</td>
+<td>-3.79%</td>
+<td>+1.66%</td>
+<td>L Eye H</td>
+<td>+3.00%</td>
+<td>+2.55%</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 9: Signed Feature Weights for Men and Women</b></p>
+The table clarifies the directions of the relationships for several of the values. A number of the features have similar effects between men and women. Several exceptions to this are nose width, facial width at the cheeks, forehead height, and lip fullness . Facial luminance has an important positive affect on attractiveness in women that is not present in men.
+<h2>Analysis of Images</h2>
+Next, the image data from the data set is analyzed. A regression model is constructed which predicts an image given a vector of values. Each sample vector contains the subjective scores along with the race and gender variables. Each target vector is a flattened vector of the pixels in the image.
+<br/>
+<br/>A <i>ridge regression</i> model is constructed. Ridge regression fits a linear function to the data using least-squares criterion along with an L2 regularization term. By regularizing the coefficients of the model, ridge regression can help to achieve better model performance when there are large numbers of correlated variables [3]. The error term for ridge regression is given in Equation 8. Ridge regression is used instead of lasso regression for performance reasons due to the high dimensionality of the data.
+<p style="text-align:center;">\[\displaylines{E(\mathbf{x},\mathbf{b})=\lVert \mathbf{A}\mathbf{x}+\mathbf{b} - \mathbf{Y}\rVert^{2}+\lVert \mathbf{\Gamma} \mathbf{x} \rVert^{2}}\]</p>
+<p style="text-align:center;"><b>Equation 8: Ridge Regression Error Term</b></p>
+The function is the same as that for linear regression with the addition of an L2 regularization term. By trying a large number of values, the regularization constant \(\mathbf{\Gamma}\) is chosen to be 1.0.
+<br/>
+<br/>The regression models fits an \((n, m)\) matrix of values, where \(n\) is the number of features in the sample vector and \(m\) is the number of pixels in the image. Each row of the matrix represents facial features which are related to the corresponding column in the input vectors. For example, if the first column of the input vector contains the age, then the first row in the matrix contains regression coefficients related to age. In this way, the regression model synthesizes a weighted average of different facial features to arrive at a final image.
+<br/>
+<br/>The model's predictions for two of the input samples are shown in Figure 21. The original image is shown on the left and the predicted image is shown on the right. The shadowing around the face is an artifact of the wide variety of hairstyles among the subjects.
+<p style="text-align:center;"><img src="../Img/fainvreg.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 21: Image Predictions</b></p>
+The rows of the coefficient matrix can be analyzed to determine the portions of the face that are strongly related to a given feature. Each row of coefficients is reshaped into an image and results for several of the features are shown in Figure 22.
+<p style="text-align:center;"><img src="../Img/facoefactv.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 22: Feature Activations</b></p>
+In the image, the regions of the face that contribute most to a feature are shown in lighter yellow. It appears that the shapes and positions of the eyes, nose, mouth, chin, and forehead are most important in determining attractiveness. Elongated curved eyebrows and lips appear to be more attractive. The definition and size of the base of the nose is influential as well. Also of interest, is definition in the chin and jowl region. There are also regions of activation on the forehead, implying that forehead shape is important. However, interpretation of this result is made difficult by the wide variety of hair styles in the dataset.
+<br/>
+<br/>The regression model is also capable of providing several interesting functions. Since the model predicts the appearance of a person based on a vector of coefficients, semi-random faces can be created by generating random vectors of coefficients. Random standardized sample vectors are generated using a standard normal distribution. The dummy variables for race and gender must be handled carefully to ensure they are mutually exclusive. Several such randomly generated images are shown in Figure 23.
+<p style="text-align:center;"><img src="../Img/farandomfacess11.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 23: Randomly Generated Faces with Low Variance</b></p>
+By increasing the standard deviation of the distribution used to generate samples, more irregular images can be generated. Randomly generated images with a standard deviation of 3 are shown in Figure 24.
+<p style="text-align:center;"><img src="../Img/farandomfacess21.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 24: Randomly Generated Faces with High Variance</b></p>
+The model can also be used to manipulate images via transformations to the input vectors. A subject may be aged by increasing the age score in the corresponding vector. Or a subject may be made to look happier by modifying the appropriate value. Even the gender or race of a subject can be changed. Several examples follow.
+<br/>
+<br/>Subject WF-022 is a white female evaluated to be roughly 20 years old. By modifying the age in the sample vector, the subject is aged by roughly 55 years. The result is shown in Figure 25.
+<p style="text-align:center;"><img src="../Img/faagemod.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 25: Age Modification</b></p>
+Subject AF-242 is an Asian female with a happiness score of 1.93 on a scale of 1 to 7. The subject is made to look happier by setting her happiness and sadness scores to the maximum and minimum values attained in the dataset respectively. The subject is also made to look sadder by setting her happiness and sadness scores to the minimum and maximum values respectively. The results are shown in Figures 26 and 27.
+<p style="text-align:center;"><img src="../Img/fahappymod.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 26: Happiness Modification</b></p>
+<p style="text-align:center;"><img src="../Img/fasadmod.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 27: Sadness Modification</b></p>
+Subject WF-022 is a white female. By modifying the race variables, the subject is transformed into a Latino female. The result is shown in Figure 28.
+<p style="text-align:center;"><img src="../Img/faracemod.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 28: Race Modification</b></p>
+Subject LM-224 is a Latino male. By modifying the gender variables, the subject is transformed into a Latino female. The result is shown in Figure 29.
+<p style="text-align:center;"><img src="../Img/fafemalemod.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 29: Gender Modification</b></p>
+Subject WM-220 is a white male with the lowest trustworthiness score observed in the study. Again, by manipulating the relevant variables, the subject is made to look more trustworthy and happy. The result is shown in Figure 30.
+<p style="text-align:center;"><img src="../Img/fathreateningmod.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 30: Trustworthiness Modification</b></p>
+The above functionality has several applications including simulated aging as seen on missing people reports. In addition, it can be used to visually evaluate the performance of the model. Image transformations that are less convincing indicate that the model has a more difficulty determining what is influential for the given feature. For example, if modification of the masculinity feature does not produce a convincing image transformation, it may indicate that the model has difficulty determining the features that makes a person look masculine.
+<h2>Conclusion</h2>
+Despite their simplicity, linear frequently perform well in practice and their results are relatively easy to interpret. More complicated models like kernel support vector machines and artificial neural networks can achieve better performance but perform <i>black box</i> prediction. The term black box implies that the model is used like an appliance. Samples are provided to one end of the black box and predictions come out the other end. The inner-workings of the model are opaque.
+<br/>
+<br/>Linear models obviously break down after some point. For instance, a subject with an impossibly wide nose might be rated as being arbitrarily attractive by an earlier seen model. Human intuition disagrees. Using a model to predict values outside the range of its training data is known as <i>extrapolation</i>. It is necessary to understand the shortcomings of a model to properly interpret its results.
+<br/>
+<br/>The linear models in this chapter provide several key insights.
+<ol>
+ 	<li>The effects of symmetry and averageness appear overstated.</li>
+ 	<li>Objective measures of attractiveness appear to exist.</li>
+ 	<li>Subjective features are better predictors of attractiveness than facial measurements.</li>
+ 	<li>Men are rated as being less attractive than women on average.</li>
+</ol>
+Returning to the prompt for this topic, it appears that facial attractiveness has both a subjective and objective component. The relationships between these components are complex, but certain physical characteristics appear to predispose attractiveness.
+<h2>References</h2>
+<table style="margin: 0 auto;border:none;">
+<tbody>
+<tr>
+<td style="border:none;" width="5%" valign="top">[1]</td>
+<td style="border:none;" width="95%">Ma, D. S., Correll, J., &amp; Wittenbrink, B. (2015). The Chicago face database: A free stimulus set of faces and norming data. <i>Behavior research methods</i>, 47(4), 1122-1135.</td>
+</tr>
+<tr>
+<td style="border:none;" valign="top">[2]</td>
+<td style="border:none;">Little AC, Jones BC, DeBruine LM. Facial attractiveness: evolutionary based research. <i>Philosophical Transactions of the Royal Society B: Biological Sciences. 2011;366</i>(1571):1638-1659. doi:10.1098/rstb.2010.0404.</td>
+</tr>
+<tr>
+<td style="border:none;" width="5%" valign="top">[3]</td>
+<td style="border:none;" width="95%">Friedman, J., Hastie, T., &amp; Tibshirani, R. (2001). <i>The elements of statistical learning</i> (Vol. 1, pp. 241-249). New York: Springer series in statistics.</td>
+</tr>
+</tbody>
+</table><br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

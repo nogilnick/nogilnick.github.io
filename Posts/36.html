@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>On the Analysis and Prediction of Recessions in the USA</h1><h2>Sat, 23 Jun 2018</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>Machine Learning</i>, <i>Statistics</i>, <i>Stocks</i></h3>This chapter explores recessions in the United States of America. Datasets are collected from a variety of locations including the Federal Reserve Economic Data (FRED) and from the website of Yale professor and Nobel laureate Dr. Robert J. Shiller. A classifier model is constructed which predicts recessions and this model is analyzed for useful insights.
+<h1>Data Overview</h1>
+Dr. Shiller maintains an impressive dataset of historical data relating to the S&amp;P composite, interest rates, and consumer price index from 1871 to the present. In addition to historical price, dividends, and earnings data, Shiller presents an indicator of his own making: the cyclically adjusted price to earnings ratio (CAPE).
+<br/>
+<br/>CAPE is the ratio of the price to 10 year moving average of earnings for the S&amp;P composite both adjusted for inflation. Figure 1 shows a plot of this ratio.<br/>
+<p style="text-align:center;"><img src="../Img/stcape2.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1:</b> The Cyclically Adjusted Price to Earnings Ratio</p>
+<br/>
+In addition to the above, historical data on unemployment, GDP, an industrial production index, and oil are collected from FRED.
+<br/>
+<br/>The National Bureau of Economic Research (NBER) maintains the official list of U.S. recessions on their website. Using this list, categorical labels are constructed. Five labels are used corresponding to the number of years until the next recession. The definitions of the five categorical labels are shown in Table 1.
+<br/>
+<br/><table align="center" style="margin: 0px auto;">
+<col width="20%"><col width="80%">
+<th>Label</th><th>Definition</th>
+<tr><td>0</td><td>Recession in progress</td></tr>
+<tr><td>1</td><td>≤ 1 year to next recession</td></tr>
+<tr><td>2</td><td>≤ 2 years to next recession</td></tr>
+<tr><td>3</td><td>≤ 3 years to next recession</td></tr>
+<tr><td>4</td><td>&gt; 3 years to next recession</td></tr>
+</table>
+<p style="text-align:center;"><b>Table 1:</b> The Definitions of the Classification Labels</p>
+<p style="text-align:center;"><img src="../Img/stspplottarget3.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2:</b> Real S&amp;P with Categorical Labels</p>
+<br/>
+The numerically smallest label is applied in each case. Thus, each month of each year can be classified as exactly one of the 5 labels. Figure 2 shows a plot of the inflation-corrected S&amp;P composite stock index overlaid with the categorical labels.
+<h1>Feature Engineering</h1>
+The purpose of the model is to predict recessions and the periods leading up to them. Features are constructed which have a plausible relationship to recessions.
+<br/>
+<br/>Much of the data mentioned above is time-dependent and cannot be directly consumed by a typical classification model. For instance, it is not meaningful to directly compare the S&amp;P price in 2008 to 1929 due to inflation and other factors. Instead, percentage changes are computed for many of the time series features. Figure 3 shows the transformation of the adjusted S&amp;P price to percentage change.
+<p style="text-align:center;"><img src="../Img/stpchange2.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 3:</b> Time-Series to Percentage Change Transformation</p>
+It is plausible that a percentage change in the S&amp;P captures information about recessions due to their peak to trough definition. Percentage changes are computed for S&amp;P data in addition to several other indicators.
+<br/>
+<br/>Other features allow for direct comparison. For example, the unemployment rate fluctuates relatively consistently between periods of expansion and recessions. It is also plausible that raw interest rates, and Shiller's CAPE provide meaningful information about recessions.
+<br/>
+<br/>The data frame is organized by month so that each row corresponds to a year and month. Thus far, samples contain features relating to a single month. To provide the model with information about the past trend in addition to the current month, moving averages over the past six months are computed for each feature. A sample of the non-standardized data frame is shown in Table 2.
+<br/>
+<br/><table align="center" style="margin: 0px auto;">
+<col width="20%"><col width="20%"><col width="20%"><col width="20%"><col width="20%">
+<tr><th>Date</th><th>S&amp;P</th><th>...</th><th>CAPE</th><th>Target</th></tr>
+<tr><td>1871-01-31</td><td>4.44</td><td>...</td><td>8.06</td><td>1</td></tr>
+<tr><td>1871-02-28</td><td>4.5</td><td>...</td><td>7.83</td><td>1</td></tr>
+<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+<tr><td>2018-06-30</td><td>2746.87</td><td>...</td><td>32.11</td><td>0</td></tr>
+</table>
+<p style="text-align:center;"><b>Table 2:</b> Sample Taken from the Data Frame</p>
+<br/>
+Meaningful interactions likely exist between several variables. These could be captured with interaction terms, but these terms are not included in this initial model to allow for better interpretability.
+<br/>
+<br/>The final data matrix is standardized on the training data so that each column is centered at 0 with unit variance.
+<h1>Model Construction</h1>
+A logistic regression model is fit to the data set. Each row of the data matrix corresponds to a month and year and each row of the target matrix corresponds to a categorical label. Sample weights are employed to assign greater importance to more recent samples.
+<br/>
+<br/>Cross-validation is performed using a hold-out period as is typical for time-series data. Some care is needed in constructing the hold-out period as the target labels are not defined after the Great Recession. A holdout period is selected after the dot-com bubble to evaluate the performance of the model with the Great Recession.<br/>
+<p style="text-align:center;"><img src="../Img/stspplotlabelho3.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 4:</b> Real S&amp;P with Predicted Labels for Great Recession Holdout</p>
+<br/>
+Figure 4 shows a plot of the real S&amp;P price data overlaid by the predictions. As can be seen the model correctly classifies the 2008 recession. Further, the model identifies some of the early warning factors before the recession. Next the model is trained on all data up to 4 years before the present. The resulting predictions are shown in Figure 5.<br/>
+<p style="text-align:center;"><img src="../Img/stspplotlabel3.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 5:</b> Real S&amp;P with Predicted Labels</p>
+<br/>
+The model predicts class 4 for most of 2013 and 2014. However, after the dip starting around the end of 2015, the model begins to predict an upcoming recession. Next, the model is analyzed to better understand its predictions.
+<h1>Model Analysis</h1>
+One of the primary advantages of using logistic regression is ease of interpretability. The coefficients of the standardized model provide insight into the relative importance of the features. Figure 6 shows a bar plot of the coefficients of the model.<br/>
+<p style="text-align:center;"><img src="../Img/stcoefbars3.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 6:</b> Feature Importance as Logistic Regression Coefficients</p>
+<br/>
+In the above figure, the coefficients for the first 4 classes are summed. Further, the coefficients of the moving averages are added to the original features to show their total importance. The red bars have an inverse relationship with the likelihood of an upcoming recession. For instance, a low (negative) percentage change in the industrial production index provides evidence for a recession as the two negative signs cancel when multiplied.
+<br/>
+<br/>Consider the most recent sample. The model assigns this sample a label of 2. Now, consider the coefficients of the model for class 2. The dot product of these two vectors gives the score the model assigns class 2. Since the model ultimately chooses class 2, this score is the maximum among all classes.
+<br/>
+<br/>The dot product is the sum of the component-wise product of the vectors. The component-wise product of these two vectors is taken and the result is displayed in Figure 7 as a bar plot. The positive and negative bars provide evidence for and against an upcoming recession respectively.<br/>
+<p style="text-align:center;"><img src="../Img/stevidencebars3.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 7:</b> Evidence For and Against an Upcoming Recession</p>
+<br/>
+The tallest bar corresponds to interest rates and their average percentage change over the past six months. Figure 8 shows a plot of the interest rates over the past ten years. As can be seen, the federal government raised interest rates significantly near the end of 2016. These increased interest rates discourage banks and other institutions from lending money. These increased rates appear as an attempt to cool off an overheating economy and the model weighs this heavily.<br/>
+<p style="text-align:center;"><img src="../Img/stpinterest2.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 8:</b> Interest Rates in the Past Decade</p>
+<br/>
+Of similar importance in Figure 7 is the recent behavior of the unemployment rate. This rate is approaching record lows; a fact that this is historically, and somewhat paradoxically, suggestive of an upcoming recession. Figure 9 shows the historical unemployment rate over the past forty years.<br/>
+<p style="text-align:center;"><img src="../Img/stunemp2.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 9:</b> Historical Unemployment Rate in the USA</p>
+<br/>
+The model also finds the recent behavior of the industrial production index and S&amp;P composite as an early indicator of an upcoming recession. The rapid expansion of the S&amp;P appears to have halted around the start of 2018 and this behavior is likely being identified by the logistic regression model.
+<h1>Conclusion</h1>
+Whether a recession is coming within the next couple of years remains to be seen. Regardless, the presence of some warnings signs in the economy is worrying especially with the looming trade wars and reports of excessive corporate debt. Recessions are complicated phenomenon and the exact cause of each is unique. However, with the right mix of factors it seems only a matter of time before one problem starts a cascade that cripples the economy.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Analysis of the 2016 US General Election</h1><h2>Wed, 21 Oct 2020</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Economics</i>, <i>Election</i>, <i>Voter Turnout</i>, <i>Voting</i></h3>Counties within the United States vary substantially along a number of demographic and socioeconomic axes. These factors explain much of the variation observed throughout the US with respect to election and polling trends. This post attempts to untangle some of this complexity to give insight into the factors that influence voter behavior and other broader national trends.
+
+<h1>The Data</h1>
+Data regarding U.S. counties and the 2016 U.S. election is obtained <a href="https://public.opendatasoft.com/explore/dataset/usa-2016-presidential-election-by-county/">from <i>opendatasoft</i>.</a> The dataset combines statistics on the thousands of state counties throughout the United States along with results for each of the 2016 general election candidates. By merging these two types of information, factors which contribute to the success or failure of specific candidates can be identified in addition to broader demographic trends.
+<h1>Distribution of Votes</h1>
+The distribution of both the percent and count of votes for the two top candidates considered is shown in Figure 1. The histograms in the percent plot show that Trump won by larger margins on a county-by-county basis. The log-scale count plot reveals that Clinton won individual counties containing large counts of votes.
+<br/>
+<br/><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/ge16clntrmpcthist-1.png"><img src="../Img/ge16clntrmpcthist-1.png" /></a></td><td><a href="../Img/ge16clntrmrawhist-1.png"><img src="../Img/ge16clntrmrawhist-1.png" /></a></td></tr></table>
+<p style="text-align:center;"><b>Figure 1: County Vote Distributions</b></p>
+Figure 2 plots log-population against candidate support and corroborates the above results, though the relationship between the two factors is somewhat tenuous.
+<p style="text-align:center;"><a href="../Img/ge16clntrmscatter.png"><img src="../Img/ge16clntrmscatter.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: County Size and Candidate Support</b></p>
+Broadly speaking, the charts show that Trump has stronger support in lower population counties while the opposite is true for Clinton. These two plots help explain the fact that Clinton won the majority vote while Trump won the election.
+<h1>Voter Turnout</h1>
+Next, a random forest model is used to identify leading factors that influence voter turnout. First, a regression model is constructed that estimates voter turnout for a county given statistics regarding the county. The top ten factors that contribute to voter turnout are shown as a bar chart in Figure 3.
+<p style="text-align:center;"><a href="../Img/factorimpactvoterturnout.png"><img src="../Img/factorimpactvoterturnout.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: Top Factors Influencing Voter Turnout</b></p>
+The <i>x</i>-axis represents the average amount each feature contributes to overall voter turnout in counties falling in the 55th percentile or higher of that feature. The color axis represents the average amount each feature contributes to overall voter turnout in counties at or below the 45th percentile. As can be seen, the most influential factor by a wide margin is median age.
+<br/>
+<br/>Next, the contributions of each feature are analyzed for specific counties to gain further insight into the behavior of the model. Figure 4 shows how the prediction of the model changes in light of evidence provided by each feature in turn.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/voterturnouteffectplotorangecountycalifornia-1.png"><img src="../Img/voterturnouteffectplotorangecountycalifornia-1.png" /></a></td><td><a href="../Img/voterturnouteffectplotnewyorkcountynewyork-1.png"><img src="../Img/voterturnouteffectplotnewyorkcountynewyork-1.png" /></a></td></tr><tr><td><a href="../Img/voterturnouteffectplotmultnomahcountyoregon-1.png"><img src="../Img/voterturnouteffectplotmultnomahcountyoregon-1.png" /></a></td><td><a href="../Img/voterturnouteffectplotboisecountyidaho-1.png"><img src="../Img/voterturnouteffectplotboisecountyidaho-1.png" /></a></td></tr></table>
+<p style="text-align:center;"><b>Figure 4: Top Factors Influencing Voter Turnout in Select Counties</b></p>
+The features are sorted in descending order by the magnitude of their contribution. Further, the values are cumulative in that the partial prediction at a given rank contains all smaller predictions. In this way, the ultimate prediction is found at the top of the chart. The final symbol (+/=/-) denotes whether the feature value is relatively low, average, or high. This separation into three levels is made at the 40th and 60th percentiles.
+<h1>Candidate Support</h1>
+Next, candidate support is analyzed in a similar fashion. Figure 5 shows the leading factors that influence support for Trump, Clinton, and 3rd party candidates.
+<br/>
+<br/><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/factorimpacttrump.png"><img src="../Img/factorimpacttrump.png" /></a></td><td><a href="../Img/factorimpact3rdparty.png"><img src="../Img/factorimpact3rdparty.png" /></a></td><td><a href="../Img/factorimpactclinton.png"><img src="../Img/factorimpactclinton.png" /></a></td></tr></table>
+<p style="text-align:center;"><b>Figure 5: Top Factors Influencing Candidate Support</b></p>
+Again, the results for individual counties are displayed in separate charts to better understand the factors that influence candidate support.
+<br/>
+<br/><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/clintoneffectplotboisecountyidaho.png"><img src="../Img/clintoneffectplotboisecountyidaho.png" /></a></td><td><a href="../Img/clintoneffectplotmultnomahcountyoregon.png"><img src="../Img/clintoneffectplotmultnomahcountyoregon.png" /></a></td></tr><tr><td><a href="../Img/clintoneffectplotnewyorkcountynewyork.png"><img src="../Img/clintoneffectplotnewyorkcountynewyork.png" /></a></td><td><a href="../Img/clintoneffectplotorangecountycalifornia.png"><img src="../Img/clintoneffectplotorangecountycalifornia.png" /></a></td></tr><tr><td><a href="../Img/trumpeffectplotboisecountyidaho.png"><img src="../Img/trumpeffectplotboisecountyidaho.png" /></a></td><td><a href="../Img/trumpeffectplotmultnomahcountyoregon.png"><img src="../Img/trumpeffectplotmultnomahcountyoregon.png" /></a></td></tr><tr><td><a href="../Img/trumpeffectplotnewyorkcountynewyork.png"><img src="../Img/trumpeffectplotnewyorkcountynewyork.png" /></a></td><td><a href="../Img/trumpeffectplotorangecountycalifornia.png"><img src="../Img/trumpeffectplotorangecountycalifornia.png" /></a></td></tr></table>
+<p style="text-align:center;"><b>Figure 6: Top Factors Influencing Candidate Support in Select Counties</b></p>
+For instance, the model estimates that Trump has relatively less support in Orange County, California due in part to the relatively low and high proportions of white and asian residents in the county respectively. Education also appears to play a role with relatively high proportions of graduate and advanced degrees in the region.
+<h1>Socioeconomic Factors</h1>
+Finally, multiple socioeconomic factors are considered simultaneously to view their relationships. The rate of diabetes, infant mortality, teen births, and violent crime are represented with a scatter chart using the <i>x</i>, <i>y</i>, color, and size axes respectively.
+<p style="text-align:center;"><a href="../Img/sesscatter.png"><img src="../Img/sesscatter.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 7: Socioeconomic Factors by County</b></p>
+As can be seen in Figure 7, there is significant correlation between the four factors. The strongest correlation is found between diabetes and infant mortality, which share a correlation of 0.61. The second most correlated pair are infant mortality and teenage births, which share a correlation of 0.55. Misfortunes never come alone, as the saying goes.
+<p style="text-align:center;"><a href="../Img/countyundesirability.png"><img src="../Img/countyundesirability.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 8: Undesirability by County</b></p>
+Finally, the negative socioeconomic factors are integrated into a single undesirability index. The index includes:
+<ul>
+ 	<li>Poor Physical and Mental Health Days</li>
+ 	<li>Low Birthweight Births</li>
+ 	<li>Children in Single Parent Households</li>
+ 	<li>Prevalence of Smoking Among Adults</li>
+ 	<li>Prevalence of Obesity Among Adults</li>
+ 	<li>Rate of Diabetes</li>
+ 	<li>Number of Sexually Transmitted Infections</li>
+ 	<li>Prevalence of HIV</li>
+ 	<li>Percent Uninsured</li>
+ 	<li>Percent Unemployed</li>
+ 	<li>Violent Crime Rate</li>
+ 	<li>Homicide Rate</li>
+ 	<li>Number of Injury Deaths</li>
+ 	<li>Infant Mortality Rate</li>
+</ul>
+The individual factors are scaled and then averaged into a single index that ranges from 0 to 1. Figure 8 displays the results in a choropleth chart.
+<h1>Conclusion</h1>
+Demographic and socioeconomic factors in the United States adhere to a number of broad trends. Many of the trends described above corroborate with intuition and correspond to well established ideas. These trends capture a significant portion of the variance in the data, but are still best considered as generalizations.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

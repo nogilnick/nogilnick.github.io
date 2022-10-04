@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>CoVID-19 Projections using Kernel SVR and Death Rate Analysis</h1><h2>Sun, 05 Apr 2020</h2><h3><i>Covid-19</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Statistics</i></h3><strong>Updated April 8th 2020</strong>
+<br/>
+<br/>I've spent a disturbing amount of time trying to come up with a decent model for the CoVID-19 pandemic. The big challenge is how little good data there is. Pretty much all available data is riddled with confounding variables and bias. There is a long list of challenges but some I find most daunting are that:
+
+<ul>
+	<li>Testing is concentrated on the most affected sub-populations</li>
+	<li>Testing capacity is limited and random sampling is not performed</li>
+	<li>Countries employ vastly different strategies to contain the outbreak</li>
+	<li>Countries differ in the ways they count and report cases and deaths</li>
+	<li>The nature of this event is unprecedented</li>
+</ul>
+I tried, unsuccessfully, to apply traditional compartmental models to the data. Fitting the model parameters to the data typically resulted in one of two outcomes:
+
+<ul>
+	<li>Ridiculous model parameters</li>
+	<li>Ridiculous model predictions</li>
+</ul>
+After numerous failures, even heavily regularizing the model parameters, I eventually decided to take a more empirical approach using kernel SVR.
+<br/>
+<br/>The basic idea is to estimate the rate of change in the number of deaths instead of relying on the constants from compartmental models. A model can be constructed that predicts percentage change in number of deaths given information about a country and a temporal factor.
+<br/>
+<br/>In this case, a regularized kernel SVR is employed. The percentage change in number of deaths fluctuates wildly early in an outbreak. To reduce the impact of this, outliers are removed and samples occurring earlier in the outbreak are assigned less weight. Some of the factors included in the model:
+
+<ul>
+	<li>Population size</li>
+	<li>Time of outbreak</li>
+	<li>Recent number of deaths</li>
+</ul>
+Countries are binned according to these and other values and 1-hot columns are introduced corresponding to each bin. In this way, the SVR learns unique curves for each country.
+<br/>
+<br/>In Figure 1, the five dashed lines correspond to the estimated curves for the five countries plotted in the scatter plot. The model is fit using the data of 15 countries, though only 5 are shown here so that the plot does not become overly messy.<br/>
+<p style="text-align:center;"><a href="../Img/deathrateest20200408.png"><img src="../Img/deathrateest20200408-1.png" alt="DeathRateEst20200408" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><strong>Figure 1: Death Rate Estimation</strong></p>
+<br/>
+With the model to estimate the percentage change in total deaths, initial values for the problem are estimated using numerical optimization. Namely, values are used that produce curves most closely matching the observed data in terms of MSE.<br/>
+<p style="text-align:center;">
+<table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/statedailydeaths20200408-1.png"><img src="../Img/statedailydeaths20200408-1.png" /></a></td><td><a href="../Img/statesumdeaths20200408-1.png"><img src="../Img/statesumdeaths20200408-1.png" /></a></td></tr></table>
+</p>
+<p style="text-align:center;"><strong>Figure 2: CoVID-19 Deaths in the USA by State</strong></p>
+<br/>
+With both of these in place, the final curve is constructed using calculations similar to those used in an SIR model. Figure 2 shows the daily and cumulative estimated death curves for each state in the US. The top ten states are ranked by severity in the legends.<br/>
+<p style="text-align:center;">
+<table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/c19dailydeathest20200408.png"><img src="../Img/c19dailydeathest20200408.png" /></a></td><td><a href="../Img/c19dsum20200408.png"><img src="../Img/c19dsum20200408.png" /></a></td><td><a href="../Img/c19dsumtoapex20200408.png"><img src="../Img/c19dsumtoapex20200408.png" /></a></td></tr></table>
+</p>
+<p style="text-align:center;"><strong>Figure 3: CoVID-19 Death Projections for the USA</strong></p>
+<br/>
+Figure 3 gives projections for the entire nation by summing the individual curves of each of the states and provinces in the USA. A range of predictions is computed by varying the parameters of the kernel SVR model.<br/>
+<p style="text-align:center;">
+<table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/usadailydeaths20200408.png"><img src="../Img/usadailydeaths20200408.png" /></a></td><td><a href="../Img/new-yorkdailydeaths20200408.png"><img src="../Img/new-yorkdailydeaths20200408.png" /></a></td></tr><tr><td><a href="../Img/new-jerseydailydeaths20200408.png"><img src="../Img/new-jerseydailydeaths20200408.png" /></a></td><td><a href="../Img/michigandailydeaths20200408.png"><img src="../Img/michigandailydeaths20200408.png" /></a></td></tr><tr><td><a href="../Img/louisianadailydeaths20200408.png"><img src="../Img/louisianadailydeaths20200408.png" /></a></td><td><a href="../Img/massachusettsdailydeaths20200408.png"><img src="../Img/massachusettsdailydeaths20200408.png" /></a></td></tr></table>
+</p>
+<p style="text-align:center;"><strong>Figure 4: CoVID-19 Death Daily Deaths and Prediction by State</strong></p>
+<br/>
+Finally, Figure 4 shows the actual data alongside the values predicted by the model for several individual states. The dotted lines show the percentage rate of change in the cumulative death curve predicted by the SVR model.
+<br/>
+<br/><strong>Note:</strong> The data used in this post is taken from the COVID-19 Data Repository by Johns Hopkins CSSE GitHub page.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

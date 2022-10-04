@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Visualizing International Trade of Food Products</h1><h2>Sat, 12 Jan 2019</h2><h3><i>Data Visualization</i>, <i>Economics</i>, <i>Food</i>, <i>International Trade</i></h3>With the rise of globalization, countries increasingly trade food products internationally. Acting in their own economic interests, countries buy and sell food where profitable, much like any other product. Import and export records provide a fascinating window into this complex world of international food trade.
+<h1>Data Cleaning</h1>
+The data in this post is available courtesy of the <a href="www.fao.org/home/en/">Food and Agriculture Organization (FAO) of the United Nations</a>. The FAO provides a wide array of datasets regarding food products. This particular set records import and export quantities of different food products by country from 1961 to the present. The most recent data available as of this writing is for the year 2016.
+<br/>
+<br/>The dataset contains more missing values for the three most recent years: 2014, 2015, and 2016. Ignoring these values can cause the trend of trade growth to appear artificially lower during this period. Linear interpolation is used to extrapolate missing values, as seen in Code Block 1.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>Di = D[D.AreaCode == aci][allYears]
+ay = Di.any(0)
+ay = ay[ay].index.astype(np.int)            # Years country is active
+ar = Di[Di.notnull().sum(1) &gt; 1].index      # Need &gt;1 value to interpolate
+Di.columns = pd.Index(allYears)
+Di = Di.loc[ar, ay]
+D.loc[ar, ay] = Di.interpolate('slinear', 1, limit=5, fill_value='extrapolate')</code></pre><br/><hr/><br/>
+<p style="text-align:center;"><b>Code Block 1: Linear Interpolation of Missing Values</b></p>
+<br/>
+However, it is important not to extrapolate data for countries that no longer exist. For instance, the dataset has rows for Czechoslovakia, which ceased to exist in 1993. To simplify this issue, it is assumed a country is active for a year only if it has a least one value present for the entire year. The variable <i>ay</i> records the active years for each country. Linear interpolation is only performed during these years.
+<br/>
+<br/>The <i>slinear</i> method of interpolation uses <i>scipy.interp1d</i> internally. The <i>fill_value</i> named parameter comes from the <i>scipy</i> function and <i>pandas</i> passes it through via a <i>**kwargs</i> parameter. The <i>extrapolate</i> value allows the interpolation method to extrapolate the linear curve instead of limiting it to the maximum value.<br/>
+<p style="text-align:center;"><a href="../Img/missingvalues19612016.png"><img src="../Img/missingvalues19612016.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: Number of Missing Values by Year</b></p>
+<br/>
+Figure 1 shows the number of remaining null values per year. The number is relatively fixed until 1991 and then decreases into the present. The countries that contribute most to this number in 1980 are shown in Table 1.<br/>
+<p style="text-align:center;"><table style="margin: 0px auto;">
+<tr><th>Country</th><th>Null Values</th></tr>
+<tr><td>Belgium</td><td>1711</td></tr>
+<tr><td>Luxembourg</td><td>1695</td></tr>
+<tr><td>Czechia</td><td>1568</td></tr>
+<tr><td>Lithuania</td><td>1562</td></tr>
+<tr><td>Slovakia</td><td>1561</td></tr>
+<tr><td>Russian Federation</td><td>1552</td></tr>
+<tr><td>Slovenia</td><td>1545</td></tr>
+<tr><td>Latvia</td><td>1522</td></tr>
+<tr><td>Estonia</td><td>1519</td></tr>
+<tr><td>Croatia</td><td>1503</td></tr>
+<tr><td>Kazakhstan</td><td>1492</td></tr></table></p>
+<p style="text-align:center;"><b>Table 1: Remaining Missing Values in 1980</b></p>
+<br/>
+Belgium and Luxembourg are missing due to the Belgium-Luxembourg Economic Union still in place in 1980; their values are mutually recorded as <i>Belgium-Luxembourg</i> for the year. The majority of the remainder are countries established after the dissolution of the Soviet Union in 1991. Indeed, the number of missing values begins decreasing as the former Soviet countries individually declare independence.
+<h1>Overall Growth</h1>
+The overall trend of exports and imports is shown in Figure 2. The slope of the curve for 2000-2016 is noticeably steeper than in most prior periods. Import and export curves nearly coincide as expected; goods that are exported from one country are imported by another. However, the import curve is discernibly lower than the export curve. The cause of this is apparent in the above missing value curve; there are more missing import fields than export fields.<br/>
+<p style="text-align:center;"><a href="../Img/importexport19612016sum-1.png"><img src="../Img/importexport19612016sum-1.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: Global Import and Export Quantities</b></p>
+<br/>
+Now, these two curves are intuitively related to world population. By dividing the yearly quantities by the yearly world population, an adjusted curve is created. Figure 3 shows the curves with the left <i>y</i>-axis representing tonnes per capita.<br/>
+<p style="text-align:center;"><a href="../Img/importexport19612016pc.png"><img src="../Img/importexport19612016pc.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: Population Adjusted Global Imports and Exports</b></p>
+<br/>
+Trade of food products largely outpaces population growth with the noticeable exception of the 12-15 year period starting in the 1980s. This may be attributed in part to world population growth plateauing in the 80s before declining into the present. The dashed black curve in Figure 3 shows the yearly percentage change in world population.
+<h1>Top Importers and Exporters</h1>
+Countries importing the largest quantity of goods are computed for the years 1966, 1976, 1986, 1996, 2006, and 2016. The result is shown in Figure 4.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/largestimportarea2016.png"><img src="../Img/largestimportarea2016.png" /></a></td><td><a href="../Img/largestimportarea2006.png"><img src="../Img/largestimportarea2006.png" /></a></td></tr><tr><td><a href="../Img/largestimportarea1996.png"><img src="../Img/largestimportarea1996.png" /></a></td><td><a href="../Img/largestimportarea1986.png"><img src="../Img/largestimportarea1986.png" /></a></td></tr><tr><td><a href="../Img/largestimportarea1976.png"><img src="../Img/largestimportarea1976.png" /></a></td><td><a href="../Img/largestimportarea1966.png"><img src="../Img/largestimportarea1966.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 4: Top Importers by Year</b></p>
+<br/>
+China's rapid growth is evident in the last four charts. In 1986, the country is not even found on the chart while in 2006 it is the top importer. China remains the top importer in 2016 and the volume of its imports more than doubles.
+<br/>
+<br/>Countries exporting the largest quantity of goods are computed for the years 1966, 1976, 1986, 1996, 2006, and 2016. The result is shown in Figure 5.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/largestexportarea2016.png"><img src="../Img/largestexportarea2016.png" /></a></td><td><a href="../Img/largestexportarea2006.png"><img src="../Img/largestexportarea2006.png" /></a></td></tr><tr><td><a href="../Img/largestexportarea1996.png"><img src="../Img/largestexportarea1996.png" /></a></td><td><a href="../Img/largestexportarea1986.png"><img src="../Img/largestexportarea1986.png" /></a></td></tr><tr><td><a href="../Img/largestexportarea1976.png"><img src="../Img/largestexportarea1976.png" /></a></td><td><a href="../Img/largestexportarea1966.png"><img src="../Img/largestexportarea1966.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 5: Top Exporters by Year</b></p>
+<br/>
+The USA is the top exporter in the world for the years shown. Recently, South American countries show strong growth in their exports; Brazil and Argentina claim second and third place by a wide margin in 2016, though Argentina's output fluctuates somewhat in the 2010s.
+<h1>Top Importers and Exporters by Item</h1>
+Next, top import items in different time periods are explored. The dataset only provides total import and export totals for each country and item. So, it is not possible to determine from which country another country primarily imports. However with the rise of free trade in recent years, top importers and exporters for a given item provide some insight into this.
+<br/>
+<br/>For example, consider the top importers of <i>bananas</i> shown in Figure 6. The USA imports the largest number of bananas from 2006 to 2016 by a large margin. The country imports an average of over 4.2 million metric tons of bananas yearly during the period. Germany only imports an average of roughly 1.3 megatonnes of bananas over the period. However, correcting for the larger USA population, Germany actually imports more bananas per capita. The USA imports 0.013 tonnes per capita while Germany imports 0.016.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/topimportbananas20062016.png"><img src="../Img/topimportbananas20062016.png" /></a></td><td><a href="../Img/worldimportbananas20062016.png"><img src="../Img/worldimportbananas20062016.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 6: Top Importers of Bananas</b></p>
+<br/>
+Per capita, Belgium is by far the leading importer of bananas, importing roughly 0.12 tonnes per capita. However, Belgium re-distributes imported bananas and is a leading exporter of the fruit. Figure 7 shows the population adjusted import quantities.<br/>
+<p style="text-align:center;"><a href="../Img/topimportbananas20062016pc.png"><img src="../Img/topimportbananas20062016pc.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 7: Bananas Imported per Capita</b></p>
+<br/>
+Top exporters of bananas are shown in Figure 8 to provide an idea of where these imports originate. Not surprisingly, South American countries comprise the bulk of the export quantities with Ecuador leading by a large margin. Notice that Belgium places 6th on this list.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/topexportbananas20062016.png"><img src="../Img/topexportbananas20062016.png" /></a></td><td><a href="../Img/worldexportbananas20062016.png"><img src="../Img/worldexportbananas20062016.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 8: Top Exporters of Bananas</b></p>
+<br/>
+The top importers and exporters of peanut butter are shown in Figure 9. The USA is both a leading importer and exporter of peanut butter, exporting and importing roughly 1.3 and 3.5 megatonnes over the period respectively. As is often the case, it can be more profitable to consume imports and export domestic products in global economies.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/topimportpeanut-butter20062016.png"><img src="../Img/topimportpeanut-butter20062016.png" /></a></td><td><a href="../Img/worldimportpeanut-butter20062016.png"><img src="../Img/worldimportpeanut-butter20062016.png" /></a></td></tr></table>
+<table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/topexportpeanut-butter20062016.png"><img src="../Img/topexportpeanut-butter20062016.png" /></a></td><td><a href="../Img/worldexportpeanut-butter20062016.png"><img src="../Img/worldexportpeanut-butter20062016.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 9: Top Importers and Exporters of Peanut Butter</b></p>
+<br/>
+Another interesting item type is <i>soybeans</i>. China is the largest importer of soybeans in the world by a huge margin, importing over 600 megatonnes from 2006 to 2016.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/topexportsoybeans20062016.png"><img src="../Img/topexportsoybeans20062016.png" /></a></td><td><a href="../Img/worldexportsoybeans20062016.png"><img src="../Img/worldexportsoybeans20062016.png" /></a></td></tr></table>
+<table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/topimportsoybeans20062016.png"><img src="../Img/topimportsoybeans20062016.png" /></a></td><td><a href="../Img/worldimportsoybeans20062016.png"><img src="../Img/worldimportsoybeans20062016.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 10: Top Importers and Exporters of Soybeans</b></p>
+<br/>
+The majority of soybean exports are from USA and Brazil. China uses soybeans both as a food product and also as feed for its most popular meat livestock: pigs.
+<h1>Top Imports and Exports by Country</h1>
+Top imports and exports by country are largely aggregate categories involving staples and livestock food and fodder. The top imports for several countries are shown in Figure 11.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/usatopimport20062016.png"><img src="../Img/usatopimport20062016.png" /></a></td><td><a href="../Img/russian-federationtopimport20062016.png"><img src="../Img/russian-federationtopimport20062016.png" /></a></td></tr><tr><td><a href="../Img/japantopimport20062016.png"><img src="../Img/japantopimport20062016.png" /></a></td><td><a href="../Img/indiatopimport20062016.png"><img src="../Img/indiatopimport20062016.png" /></a></td></tr><tr><td colspan="2"><a href="../Img/chinatopimport20062016.png"><img src="../Img/chinatopimport20062016.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 11: Top Imports by Country</b></p>
+<br/>
+China's single largest import is soybeans; oilseeds are an aggregate group including soybeans and other crops such as canola and rapeseed.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/chinatopexport20062016.png"><img src="../Img/chinatopexport20062016.png" /></a></td><td><a href="../Img/indiatopexport20062016.png"><img src="../Img/indiatopexport20062016.png" /></a></td></tr><tr><td><a href="../Img/japantopexport20062016.png"><img src="../Img/japantopexport20062016.png" /></a></td><td><a href="../Img/russian-federationtopexport20062016.png"><img src="../Img/russian-federationtopexport20062016.png" /></a></td></tr><tr><td colspan="2"><a href="../Img/usatopexport20062016.png"><img src="../Img/usatopexport20062016.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 12: Top Exports by Country</b></p>
+<br/>
+Bananas are the single largest non-aggregate import item in the USA for the years 2006 to 2016.
+<br/>
+<br/>Somewhat surprisingly, Japan imports large quantities of maize. However, it is primarily used as animal feed instead of being consumed directly.
+<h1>Import/Export Quantities, Population Size, and Trade Growth</h1>
+Finally, a scatter chart is constructed which compares countries on several axes simultaneously. In this chart, the <i>x</i> and <i>y</i>-axes represent tonnes of goods imported and exported respectively. Marker size represents population and color the 20 year percentage growth of trade volume for each country.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/importexportscatter2016.png"><img src="../Img/importexportscatter2016.png" /></a></td><td><a href="../Img/importexportscatter2006.png"><img src="../Img/importexportscatter2006.png" /></a></td></tr><tr><td><a href="../Img/importexportscatter1996.png"><img src="../Img/importexportscatter1996.png" /></a></td><td><a href="../Img/importexportscatter1986.png"><img src="../Img/importexportscatter1986.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 13: Import and Export Quantities, Population, and Trade Growth by Year</b></p>
+<br/>
+The scatterplot for 2016 highlights the extraordinary import and export volumes for China and USA respectively. China's rapid growth is also apparent from comparing the chart for different years.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

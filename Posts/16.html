@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>PoE AI Part 3: Movement and Navigation</h1><h2>Wed, 19 Jul 2017</h2><h3><i>Bot</i>, <i>Computer Science</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i>, <i>Poe</i>, <i>Python</i>, <i>Security</i>, <i>Software</i></h3>This post is part of <a href="Posts/14.html">a series on creating an AI for the game Path of Exile © (PoE)</a>. In this post, techniques for moving the character around a level are explored.
+<h1>The Movement Map Class</h1>
+In PoE, movement is typically accomplished by using the left mouse button to click on a location. The player then typically moves to the location of the mouse click. Figure 1 shows an example of moving the player using a mouse click.<br/>
+<p style="text-align:center;">
+<img src="../Img/illiterateoptimisticlark-size_restricted.gif" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: Player Movement</b></p>
+<br/>
+Now, in order to accomplish navigation, the AI maintains a data structure which represents a map of the world. A mapping of coordinates to location type is maintained to accomplish this. For example, at a given time, the AI might have the data shown in Table 1 in its internal map.
+<br/>
+<br/><table align="center" style="margin: 0px auto;">
+<tr><th align="center">World Point</th><th align="center">Type</th></tr>
+<tr><td align="center">\((0,0,0)\)</td><td align="center">Open</td></tr>
+<tr><td align="center">\((1,0,0)\)</td><td align="center">Open</td></tr>
+<tr><td align="center">\((0,-1,0)\)</td><td align="center">Obstacle</td></tr>
+<tr><td align="center">\((1,1,0)\)</td><td align="center">Obstacle</td></tr>
+<tr><td align="center">\((-1,-1,0)\)</td><td align="center">Open</td></tr>
+</table>
+<p style="text-align:center;"><b>Table 1: The Internal Map</b></p>
+<br/>
+The map records locations that have been visited along with their type. The type identifies if the player can move to the location (it maps to "Open") or if the player cannot (it maps to "Obstacle"). With such a map in place, <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> can be used to find a shortest path from one location to another.
+<h1>Mapping Between Dimensions</h1>
+Now assume the player is at location (0, 0, 0) and is to move to (1, 1, 0). Where on the screen should the mouse click be performed? Recall from <a href="Posts/14.html" />a previous post</a>, that a projection matrix was calibrated, allowing for more accurate approximation of the player's location in 3D coordinates. Thus, the point (1, 1, 0) is transformed by the projection matrix to determine its location on the screen. This is the location where the mouse click should be performed.
+<br/>
+<br/>In practice, I found the "movement only" skill to be too inaccurate in terms of where the player will move. This is especially the case when the mouse click is performed on an obstacle. In this case, the player typically moves nearby the mouse click. An example of this is shown below in Figure 2.<br/>
+<p style="text-align:center;">
+<img src="../Img/unsightlychiefiguanodon-size_restricted.gif" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: Moving Towards an Obstacle</b></p>
+<br/>
+The video shows the result of a mouse click that is performed over an obstacle. Note that the player moves towards the mouse click but stops at the obstacle.
+<h1>Using Lightning Warp</h1>
+Unfortunately, cases like the one shown Figure 2 can cause the AI's internal map to become out of sync with reality. To get around this somewhat, I decided to use the skill <i>lightning warp</i> for movement. Figure 3 shows the lightning warp skill being performed 3 times.<br/>
+<p style="text-align:center;">
+<img src="../Img/halftautbumblebee-size_restricted.gif" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 3: Lightning Warp</b></p>
+<br/>
+Lightning warp has the advantage of being more black and white in terms of movement; either the player moves to the mouse location or the player does not. This helps to keep the AI's location in its internal map and the player's actual location more in sync. Thus, in order to move to a location \(x\), the AI projects the point \(x\) onto the screen, moves the mouse to that location, then triggers the appropriate key to perform lightning warp.
+<h1>A Movement Detector</h1>
+Now, the only remaining challenge is to determine if lightning warp was successfully performed or not. If the mouse is over an obstacle, the player will not perform lightning warp. In order to accurately predict this, a binary classifier is constructed which takes as input a portion of the screen and predicts whether lightning-warp is currently taking place. A 70x70 rectangle around the character is extracted from the screen and used as input to the model.
+<br/>
+<br/>In order to build the model, a data set is manually constructed from still images of the game. Figure 4 shows samples taken from the data set.<br/>
+<p style="text-align:center;">
+<img src="../Img/lw-nlw.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 4: Lightning Warp Classifier Data</b></p>
+<br/>
+Code to perform prediction follows. The below code assumes the file <i>LWTrain.csv</i> has multiple rows of the format: <i>filename</i>,<i>Y/N</i>.  In each row, <i>filename</i> is the path to an image file described above, and <i>Y</i> indicates the image shows lightning warp being performed, while <i>N</i> indicates the opposite.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>class TargetingSystem:
+    
+    def __init__(self):
+        #...
+        self.lwlr = self.MakeLWDetector()       #Logistic regression determines if lightning-warp is being performed
+        self.RS = (35, 35)  
+        #....
+        
+    #Use classifier to determine if LW is occuring
+    #im:    The image of the screen
+    #pos:   Position of the character on the screen
+    def DetectLW(self, im, pos):
+        detr = im[(pos[1] - self.RS[0]):(pos[1] + self.RS[0]), (pos[0] - self.RS[1]):(pos[0] + self.RS[1])]
+        r = self.lwlr.predict(detr.reshape(1, -1))
+        if r == 'Y':            #Y indicates LW is being performed
+            return True
+        return False
+        
+    #Fits a model for predicting character status
+    #M:         The model to fit
+    #trnFn:     Filename of the training data
+    #SF:        Score function for evaluating the model
+    def FitStatusModel(self, M, trnFn, SF):
+        RM = self.RestoreStatusModel(trnFn)
+        if RM is not None:
+            return RM
+        RX, RY = [], []
+        with open(trnFn) as lwtf:                   #Load dataset from file
+            for l in lwtf:
+                sl = l.strip().split(',')
+                RX.append(imread(sl[0]).reshape(-1))
+                try:
+                    RY.append(float(sl[1]))         #Floating point data is for regression models
+                except ValueError:
+                    RY.append(sl[1])                #Strings are labels for classification
+        A = np.stack(RX)
+        Y = np.stack(RY)
+        trn, tst = next(ShuffleSplit().split(A))    #Use cross-validation to estimate results
+        M.fit(A[trn], Y[trn])
+        YH = M.predict(A)
+        s1, s2, s3 = SF(Y[trn], YH[trn]), SF(Y[tst], YH[tst]), SF(Y, YH)
+        print('LW CV:\nTrn:{:8.6f}\tTst:{:8.6f}\tAll:{:8.6f}'.format(s1, s2, s3))
+        M.fit(A, Y)                                 #Train the final model with all data
+        joblib.dump(M, self.GetModelFN(trnFn))
+        return M
+        
+    #Gets the file name for the saved model
+    def GetModelFN(self, trnFn):
+        if trnFn == 'LWTrain.csv':
+            return 'LWDetLR.pkl'
+        elif trnFn == 'LCTrain.csv':
+            return 'LCRegLR.pkl'
+        elif trnFn == 'MCTrain.csv':
+            return 'MCRegLR.pkl'
+        return None
+      
+    #Creates a classification model which is used to determine if lightning warp is occuring
+    #in a given image
+    def MakeLWDetector(self):
+        return self.FitStatusModel(LogisticRegression(), 'LWTrain.csv', Acc)
+      
+    def RestoreStatusModel(self, trnFn):
+        jlfn = self.GetModelFN(trnFn)
+        try:
+            return joblib.load(jlfn)
+        except FileNotFoundError:
+            pass
+        return None</code></pre><br/><hr/><br/>
+<br/>
+<br/>Thus, after triggering the appropriate key, the AI then calls the <i>DetectLW</i> function above (repeatedly) to check if the move was successful. On success, the character's position on the map is updated. If lightning warp is not detected within a certain period, it is assumed the move failed and the player's location on the map does not change.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

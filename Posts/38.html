@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Decorrelating Features using the Gram-Schmidt Process</h1><h2>Thu, 04 Oct 2018</h2><h3><i>Data Science</i>, <i>Linear Algebra</i>, <i>Linear Models</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></h3>A problem that frequently arises when applying linear models is that of multicollinearity. The term <b>multicollinearity</b> describes the phenomenon where one or more features in the data matrix can be accurately predicted using a linear model involving others of the features. The consequences of multicollinearity include numerical instability due to ill-conditioning, and difficulty in interpreting the regression coefficients. An approach to decorrelate features is presented using the Gram-Schmidt process.
+<br/>
+<br/>
+<h1>The Gram-Schmidt Process</h1>
+The Gram-Schmidt process is typically presented as a process for orthonormalizing the columns of a matrix. Let \(\textbf{A}\) be an <b>m</b> x <b>n</b> matrix with each row being a sample and each column a feature. Further, define \(\textbf{B}\) as the transformed matrix and \(\textbf{X}_{i}\) as the <i>i</i>-th column of a matrix \(\textbf{X}\). Using this notation, the orthonormalized matrix \(\textbf{B}\) is computed as
+<p style="text-align:center;">\[\displaylines{\textbf{B}^{*}_{i} = \textbf{A}_{i} - \sum\limits_{j=1}^{i-1}{P(\textbf{B}^{*}_{j}, \textbf{A}_{i})}\\
+\textbf{B}_{i}=\frac{\textbf{B}^{*}_{i}}{||\textbf{B}^{*}_{i}||}}\]     for \[\displaylines{i = 1,2,\ldots,n}\ ,\]</p>
+where,
+<p style="text-align:center;">\[\displaylines{P(\textbf{u}, \textbf{v}) =  \frac{\langle \textbf{u},\textbf{v}\rangle}{\langle \textbf{u},\textbf{u}\rangle}\textbf{u} }\]</p>
+is the projection of <b>v</b> onto <b>u</b>, and \(\langle \textbf{u},\textbf{v}\rangle\) denotes the inner product of these vectors
+<br/>
+<br/>The Gram-Schmidt process accomplishes orthonormalization when the <b>dot product</b> is used as the inner-product. Recall that the dot-product of two vectors is defined as:
+<p style="text-align:center;">\[\displaylines{\textbf{x} \cdot \textbf{y} = \sum\limits_{i=1}^{n}{x_{i}y_{i}}}\]</p>
+If the dot product of two vectors <b>x</b> and <b>y</b> is 0, then the vectors are orthogonal to each-other. This implies that the angle between the two vectors is 90°. After performing the Gram-Schmidt process, the inner-product of any pair of columns in the transformed matrix is 0. Thus, the resulting matrix is orthogonal.
+<h1>Covariance and Inner Products</h1>
+The Gram-Schmidt process does not require that the dot product be used as inner-product in \(P(\textbf{u}, \textbf{v})\). In this case, the goal is to decorrelate the columns of the matrix <b>A</b> not to make them orthogonal. This can be accomplished using the same procedure with an appropriate operator as inner product. In this case, the operator that is considered is <b>covariance</b>. Define
+<p style="text-align:center;">\[\displaylines{C(\textbf{x}, \textbf{y})=\frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(x_i-x_j)(y_i-y_j)} }\]</p>
+as the covariance of the vectors <b>x</b> and <b>y</b>. The above definition is used for convenience despite being more inefficient than the typical definition using the vector means.
+<br/>
+<br/>In order for an operator to be defined as an inner product, it must satisfy four criteria.
+<ol>
+ 	<li>\(\langle \textbf{u},\textbf{v}\rangle = \langle \textbf{v},\textbf{u}\rangle\)</li>
+ 	<li>\(\langle a\textbf{u},\textbf{v}\rangle = a\langle \textbf{u},\textbf{v}\rangle\)</li>
+ 	<li>\(\langle \textbf{u}+\textbf{w},\textbf{v}\rangle = \langle \textbf{u},\textbf{v}\rangle + \langle \textbf{w},\textbf{v}\rangle\)</li>
+ 	<li>\(\langle \textbf{u},\textbf{u}\rangle \geq 0\) and \(\langle \textbf{u},\textbf{u}\rangle = 0\) iff \(\textbf{u} = 0\)</li>
+</ol>
+<h3>Criteria 1</h3>
+<p style="text-align:center;">\[\displaylines{C(\textbf{x}, \textbf{y})=\frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(x_i-x_j)(y_i-y_j)} \\
+= \frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(y_i-y_j)(x_i-x_j)} \\
+= C(\textbf{y}, \textbf{x})}\]</p>
+<br/>
+<h3>Criteria 2</h3>
+<p style="text-align:center;">\[\displaylines{C(a\textbf{x}, \textbf{y})=\frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(ax_i-ax_j)(y_i-y_j)} \\
+= \frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{a(x_i-x_j)(y_i-y_j)} \\
+= a \times C(\textbf{x}, \textbf{y})}\]</p>
+<br/>
+<h3>Criteria 3</h3>
+<p style="text-align:center;">\[\displaylines{C(\textbf{x}+\textbf{z}, \textbf{y})=\frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{((x_i+z_i)-(x_j+z_j))(y_i-y_j)} \\
+= \frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{[(x_i-x_j)+(z_i-z_j)](y_i-y_j)} \\
+= \frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{[(x_i-x_j)(y_i-y_j)+(z_i-z_j)(y_i-y_j)]} \\
+= \frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(x_i-x_j)(y_i-y_j)}+\frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(y_i-y_j)(z_i-z_j)} \\
+= C(\textbf{x}, \textbf{y}) + C(\textbf{y}, \textbf{z})}\]</p>
+<br/>
+<h3>Criteria 4</h3>
+<p style="text-align:center;">\[\displaylines{C(\textbf{x}, \textbf{x})=\frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(x_i-x_j)(x_i-x_j)} \\
+= \frac{1}{2n^{2}}\sum\limits_{i=1}^{n}\sum\limits_{j=1}^{n}{(x_i-x_j)^2}\geq 0 }\]</p>
+Unfortunately, this fourth condition is only partially true. The covariance of any constant vector is 0 and so the vector being <b>0</b> is a sufficient but not a necessary condition. Thus, covariance is positive semi-definite and not positive-definite as required.
+<br/>
+<br/>By carefully restricting the subspace of vectors, this condition can be made true in the reduced space. If the features are assumed to have mean 0, this condition holds. Intuitively, any constant vector that is mean centered becomes the 0 vector.
+<br/>
+<br/>It can be shown that this construction is valid using the concept of quotient vector spaces. Instead of considering the space of all random variables, a quotient space is constructed in which all random variables that differ by only a constant are identified. In this quotient space, covariance is a true inner product. Further, the space of mean centered vectors is isomorphic to this quotient space.
+<br/>
+<br/>Since it is assumed that the vectors are centered, only centered vectors must be used throughout the Gram-Schmidt process. A short proof follows which shows that all vectors produced in the intermediate steps of the process are centered.
+<br/>
+<br/><b>Lemma:</b>
+<p style="text-align:center;">If \[\displaylines{\bar{\textbf{A}}_{i}=0 }\]      for \[\displaylines{i = 1,2,\ldots,n}\]</p>
+<p style="text-align:center;">Then \[\displaylines{\bar{\textbf{B}}_{i}=0 }\]      for \[\displaylines{i = 1,2,\ldots,n}\ .\]</p>
+<b>Proof:</b>
+By definition, \(\textbf{B}^{*}_{0}=\textbf{A}_{0}\) is centered, since \(\textbf{A}_{0}\) is centered. The proof proceeds using mathematical induction. Using the definition of \(\textbf{B}_{i}\) and the mean,
+<p style="text-align:center;">\[\displaylines{\textbf{B}_{i} = (\textbf{A}_{i} - \sum\limits_{j=1}^{i-1}{\frac{\langle \textbf{B}^{*}_{j}, \textbf{A}_{i} \rangle}{\langle \textbf{A}_{i}, \textbf{A}_{i} \rangle}\textbf{B}^{*}_{j}})/||\textbf{B}^{*}_{i}|| }\ ,\]</p>
+and so,
+<p style="text-align:center;">
+\[\displaylines{\bar{\textbf{B}}_{i} = (\frac{1}{m}\sum\limits_{k=1}^{m}{(\textbf{A}_{ki} - \sum\limits_{j=1}^{i-1}{\frac{\langle \textbf{B}^{*}_{j}, \textbf{A}_{i} \rangle}{\langle \textbf{A}_{i}, \textbf{A}_{i} \rangle}\textbf{B}^{*}_{kj}})})/||\textbf{B}^{*}_{i}||\\
+= \frac{1}{||\textbf{B}^{*}_{i}||}\frac{1}{m}\sum\limits_{k=1}^{m}{\textbf{A}_{ki}} - \frac{1}{||\textbf{B}^{*}_{i}||}\frac{1}{m}\sum\limits_{k=1}^{m}{\sum\limits_{j=1}^{i-1}{\frac{\langle \textbf{B}^{*}_{j}, \textbf{A}_{i} \rangle}{\langle \textbf{A}_{i}, \textbf{A}_{i} \rangle}\textbf{B}^{*}_{kj}}}\\
+= 0 - \frac{1}{||\textbf{B}^{*}_{i}||}\frac{\langle \textbf{B}^{*}_{j}, \textbf{A}_{i} \rangle}{\langle \textbf{A}_{i}, \textbf{A}_{i} \rangle}\sum\limits_{j=1}^{i-1}{\frac{1}{m}\sum\limits_{k=1}^{m}{\textbf{B}^{*}_{kj}}}\\
+= 0 - \frac{1}{||\textbf{B}^{*}_{i}||}\frac{\langle \textbf{B}^{*}_{j}, \textbf{A}_{i} \rangle}{\langle \textbf{A}_{i}, \textbf{A}_{i} \rangle}\sum\limits_{j=1}^{i-1}{\bar{\textbf{B}}^{*}_{j}}\\
+= 0 - 0 = 0 }\ .\]</p>
+In the above, \(\bar{\textbf{A}}_{i}\) indicates the mean of column \(\textbf{A}_{i}\) and \(\textbf{A}_{ki}\) indicates the element in the <i>k</i>-th row and <i>i</i>-th column of the matrix \(\textbf{A}\).In the final step, the induction hypothesis, that \(\bar{\textbf{B}}^{*}_{j}=0\) for \(j&lt;i\), is used. Thus, if the data matrix is centered, the Gram-Schmidt process only operates on centered vectors; the assumption remains valid throughout the process.
+<h1>The Decorrelation Procedure</h1>
+To proceed, the data matrix \(\textbf{A}\) is standardized. This fulfills the condition required above and causes the covariance of columns in the standardized matrix to be equal to the correlation. Recall that the Pearson correlation coefficient is defined as
+<p style="text-align:center;">\[\displaylines{R(\textbf{x}, \textbf{y})=\frac{C(\textbf{x},\textbf{y})}{\sigma_{\textbf{x}}\sigma_{\textbf{y}}} }\]</p>
+Where \(\sigma_{\textbf{x}}\) is the standard deviation of <b>x</b>. Thus, the correlation and covariance are equal in this case, since the standardized columns have variance one.
+<br/>
+<br/>Next the Gram-Schmidt process is applied sequentially on the columns. The first column is left unchanged since it already has variance 1. The second transformed column is computed as the second original column with any portion that is correlated to first column removed. In general, the <i>i</i>-th transformed column is equal to the <i>i</i>-th original column with any portion that is linearly correlated to the <i>j</i>-th transformed column removed for all \(j&lt;i\).
+<h1>An Example</h1>
+An example is presented using the <a href="https://archive.ics.uci.edu/ml/datasets/Auto+MPG">automobile MPG dataset available from UCI</a>. The dataset is used to train a model which can predict city-cycle fuel economy given several numerical and categorical features. Only the numerical features are considered here.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<tbody>
+<tr>
+<th></th>
+<th>Weight</th>
+<th>Displacement</th>
+<th>Cylinders</th>
+<th>Acceleration</th>
+</tr>
+<tr>
+<td><b>Cylinders</b></td>
+<td>1.00</td>
+<td>0.93</td>
+<td>0.90</td>
+<td>-0.42</td>
+</tr>
+<tr>
+<td><b>Displacement</b></td>
+<td>0.93</td>
+<td>1.00</td>
+<td>0.95</td>
+<td>-0.54</td>
+</tr>
+<tr>
+<td><b>Weight</b></td>
+<td>0.90</td>
+<td>0.95</td>
+<td>1.00</td>
+<td>-0.51</td>
+</tr>
+<tr>
+<td><b>Acceleration</b></td>
+<td>-0.42</td>
+<td>-0.54</td>
+<td>-0.51</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 1: Auto MPG Feature Correlation</b></p>
+The correlation between the variables can easily be computed using <i>pandas</i>: <i>A.corr()</i>. The resulting correlation matrix shown in Table 1.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>def Cov(X, Y):
+   return ((X - X.mean()) * (Y - Y.mean())).mean()
+
+def Proj(X, Y, F=Cov):
+   return X * (F(X, Y) / F(X, X))
+
+def ToUnit(X, F=Cov):
+   return X / np.sqrt(F(X, X))
+
+def GramSchmidt(A, F=Cov):
+   B = A.copy()
+   n = A.shape[1]
+   for i in range(n):
+      for j in range(i):
+         B[:, i] = B[:, i] - Proj(B[:, j], B[:, i], F=F)
+      B[:, i] = ToUnit(B[:, i], F=F)
+   return B</code></pre><br/><hr/><br/>
+<br/>
+<br/>The \(R^2\) of a linear regression model fit to the data is 0.7007. Next the method described above is implemented and the data matrix is transformed.
+<br/>
+<br/>
+<table align="center" style="margin: 0px auto;">
+<tbody>
+<tr>
+<th></th>
+<th>Weight</th>
+<th>Displacement</th>
+<th>Cylinders</th>
+<th>Acceleration</th>
+</tr>
+<tr>
+<td><b>Weight</b></td>
+<td>1.00</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>0.00</td>
+</tr>
+<tr>
+<td><b>Displacement</b></td>
+<td>0.00</td>
+<td>1.00</td>
+<td>0.00</td>
+<td>0.00</td>
+</tr>
+<tr>
+<td><b>Cylinders</b></td>
+<td>0.00</td>
+<td>0.00</td>
+<td>1.00</td>
+<td>0.00</td>
+</tr>
+<tr>
+<td><b>Acceleration</b></td>
+<td>0.00</td>
+<td>0.00</td>
+<td>0.00</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 2: Transformed Auto MPG Feature Correlation</b></p>
+The resulting correlation matrix is shown in Table 2. Note that the correlation matrix is diagonal indicating that there is no correlation between the columns. The Gram-Schmidt process successfully decorrelated the data matrix! Figures 1 and 2 show scatter charts of MPG against the four features before and after decorrelation respectively.<br/>
+<p style="text-align:center;"><img src="../Img/originalsp.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 1: Scatter Plots of Original Data Against MPG</b></p>
+A linear regression model fit on the decorrelated data matrix achieves the same \(R^2\) of 0.7007. Further of interest is that the univariate regression coefficients for each column exactly match the multivariate coefficients of the full decorrelated matrix. Also, the sum of the univariate \(R^2\) values equal the multivariate regression \(R^2\). The above are both due to the columns having no linear correlation to each other.<br/>
+<p style="text-align:center;"><img src="../Img/decorrelatedsp.png" height="auto" width="75%" /></p>
+<p style="text-align:center;"><b>Figure 2: Scatter Plots of Decorrelated Data Against MPG</b></p>
+As can be seen in Table 3, the sum of the \(R^2\) values for the original features is inflated as some variables explain the same variation in MPG.
+<br/>
+<br/>
+<table style="margin:0 auto;width:60%;" align="center">
+<tbody>
+<tr>
+<th>Feature</th>
+<th>Orig. R²</th>
+<th>Tran. R²</th>
+</tr>
+<tr>
+<td>Weight</td>
+<td>0.69179</td>
+<td>0.69179</td>
+</tr>
+<tr>
+<td>Displacement</td>
+<td>0.64674</td>
+<td>0.00618</td>
+</tr>
+<tr>
+<td>Cylinders</td>
+<td>0.60124</td>
+<td>0.00027</td>
+</tr>
+<tr>
+<td>Acceleration</td>
+<td>0.17664</td>
+<td>0.00245</td>
+</tr>
+<tr>
+<td><b>Total</b></td>
+<td><b>2.11642</b></td>
+<td><b>0.70070</b></td>
+</tr>
+</tbody>
+</table>
+<p style="text-align:center;"><b>Table 3: Transformed Auto MPG Feature Correlation</b></p>
+While the multivariate and univariate regression coefficients are identical for the decorrelated data, the intercepts are different. However, the multivariate intercept can be derived from the univariate intercepts using the following formula.
+<p style="text-align:center;">\[\displaylines{b^{*}=\sum\limits_{i=1}^{n}{{b_i}-(n-1)\bar{Y}} }\]</p>
+Where \(b^{*}\) is the multivariate intercept, \(b_i\) is the <i>i</i>-th univariate regression coefficient, \(n\) is the number of columns in the data matrix, and \(\bar{Y}\) is the mean target value.
+<h1>Conclusion</h1>
+Principal component analysis also produces an uncorrelated transformed matrix. However, due to the nature of the transform, it is difficult to interpret the projected vectors. The aim of this post is to present a method that can be used to decorrelate a data matrix suffering from multicollinearity in a way that is more transparent. In this case, a transformed column has had all portions that are linearly correlated to the previous columns removed.
+<br/>
+<br/>As seen in the example provided, this method does not improve the \(R^2\) of the model. Instead, the method is presented as a way of aiding the introspection of linear models on highly collinear data sets.
+<br/>
+<br/><b>Note:</b> See <a href="Posts/58.html"><u>Decorrelation Redux</u></a> to read about another approach to decorrelating the columns of a matrix that leverages the Cholesky decomposition.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

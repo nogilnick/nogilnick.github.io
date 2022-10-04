@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>A Look at Stack Overflow Questions about Python</h1><h2>Mon, 05 Mar 2018</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Python</i>, <i>Software</i>, <i>Stack Overflow</i>, <i>Wordcloud</i></h3>There is a <a href="https://www.kaggle.com/stackoverflow/pythonquestions">dataset on Kaggle</a> that contains questions taken from Stack Overflow about the Python programming language. This post briefly explores portions of the dataset.
+<br/>
+<br/>The number of questions per week regarding Python has been steadily growing over the past decade. The number of questions has increased from about 10 per week in 2008 to about 3000 towards the present.<br/>
+<p style="text-align:center;">
+<img src="../Img/pqweekq.png" alt="PQWeekQ" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 1: Number of Questions per Week</b></p>
+<br/>
+A histogram of the question scores is constructed. As seen in Figure 2, the vast majority of questions receive little to no upvotes. If you have ever spent hours typing up an in-depth question only to watch it fall flat, fear not! You are not alone.<br/>
+<p style="text-align:center;">
+<img src="../Img/pqscorehist.png" alt="PQScoreHist" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 2: Histogram of Question Scores</b></p>
+<br/>
+If you primarily access Stack Overflow questions from search engine results, this result may seem counter-intuitive. This seeming discrepancy is known as <i>survivorship bias</i>. Unpopular questions do not appear in search results and so it is difficult to estimate their number.
+<br/>
+<br/>So how then to have a successful post? One potentially good approach is to go back in time!<br/>
+<p style="text-align:center;">
+<img src="../Img/pqtimescore.png" alt="PQTimeScore" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 3: Average Question Score over Time</b></p>
+<br/>
+Taking the scores and grouping then by week, the average weekly score for Python questions declines over time. The older questions have had more opportunity to receive upvotes. But, the same can be said about downvotes!
+<br/>
+<br/>Another way to improve your chances is to craft a title with a specific length. Figure 4 shows average score plotted against title length.<br/>
+<p style="text-align:center;">
+<img src="../Img/pqtitlelenscore.png" alt="PQTitleLenScore" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 4: Question Score and Title Length</b></p>
+<br/>
+It appears that questions having a title with roughly 30 to 40 characters perform better on average. Longer titles perform worse on average. The longest title has 172 characters and the corresponding question has a score of 1 (no upvotes or downvotes).
+<br/>
+<br/>The distribution for the length of question bodies is shown in Figure 5. The distribution is left skewed.<br/>
+<p style="text-align:center;">
+<img src="../Img/pqbodylenhist.png" alt="PQBodyLenHist" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 5: Distribution of Question Body Length</b></p>
+<br/>
+The length of the body has less of a correspondence with score. Often times short questions can have large blocks of code or data tables. The question with the longest body has 48242 characters. However, the majority of these characters comes from two large data tables.<br/>
+<p style="text-align:center;">
+<img src="../Img/pythonwcmed.png" alt="PythonWCMed" height="auto" width="75%" />
+</p>
+<p style="text-align:center;"><b>Figure 6: Python Question Wordcloud</b></p>
+<br/>
+Finally, a wordcloud is constructed from the text. The result is shown in Figure 6.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>

