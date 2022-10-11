@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Plot</title>
+  <link rel="stylesheet" type="text/css" href="../style.css">
+  <script src="plotly-latest.min.js"></script>
+  <script src="Explore.js"></script>
+</head>
+<body style="text-align: center;">
+  <div style="position: absolute; z-index: 1; top: 4px; left: 4px;">
+      <input id="inputText" type="text" value="">
+      <button id="btnSearch" onClick="Search()">Search</button>
+      <button id="btnReset" onClick="Reset()">Clear</button>
+      <button id="btnHigh" onClick="Highlight()">Highlight</button>
+  </div>
+  <div id="graph" style="height: 100%; width: 100%; z-index: 100;"></div>
+</body>
+</html>
