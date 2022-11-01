@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 64%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="Posts/Plots.html">Plots</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Kernel Recipes and Kernel PCA</h1><h2>Tue, 01 Nov 2022</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i></h3>One strength of kernel methods is their ability to operate directly on non-numerical objects like sets. As seen in the previous post, the Jaccard index on sets satisfies Mercer's condition and thus is a valid kernel. The process of proving a similarity measure is a valid kernel is somewhat involved, but thankfully several theorems can be employed to get more mileage out of the set of known good kernels. This post outlines some recipes for producing new valid kernels and introduces a method for obtaining numerical representations of samples using kernel methods.
+
+<h3>Recipes for New Kernels</h3>
+A number of transformations of valid kernels are known to produce new valid kernels, only several of which are demonstrated here.<br/><br/>
+
+<b>Theorem 1</b><br/>
+If \(k_1(\mathbf{x}, \mathbf{y})\) and \(k_2(\mathbf{x}, \mathbf{y})\) are both valid kernels, then \(k(\mathbf{x}, \mathbf{y}) = k_1(\mathbf{x}, \mathbf{y}) + k_2(\mathbf{x}, \mathbf{y})\) is also a valid kernel.<br/><br/>
+
+<b>Proof</b><br/>
+For any given set of points \(\{\mathbf{x}_i\}_{i=1}^{n}\), let the Gram matrices produced by \(k_1\) and \(k_2\) be <b>A</b> and <b>B</b> respectively. Note that, since both \(k_1\) and \(k_2\) are valid kernels, both <b>A</b> and <b>B</b> are positive semi-definite matrices. Next, by definition the Gram matrix produced by \(k(\mathbf{x}, \mathbf{y})\) is \(\mathbf{C} = \mathbf{A} + \mathbf{B}\). Since <b>C</b> is a sum of positive semi-definite matrices, it is also positive semi-definite. Finally, since the gram matrix produced by \(k(\mathbf{x}, \mathbf{y})\) is shown to be positive semi-definite for an arbitrary set of points, \(k(\mathbf{x}, \mathbf{y})\) is also a positive semi-definite kernel. \(\blacksquare\)<br/><br/>
+
+<b>Theorem 2</b><br/>
+If \(k_1(\mathbf{x}, \mathbf{y})\) is a valid kernel and \(c &gt; 0\) is a positive constant, then \(k(\mathbf{x}, \mathbf{y}) = c k_1(\mathbf{x}, \mathbf{y})\) is also a valid kernel.<br/><br/>
+
+<b>Proof</b><br/>
+For any given set of points \(\{\mathbf{x}_i\}_{i=1}^{n}\), let the Gram matrix produced by \(k_1\) be <b>A</b>. Again, note that <b>A</b> is positive semi-definite. Next, by definition the  Gram matrix produced by \(k(\mathbf{x}, \mathbf{y})\) is \(\mathbf{C} = c \mathbf{A}\). Since multiplying <b>A</b> by a positive constant does not zero or affect the sign of its eigenvalues, <b>C</b> is also a positive-semi-definite matrix. Again, since <b>C</b> is shown to be positive semi-definite for an arbitrary set of points, \(k(\mathbf{x}, \mathbf{y})\) is also a positive semi-definite kernel. \(\blacksquare\)<br/><br/>
+
+Putting theorems 1 and 2 together, it is easy to prove that a weighted sum of positive semi-definite kernels is also a positive semi-definite kernel when the weights are positive.<br/><br/>
+
+<b>Theorem 3</b>
+<p style="text-align:center;">
+\[\displaylines{k(\mathbf{x}, \mathbf{y}) = \sum\limits_{i=1}^{n}{c_i k_i(\mathbf{x}, \mathbf{y})} }\ ,\]</p>
+where \(c_i &gt; 0\) are positive constants and \(k_i\) are positive semi-definite kernels, is a positive semi-definite kernel.<br/><br/>
+
+<b>Proof</b><br/>
+By Theorem 2 each element of the sum is a valid kernel. By Theorem 1, a sum of valid kernels is itself a valid kernel, and so \(k(\mathbf{x}, \mathbf{y})\) is also a valid kernel. \(\blacksquare\)
+<br/>
+<br/>Theorem 3 allows practitioners to build kernels that combine a weighted combination of valid similarity metrics. Each of these individual metrics can be based on dot-products of numerical vectors, similarity functions over sets like the Jaccard index, or even, for example, functions comparing strings. Kernel functions allow rich expressiveness in modeling that is also backed with solid theoretical underpinnings.
+<h3>Kernel Principal Component Analysis</h3>
+Kernel principal component analysis (KPCA) generalizes the method of principal component analysis (PCA) by substituting an arbitrary kernel function for the typical dot product used in PCA. Through some algebraic manipulation, formulae for the projections of the data onto the implied principal components with respect to a given kernel \(k(\mathbf{x}, \mathbf{y})\) are obtained. Specifically, for a set of points \(\{\mathbf{x}_i\}_{i=1}^{n}\) and an arbitrary vector <b>x</b>, the <i>k</i>-th component of the projection of the vector using KPCA is
+<p style="text-align:center;">
+\[\displaylines{\sum\limits_{i=1}^{n}{\mathbf{v}_i^{k}k(\mathbf{x}_i, \mathbf{x})} }\ ,\]</p>
+where \(\mathbf{v}^k\) is the k-th normalized eigenvector of the implicitly centered gram matrix. Thus, to compute the projection, the kernel function is first computed between the query point and each of the training samples in turn. Next, the result is dotted with the appropriately normalized eigenvectors of the centralized gram matrix.
+<br/>
+<br/>By leveraging Kernel PCA with the above theorems, one can obtain vector representations for arbitrary non-numerical objects like sets and strings. Further, practitioners may combine numerical and non-numerical data via multiple weighted kernel functions to obtain numerical vectors for complex heterogeneous data types.
+<h3>Interactive KPCA Embeddings</h3>
+The <a href="https://nicholastoddsmith.github.io/Posts/Plots.html">plots page of my new github.io site</a> contains several interactive scatter plots built using Kernel PCA. Click on the links below to see more.
+<ul>
+ 	<li><a href="https://nicholastoddsmith.github.io/Plots/Plot.html?filename=1kGenomes">1000 Genomes Project: Human Genome Embeddings</a></li>
+ 	<li><a href="https://nicholastoddsmith.github.io/Plots/Plot.html?filename=Pokemon">Pokémon Kernel PCA Embedding</a></li>
+ 	<li><a href="https://nicholastoddsmith.github.io/Plots/Plot.html?filename=Senate">Embedding of the 117th U.S. Senate</a></li>
+</ul>
+The 1000 Genomes embedding is built using Jaccard similarity on the genotype sets for each individual. The Pokémon embedding factors in multiple pieces of information including Pokémon powers, abilities, and types. Finally, the embedding of the 117th U.S. senate is constructed using Jaccard similarity over the votes cast by each senator.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2022 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>
