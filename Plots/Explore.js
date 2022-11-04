@@ -77,11 +77,26 @@ function Search() {
 
 function Init() {
     Plotly.newPlot(PLOTLY_DIV, PLOTLY_DATA, PLOTLY_LAYOUT, PLOTLY_CONFIG);
-}
 
+    // Setup onclick
+    if (LINK_DATA !== undefined) {
+        var ele = document.getElementById(PLOTLY_DIV);
+        ele.on('plotly_click', function(data) {
+            if (data.points.length === 1) {
+                var link = LINK_DATA[data.points[0].pointNumber];
+                if (LINK_PRE !== undefined) {
+                    link = LINK_PRE + link;
+                }
+                window.open(link, "_blank");
+          }
+        });
+    }
+}
  
 var PLOTLY_DATA   = null;
 var PLOTLY_LAYOUT = null;
+var LINK_DATA     = null;
+var LINK_PRE      = null;
 
 function LoadJSON() {
   var dataFile = GetURLArgs()["filename"];
@@ -92,8 +107,10 @@ function LoadJSON() {
   xObj.onreadystatechange = function () {
         if (xObj.readyState == 4 && xObj.status == "200") {
           var DAT = JSON.parse(xObj.responseText);
-          PLOTLY_DATA   = DAT["data"];
-          PLOTLY_LAYOUT = DAT["layout"];
+          PLOTLY_DATA    = DAT["data"];
+          PLOTLY_LAYOUT  = DAT["layout"];
+          LINK_DATA      = DAT["links"];
+          LINK_PRE       = DAT["linkpre"];
 
           document.title = DAT["title"] || "Plot";
 
