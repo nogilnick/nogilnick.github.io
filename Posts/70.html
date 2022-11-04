@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nicholastsmith</title>
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 64%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nicholastsmith</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="Posts/Plots.html">Plots</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>Nicholas T. Smith</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Embedding Recipes using Kernel PCA</h1><h2>Fri, 04 Nov 2022</h2><h3><i>Data Science</i>, <i>Data Visualization</i>, <i>Machine Learning</i></h3>The previous post discusses Kernel PCA and recipes, or formulae, for deriving new kernels from known good kernels. This post applies these approaches to generate vector embeddings in a specific domain: <i>culinary recipes</i>. The idea is to find a low-dimensional representation of recipes such that points in the embedding space are neighbors to similar recipes.
+
+<h3>Data Source</h3>
+The data in this post comes from Kaggle. Specifically, a tabular dataset of recipes is obtained from <a href="https://www.kaggle.com/datasets/shuyangli94/food-com-recipes-and-user-interactions">this page</a>, which states that the data was scraped from a popular recipe website.
+<br/>
+<br/>To both reduce the dimensions of the Gram matrix and filter less relevant results, only recipes with at least 10 ratings and an average score of 3.5 (out of 5) or more are preserved. After this filtering, roughly 7.2% of the original samples, or 12,858 recipes, remain.
+<h3>Kernel Recipes</h3>
+A total of seven kernels are utilized. The ultimate kernel employed is a weighted sum of the seven. A brief description of each of the kernels is provided in the following list:
+<ul>
+ 	<li>Jaccard similarity of:
+<ul>
+ 	<li>Tokens from the name</li>
+ 	<li>Ingredients</li>
+ 	<li>Tags</li>
+ 	<li>Tokens from the description</li>
+ 	<li>Tokens from the recipe steps</li>
+</ul>
+</li>
+ 	<li>Cosine similarity of prep information: time, steps, and ingredient count</li>
+ 	<li>Cosine similarity of the nutrition vector: fat, protein, etc.</li>
+</ul>
+The name, ingredient, and tag kernels are weighted heavier, accounting for nearly 90% of the overall weight. However, the low weighting from the dot-product kernels is somewhat offset by the higher magnitude values produced by those kernel.
+<h3>Interactive Recipe Embedding</h3>
+Next, a scatter plot is constructed to visualize the recipe data. The <i>x</i>, <i>y</i>, <i>size</i>, and <i>color</i> axes are respectively used for the first 4 kernel principal components. Mouse controls allow for zoom-in and zoom-out via click-and-drag and double-click respectively. The interactive scatter chart is available on my github.io page:
+<br/>
+<br/><b><a href="https://nicholastoddsmith.github.io/Plots/Plot.html?filename=Recipes">Interactive Recipe Scatter Chart</a></b>
+<br/>
+<br/>A long arm of points containing primarily carbohydrate-rich recipes extends gradually upwards to the right of the plot. The base of the arm contains more bread and cake-like recipes but this gradually transitions to more cookie or brownie-like desserts as the arm is traversed rightward.
+<p style="text-align:center;"><a href="../Img/arm-of-dessertitude.png"><img src="../Img/arm-of-dessertitude.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 1: The Great Arm of Dessert-itude</b></p>
+One point to note is that often recipes appear close to each other according to the <i>x</i> and <i>y</i>-axes, but are actually far apart according to their size and/or color. For instance, in the following area <i>deep red</i> points seem to be strongly associated with salad.
+<p style="text-align:center;"><a href="../Img/deep-red-salad.png"><img src="../Img/deep-red-salad.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 2: Red Point Salad</b></p>
+The region in Figure 2 contains more savory salads. However, as one follows the red points along "The Great Arm of Dessert-itude," savory salads give way to fruit, jello, and other dessert-like salads.
+<p style="text-align:center;"><a href="../Img/sweet-salad.png"><img src="../Img/sweet-salad.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 3: From Savory Back to Sweet</b></p>
+The controls on the top left enable filtering for or highlighting points with hover-text containing some arbitrary string. From this, it can be seen that recipes involving chicken cluster in the top left of the plot.
+<p style="text-align:center;"><a href="../Img/chicken-central.png"><img src="../Img/chicken-central.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 4: Chicken Central</b></p>
+Finally, clicking on the points opens a new tab to the associated recipe. Note that a small number of recipes appear to have been deleted, causing broken links.
+<br/>
+<br/>Bon Appétit!<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2022 Nicholas T. Smith All Rights Reserved</cite>        
+    </div>
+</body>
+</html>
