@@ -66,7 +66,7 @@ A total of seven kernels are utilized. The ultimate kernel employed is a weighte
 </ul>
 The name, ingredient, and tag kernels are weighted heavier, accounting for nearly 90% of the overall weight. However, the low weighting from the dot-product kernels is somewhat offset by the higher magnitude values produced by those kernel.
 <h3>Interactive Recipe Embedding</h3>
-Next, a scatter plot is constructed to visualize the recipe data. The <i>x</i>, <i>y</i>, <i>size</i>, and <i>color</i> axes are respectively used for the first 4 kernel principal components. Mouse controls allow for zoom-in and zoom-out via click-and-drag and double-click respectively. The interactive scatter chart is available on my github.io page:
+Next, a scatter plot is constructed to visualize the recipe data. The <i>x</i>, <i>y</i>, <i>size</i>, and <i>color</i> axes are respectively used for the first 4 kernel principal components. Mouse controls allow for zoom-in and zoom-out via click-and-drag and double-click respectively. Clicking on the points opens a new tab to the associated recipe. The interactive scatter chart is available on my github.io page:
 <br/>
 <br/><b><a href="https://nicholastoddsmith.github.io/Plots/Plot.html?filename=Recipes">Interactive Recipe Scatter Chart</a></b>
 <br/>
@@ -82,9 +82,15 @@ The region in Figure 2 contains more savory salads. However, as one follows the 
 The controls on the top left enable filtering for or highlighting points with hover-text containing some arbitrary string. From this, it can be seen that recipes involving chicken cluster in the top left of the plot.
 <p style="text-align:center;"><a href="../Img/chicken-central.png"><img src="../Img/chicken-central.png" height="auto" width="75%" /></a></p>
 <p style="text-align:center;"><b>Figure 4: Chicken Central</b></p>
-Finally, clicking on the points opens a new tab to the associated recipe. Note that a small number of recipes appear to have been deleted, causing broken links.
+Another interesting pattern is that the recipes corresponding to the largest points all seem to involve using a crock-pot. In the chicken region, the large points correspond to crock-pot recipes with chicken as an ingredient.
+<p style="text-align:center;"><a href="../Img/crock-pot-chicken.png"><img src="../Img/crock-pot-chicken.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 5: Chicken in the Crock-Pot</b></p>
+However, the large points over near the dessert recipes include a crock-pot cobbler and other fruit recipes. The furthest large point along The Great Arm of Dessert-itude is for a "crock-pot hot fudge sundae."
+<p style="text-align:center;"><a href="../Img/dessert-in-a-pot.png"><img src="../Img/dessert-in-a-pot.png" height="auto" width="75%" /></a></p>
+<p style="text-align:center;"><b>Figure 6: Dessert in the Crock-Pot</b></p>
+Many other similar relationship are apparent on further inspection of the plot. Bon Appétit!
 <br/>
-<br/>Bon Appétit!<br/><br/></div>
+<br/><b>Note:</b> A small number of recipes appear to have been deleted, causing broken links.<br/><br/></div>
                 <div class="BarRight" id="RBar"></div>
             </div>
         </div>
