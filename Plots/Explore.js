@@ -12,50 +12,43 @@ function GetURLArgs() {
     return args
 }
 
-function Highlight() {
+function Search(keep) {
   var mtch = document.getElementById("inputText").value.toLowerCase();
   
-  var FILT_DATA = [];
-  var O = [];
-  
-  for (j = 0; j < PLOTLY_DATA.length; j += 1) {
-     for (i = 0; i < PLOTLY_DATA[j].text.length; i += 1) {
-           O.push((PLOTLY_DATA[j].text[i].toLowerCase().indexOf(mtch) !== -1) ? 0.8 : 0.1);
-     }
-     
-     var dat    = {}
-     dat        = Object.assign(dat, PLOTLY_DATA[j]);
-     dat.marker = {};
-     dat.marker = Object.assign(dat.marker, PLOTLY_DATA[j].marker);
-     dat.marker.opacity = O;
-     
-     FILT_DATA.push(dat);
+  if (mtch.length == 0) {
+     return;
   }
 
-  Plotly.react(PLOTLY_DIV, FILT_DATA, PLOTLY_LAYOUT, PLOTLY_CONFIG);
-}
-
-function Search() {
-  var mtch = document.getElementById("inputText").value.toLowerCase();
-  var i = 0;
-  var T = [];
-  var X = [];
-  var Y = [];
-  var C = [];
-  var S = [];
-  
   var FILT_DATA = [];
   
   for (j = 0; j < PLOTLY_DATA.length; j += 1) {
+     var T   = [];
+     var X   = [];
+     var Y   = [];
+     var C   = [];
+     var S   = [];
+     
+     // Non-highlighted points
+     var T_k = [];
+     var X_k = [];
+     var Y_k = [];
+     var C_k = [];
+     var S_k = [];
+        
      for (i = 0; i < PLOTLY_DATA[j].text.length; i += 1) {
-           if (PLOTLY_DATA[j].text[i].toLowerCase().indexOf(mtch) === -1) {
-                 continue;
+           if (PLOTLY_DATA[j].text[i].toLowerCase().indexOf(mtch) !== -1) {
+              T.push(PLOTLY_DATA[j].text[i]);
+              X.push(PLOTLY_DATA[j].x[i]);
+              Y.push(PLOTLY_DATA[j].y[i]);
+              C.push(PLOTLY_DATA[j].marker.color[i]);
+              S.push(PLOTLY_DATA[j].marker.size[i]);
+           } else if (keep) {
+              T_k.push(PLOTLY_DATA[j].text[i]);
+              X_k.push(PLOTLY_DATA[j].x[i]);
+              Y_k.push(PLOTLY_DATA[j].y[i]);
+              C_k.push(PLOTLY_DATA[j].marker.color[i]);
+              S_k.push(PLOTLY_DATA[j].marker.size[i]);
            }
-           T.push(PLOTLY_DATA[j].text[i]);
-           X.push(PLOTLY_DATA[j].x[i]);
-           Y.push(PLOTLY_DATA[j].y[i]);
-           C.push(PLOTLY_DATA[j].marker.color[i]);
-           S.push(PLOTLY_DATA[j].marker.size[i])
      }
      
      var dat    = {}
@@ -68,8 +61,31 @@ function Search() {
      dat.marker.size = S;
      dat.marker.color = C;
      dat.text = T;
+
+    if (keep) {
+       dat.name = "Highlight";
+    }
      
      FILT_DATA.push(dat);
+     
+     // Add in non-highlighted points
+     if (keep) {
+        var dat    = {}
+        dat        = Object.assign(dat, PLOTLY_DATA[j]);
+        dat.marker = {};
+        dat.marker = Object.assign(dat.marker, PLOTLY_DATA[j].marker);
+        
+        dat.x = X_k;
+        dat.y = Y_k;
+        dat.marker.size = S_k;
+        dat.marker.color = C_k;
+        dat.marker.opacity = 0.05;
+        dat.text = T_k;
+
+        dat.name = "Lowlight";
+        
+        FILT_DATA.push(dat);
+     }
   }
 
   Plotly.react(PLOTLY_DIV, FILT_DATA, PLOTLY_LAYOUT, PLOTLY_CONFIG);

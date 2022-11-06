@@ -11,9 +11,9 @@
 <body style="text-align: center;">
   <div style="position: absolute; z-index: 1; top: 4px; left: 4px;">
       <input id="inputText" type="text" value="">
-      <button id="btnSearch" onClick="Search()">Search</button>
+      <button id="btnSearch" onClick="Search(false)">Search</button>
       <button id="btnReset" onClick="Reset()">Clear</button>
-      <button id="btnHigh" onClick="Highlight()">Highlight</button>
+      <button id="btnHigh" onClick="Search(true)">Highlight</button>
   </div>
   <div id="graph" style="height: 100%; width: 100%; z-index: 100;"></div>
 </body>
