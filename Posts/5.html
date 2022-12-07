@@ -182,7 +182,7 @@ def __init__(self, layers, actvFn = 'tanh', learnRate = 0.001, decay = 0.9, maxI
 <br/>
 <br/>As seen above, tensorflow placeholder variables are created for the input (x) and the output (y). Next, tensorflow variables for the weight matrices and bias vectors are created using the _CreateVars() function. The weights are initialized as random normal numbers distributed as \(\mathcal{N}(0, 1/\sqrt{f})\), where \(f\) is the fan-in to the layer.
 <br/>
-<br/>Next, the MLP model is constructed using its definition as discussed <a href="Posts/3.html">in an earlier post</a>. After that, the loss and regularization functions are defined as the L2 loss. Regularization penalizes larger values in the weight matrices and bias vectors to help prevent over-fitting. Lastly, tensorflow's AdamOptimizer is employed as the training optimizer with the goal of minimizing the loss function. Note that at this stage the learning has not yet been done, only the tensorflow graph has been initialized with the necessary components of the MLP.
+<br/>Next, the MLP model is constructed using its definition as discussed <a href="3.html">in an earlier post</a>. After that, the loss and regularization functions are defined as the L2 loss. Regularization penalizes larger values in the weight matrices and bias vectors to help prevent over-fitting. Lastly, tensorflow's AdamOptimizer is employed as the training optimizer with the goal of minimizing the loss function. Note that at this stage the learning has not yet been done, only the tensorflow graph has been initialized with the necessary components of the MLP.
 <br/>
 <br/>Next, the MLP is trained with the Yahoo stock data. A hold-out period is used to assess how well the MLP is performing. This can be accomplished as follows:
 <br/>

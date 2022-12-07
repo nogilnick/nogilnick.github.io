@@ -43,7 +43,7 @@
         <div class="CTable">
             <div style="display: table-row; height: 100%; width: 100%;">
                 <div class="BarLeft" id="LBar"></div>
-                <div class="BarCenter" id="CBar"><br/><h1>PoE AI Part 3: Movement and Navigation</h1><h2>Wed, 19 Jul 2017</h2><h3><i>Bot</i>, <i>Computer Science</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i>, <i>Poe</i>, <i>Python</i>, <i>Security</i>, <i>Software</i></h3>This post is part of <a href="Posts/14.html">a series on creating an AI for the game Path of Exile © (PoE)</a>. In this post, techniques for moving the character around a level are explored.
+                <div class="BarCenter" id="CBar"><br/><h1>PoE AI Part 3: Movement and Navigation</h1><h2>Wed, 19 Jul 2017</h2><h3><i>Bot</i>, <i>Computer Science</i>, <i>Gaming</i>, <i>Machine Learning</i>, <i>Path Of Exile</i>, <i>Poe</i>, <i>Python</i>, <i>Security</i>, <i>Software</i></h3>This post is part of <a href="14.html">a series on creating an AI for the game Path of Exile © (PoE)</a>. In this post, techniques for moving the character around a level are explored.
 <h1>The Movement Map Class</h1>
 In PoE, movement is typically accomplished by using the left mouse button to click on a location. The player then typically moves to the location of the mouse click. Figure 1 shows an example of moving the player using a mouse click.<br/>
 <p style="text-align:center;">
@@ -64,7 +64,7 @@ Now, in order to accomplish navigation, the AI maintains a data structure which 
 <br/>
 The map records locations that have been visited along with their type. The type identifies if the player can move to the location (it maps to "Open") or if the player cannot (it maps to "Obstacle"). With such a map in place, <a href="https://en.wikipedia.org/wiki/Breadth-first_search">breadth-first search</a> can be used to find a shortest path from one location to another.
 <h1>Mapping Between Dimensions</h1>
-Now assume the player is at location (0, 0, 0) and is to move to (1, 1, 0). Where on the screen should the mouse click be performed? Recall from <a href="Posts/14.html" />a previous post</a>, that a projection matrix was calibrated, allowing for more accurate approximation of the player's location in 3D coordinates. Thus, the point (1, 1, 0) is transformed by the projection matrix to determine its location on the screen. This is the location where the mouse click should be performed.
+Now assume the player is at location (0, 0, 0) and is to move to (1, 1, 0). Where on the screen should the mouse click be performed? Recall from <a href="14.html" />a previous post</a>, that a projection matrix was calibrated, allowing for more accurate approximation of the player's location in 3D coordinates. Thus, the point (1, 1, 0) is transformed by the projection matrix to determine its location on the screen. This is the location where the mouse click should be performed.
 <br/>
 <br/>In practice, I found the "movement only" skill to be too inaccurate in terms of where the player will move. This is especially the case when the mouse click is performed on an obstacle. In this case, the player typically moves nearby the mouse click. An example of this is shown below in Figure 2.<br/>
 <p style="text-align:center;">

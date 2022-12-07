@@ -45,7 +45,7 @@
                 <div class="BarLeft" id="LBar"></div>
                 <div class="BarCenter" id="CBar"><br/><h1>Image Classification Using Convolutional Neural Networks</h1><h2>Sun, 02 Apr 2017</h2><h3><i>Classification</i>, <i>Cnn</i>, <i>Computer Science</i>, <i>Computer Vision</i>, <i>Machine Learning</i>, <i>Neural Networks</i>, <i>Python</i>, <i>Tensorflow</i></h3>This blog post introduces a type of neural network called a convolutional neural network (CNN) using Python and <a href="https://www.tensorflow.org/">TensorFlow</a>. A brief introduction to CNNs is given and a helper class for building CNNs in Python and TensorFlow is provided. The source code from this post is <a href="https://github.com/nicholastoddsmith/pythonml/tree/master/TFANN">available here on GitHub</a>.
 <h1>Motivation for CNNs</h1>
-<a href="Posts/3.html">Past</a> <a href="Posts/5.html">blog</a> <a href="">posts</a> have explored multi-layer perceptron (MLP) networks. Recall from <a href="Posts/3.html">this post</a>, that multi-layer perceptrons (MLPs) are fully-connected. Thus, in an MLP, a neuron in layer \(i\) is connected to all neurons in layer \(i + 1\). An example of an MLP network is shown below in Figure 1.<br/>
+<a href="3.html">Past</a> <a href="5.html">blog</a> <a href="">posts</a> have explored multi-layer perceptron (MLP) networks. Recall from <a href="3.html">this post</a>, that multi-layer perceptrons (MLPs) are fully-connected. Thus, in an MLP, a neuron in layer \(i\) is connected to all neurons in layer \(i + 1\). An example of an MLP network is shown below in Figure 1.<br/>
 <p style="text-align:center;"><img src="../Img/mlp2.png" height="auto" width="75%" /></p>
 <p style="text-align:center;"><b>Figure 1: A Multi-Layer Perceptron Network</b></p>
 <br/>
@@ -86,7 +86,7 @@ the max value of 0.654 would be preserved and the remaining 3 values would be di
 <br/>
 <br/>After the data has been filtered and downsampled in some sequence of convolution and pooling layers it can be distilled into some output vector \(\textbf{yh}\) using one or more fully-connected layers. This is accomplished by flattening the output volume into a single row vector and applying the familiar steps of an MLP network.
 <h1>A TensorFlow CNN Python Class</h1>
-The TFMLP file that was introduced in <a href="Posts/5.html">a past blog post</a> is extended to support CNNs. Now that the module suports both MLPs and CNNs, it has been renamed to TFANN (short for TensorFlow Artificial Neural Networks). To promote code reuse, a base artificial neural network (ANN) class is created from which the MLP and CNN classes inherit. A simple class diagram showing the classes in the TFANN module is shown below in Figure 5.<br/>
+The TFMLP file that was introduced in <a href="5.html">a past blog post</a> is extended to support CNNs. Now that the module suports both MLPs and CNNs, it has been renamed to TFANN (short for TensorFlow Artificial Neural Networks). To promote code reuse, a base artificial neural network (ANN) class is created from which the MLP and CNN classes inherit. A simple class diagram showing the classes in the TFANN module is shown below in Figure 5.<br/>
 <p style="text-align:center;"><img src="../Img/tfann1.png" height="auto" width="75%" /></p>
 <p style="text-align:center;"><b>Figure 5: TFANN Class Diagram</b></p>
 <br/>

@@ -74,7 +74,7 @@ This training log file is read into pandas using <i>read_csv</i>. Next the logs 
     <li>Parent PID</li>
     <li>PID</li>
 </ul>
-Next, the logging calls are grouped into a blocks and the resulting strings are vectorized using a TfidfVectorizer. These vectors encode information about the number, type, and details of the system calls made on the computer. Tfidf vectorization is explained <a href="Posts/22.html">in further detail in this earlier blog post</a>.
+Next, the logging calls are grouped into a blocks and the resulting strings are vectorized using a TfidfVectorizer. These vectors encode information about the number, type, and details of the system calls made on the computer. Tfidf vectorization is explained <a href="22.html">in further detail in this earlier blog post</a>.
 <br/>
 <br/>The rational behind this approach is that malware uses system calls to operate on a system. For example, accessing or modifying files or registry keys. Sending or receiving data over the network. By analyzing the frequencies of these actions, malicious behavior can be detected.
 <br/>
