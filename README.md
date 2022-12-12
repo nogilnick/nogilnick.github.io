@@ -1,3 +1,3 @@
 Personal website and blog.
 
-[Visit Site](https://nicholastoddsmith.github.io/)
+[Visit Site](https://nogilnick.github.io/)
