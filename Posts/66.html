@@ -109,7 +109,7 @@ In this case, the cross terms do not simplify as much due to the placement of th
 \[\displaylines{(\mathbf{V}(\mathbf{X}-\mathbf{U}))^T\mathbf{Q} = (\mathbf{V}\mathbf{X})^T\mathbf{Q} - (\mathbf{V}\mathbf{U})^T\mathbf{Q}}\ .\]</p>
 Both terms above are more efficiently computed using broadcasting. Finally, these components may be re-normalized to form orthonormal principal components.
 <h1>Source Code</h1>
-In conclusion, this post details a method to compute the full PCA of a sparse <i>m</i>x<i>n</i> rectangular matrix. Specifically, this method applies to problems where a dense SVD on the original matrix is not possible, but it is tractable to compute the eigendecomposition of either an <i>m</i>x<i>m</i> or an <i>n</i>x<i>n</i> dense matrix in memory. The two approaches to weighted PCA described above are implemented in the class <i>EigenPCA</i> <a href="https://github.com/nicholastoddsmith/WeightedPCA">available here on GitHub</a>.<br/><br/></div>
+In conclusion, this post details a method to compute the full PCA of a sparse <i>m</i>x<i>n</i> rectangular matrix. Specifically, this method applies to problems where a dense SVD on the original matrix is not possible, but it is tractable to compute the eigendecomposition of either an <i>m</i>x<i>m</i> or an <i>n</i>x<i>n</i> dense matrix in memory. The two approaches to weighted PCA described above are implemented in the class <i>EigenPCA</i> <a href="https://github.com/nogilnick/WeightedPCA">available here on GitHub</a>.<br/><br/></div>
                 <div class="BarRight" id="RBar"></div>
             </div>
         </div>

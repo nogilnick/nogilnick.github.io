@@ -72,7 +72,7 @@ A  = DF.Date.astype('int')[:, None] * 1e-18</code></pre><br/><hr/><br/>
 <br/>
 <br/>To reduce the magnitude of these values and improve overall numerical conditioning, the column is multiplied by <i>1e-18.</i>
 <h1>Creating the MLP</h1>
-The MLP class that will be used follows a simple interface similar to that of the python <a href="http://scikit-learn.org/stable/">scikit-learn library</a>. The source code <a href="https://github.com/nicholastoddsmith/pythonml/tree/master/TFANN">is available here</a>. The interface is as follows:
+The MLP class that will be used follows a simple interface similar to that of the python <a href="http://scikit-learn.org/stable/">scikit-learn library</a>. The source code <a href="https://github.com/nogilnick/pythonml/tree/master/TFANN">is available here</a>. The interface is as follows:
 <br/>
 <br/>
 <hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Fit the MLP to the data
@@ -105,7 +105,7 @@ h = 32
 layers = [('F', h), ('AF', 'tanh'), ('F', h), ('AF', 'tanh'), ('F', h), ('AF', 'tanh'), ('F', o)]
 mlpr = ANNR([i], layers, batchSize = 256, maxIter = 1000, tol = 0.2, reg = 1e-4, verbose = True)</code></pre><br/><hr/><br/>
 <br/>
-<br/>With this code, an ANNR object will be initialized with the given layer sizes, a batch size of 256, a training iteration limit of 1000, an error tolerance of 0.20 (for the MSE), regularization weight of \(1e-4\), and verbose output enabled. The source code for the ANNR class shows how this is accomplished (see <a href="https://github.com/nicholastoddsmith/pythonml">GitHub for the latest code</a>).
+<br/>With this code, an ANNR object will be initialized with the given layer sizes, a batch size of 256, a training iteration limit of 1000, an error tolerance of 0.20 (for the MSE), regularization weight of \(1e-4\), and verbose output enabled. The source code for the ANNR class shows how this is accomplished (see <a href="https://github.com/nogilnick/pythonml">GitHub for the latest code</a>).
 <br/>
 <br/>
 <hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Create the MLP variables for TF graph

@@ -44,7 +44,7 @@
         <div class="CTable">
             <div style="display: table-row; height: 100%; width: 100%;">
                 <div class="BarLeft" id="LBar"></div>
-                <div class="BarCenter" id="CBar"><br/><h1>Deep Learning OCR using TensorFlow and Python</h1><h2>Sat, 14 Oct 2017</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Deep Learning</i>, <i>Machine Learning</i>, <i>Ocr</i>, <i>Python</i>, <i>Tensorflow</i></h3>In this post, deep learning neural networks are applied to the problem of optical character recognition (OCR) using Python and TensorFlow. This post makes use of TensorFlow and the convolutional neural network class available in <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFANN.py">the TFANN module</a>. The full source code from this post is <a href="https://github.com/nicholastoddsmith/pythonml/tree/master/DeepOCR">available here</a>.
+                <div class="BarCenter" id="CBar"><br/><h1>Deep Learning OCR using TensorFlow and Python</h1><h2>Sat, 14 Oct 2017</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Deep Learning</i>, <i>Machine Learning</i>, <i>Ocr</i>, <i>Python</i>, <i>Tensorflow</i></h3>In this post, deep learning neural networks are applied to the problem of optical character recognition (OCR) using Python and TensorFlow. This post makes use of TensorFlow and the convolutional neural network class available in <a href="https://github.com/nogilnick/pythonml/blob/master/TFANN/TFANN.py">the TFANN module</a>. The full source code from this post is <a href="https://github.com/nogilnick/pythonml/tree/master/DeepOCR">available here</a>.
 <h1>Introduction to OCR</h1>
 OCR is the transformation of images of text into machine encoded text. A simple API to an OCR library might provide a function which takes as input an image and outputs a string. The following pseudo-code illustrates how this might be used.
 <br/>
@@ -156,7 +156,7 @@ def LoadData(FP = '.'):
             FN.append(FNi)
     return np.stack(A), np.stack(Y), np.stack(T), np.stack(FN)</code></pre><br/><hr/><br/>
 <br/>
-<br/>Next the neural network is constructed using the artificial neural network classifier (ANNC) class from <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFANN.py">TFANN</a>. The architecture described above is represented in the following lines of code using ANNC.
+<br/>Next the neural network is constructed using the artificial neural network classifier (ANNC) class from <a href="https://github.com/nogilnick/pythonml/blob/master/TFANN/TFANN.py">TFANN</a>. The architecture described above is represented in the following lines of code using ANNC.
 <br/>
 <br/>
 <hr/><br/><pre style="margin: auto; border: 1px solid #B0B0B0B0; padding: 0.75%;max-width: 42vw; overflow-x: auto;"><code>#Architecture of the neural network

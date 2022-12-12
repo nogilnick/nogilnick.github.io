@@ -44,7 +44,7 @@
         <div class="CTable">
             <div style="display: table-row; height: 100%; width: 100%;">
                 <div class="BarLeft" id="LBar"></div>
-                <div class="BarCenter" id="CBar"><br/><h1>Multi-Layer Perceptron Networks in Theano and TensorFlow: An Implementation and Benchmark</h1><h2>Sat, 15 Apr 2017</h2><h3><i>Ai</i>, <i>Ann</i>, <i>Benchmark</i>, <i>Computer Science</i>, <i>Machine Learning</i>, <i>Mlp</i>, <i>Python</i>, <i>Tensorflow</i>, <i>Theano</i></h3>A <a href="5.html">past blog post</a> explored using multi-layer-perceptrons (MLP) to predict stock prices using Tensorflow and Python. This post introduces another common library used for artificial neural networks (ANN) and other numerical purposes: <a href="http://deeplearning.net/software/theano/">Theano</a>. An MLP Python class is created implemented using Theano, and then the performance of the class is compared with the <a href="https://github.com/nicholastoddsmith/pythonml/blob/master/TFANN/TFANN.py">TFANN</a> class in a benchmark.
+                <div class="BarCenter" id="CBar"><br/><h1>Multi-Layer Perceptron Networks in Theano and TensorFlow: An Implementation and Benchmark</h1><h2>Sat, 15 Apr 2017</h2><h3><i>Ai</i>, <i>Ann</i>, <i>Benchmark</i>, <i>Computer Science</i>, <i>Machine Learning</i>, <i>Mlp</i>, <i>Python</i>, <i>Tensorflow</i>, <i>Theano</i></h3>A <a href="5.html">past blog post</a> explored using multi-layer-perceptrons (MLP) to predict stock prices using Tensorflow and Python. This post introduces another common library used for artificial neural networks (ANN) and other numerical purposes: <a href="http://deeplearning.net/software/theano/">Theano</a>. An MLP Python class is created implemented using Theano, and then the performance of the class is compared with the <a href="https://github.com/nogilnick/pythonml/blob/master/TFANN/TFANN.py">TFANN</a> class in a benchmark.
 <h1>Installing Theano on Windows</h1>
 An easy way to get Theano working quickly is to first install <a href="https://www.continuum.io/downloads">Anaconda</a>. Anaconda is packaged with Python, NumPy, and several other of the installation requirements bundled together in a convenient installer (see Figure 1). This guide recommends using Anaconda3-4.2.0 for 64-bit Windows for simultaneous compatibility with TensorFlow.<br/>
 <p style="text-align:center;"><img src="../Img/screenshot-131.png" alt="SystemEnvVars" height="auto" width="75%" /></p>
@@ -198,7 +198,7 @@ def predict(self, A):
 def score(self, A, Y):
 	return np.float64(self.fcl(A, Y))</code></pre><br/><hr/><br/>
 <br/>
-<br/>The complete code for the class is <a href="https://github.com/nicholastoddsmith/pythonml">available here on GitHub</a>.
+<br/>The complete code for the class is <a href="https://github.com/nogilnick/pythonml">available here on GitHub</a>.
 <h1>Tensorflow vs Theano Benchmark</h1>
 Next, a benchmark is constructed to compare the performance of the TheanoMLPR class with that of the MLPR class from TFANN developed earlier. A data set comprised of random data is generated. Target values are taken to be the sum of the corresponding sample vectors squared. The sample matrix is then perturbed by values in [0, 1] and scaled again to the range [0, 1]. The sample and target matrices are written to a file so that both benchmarks can use identical data sets.
 <br/>
@@ -329,7 +329,7 @@ def RunBenchmark(R, A, Y):
 			PlotBenchmark(T3[:, 0], T3[:, 2], ax[1], &#039;# Samples&#039;, &#039;Test&#039;, &#039;Theano GPU&#039;)	
 		mpl.show()</code></pre><br/><hr/><br/>
 <br/>
-<br/>The completed code for the benchmark is <a href="https://github.com/nicholastoddsmith/pythonml/tree/master/NNBench">available here on GitHub</a>.
+<br/>The completed code for the benchmark is <a href="https://github.com/nogilnick/pythonml/tree/master/NNBench">available here on GitHub</a>.
 <h1>Results</h1>
 The above code was run on a Z800 workstation running Windows Server 2012 R2. The system has the following configuration:
 <ul>

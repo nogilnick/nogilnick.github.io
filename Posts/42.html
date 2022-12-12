@@ -69,7 +69,7 @@ This subdivision is accomplished by sorting the start and end points of the inte
 <br/>The results of the above merge are recorded in two parallel arrays to facilitate fast queries. The sorted start and end points are stored in the first array, while the corresponding sets of labels are stored in the second. Queries are performed with a binary search in the first column. If the query point is less than the element found in the search, the desired labels are found at the same index in the second array. Otherwise, the labels are in the previous element. In this way, the query is performed in logarithmic time.
 <br/>
 <br/><b>Source Code</b>
-A C++ implementation of the data structure described above is <a href="https://github.com/nicholastoddsmith/RangeMap">available here</a>. The entire data structure is available in a single header file with no dependencies in addition to the C++ standard template library.
+A C++ implementation of the data structure described above is <a href="https://github.com/nogilnick/RangeMap">available here</a>. The entire data structure is available in a single header file with no dependencies in addition to the C++ standard template library.
 <br/><br/></div>
                 <div class="BarRight" id="RBar"></div>
             </div>
