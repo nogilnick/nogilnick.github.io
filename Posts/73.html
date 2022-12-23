@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nogilnick</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 64%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nogilnick</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="Plots.html">Plots</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>nogilnick</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>Cause of Death Records in 2021</h1><h2>Fri, 23 Dec 2022</h2><h3><i>Covid-19</i>, <i>Data Analysis</i>, <i>Data Visualization</i>, <i>Medicine</i>, <i>Software</i></h3>This post explores Multiple Cause-of-Death records for the year 2021, taken from the U.S. Division of Vital Statistics. Specifically, the impact of the second full year of the coronavirus pandemic is explored in more detail.
+
+The first item to note is that the excess mortality observed in 2020 continues and even increases into 2021. Figure 1 shows the total count of mortality records by year.
+<p style="text-align:center;"><img src="../Img/totaldeathcount21.png" height="auto" width="75%" class="ImgClear"/></p>
+<p style="text-align:center;"><b>Figure 1: Count of Deaths by Year</b></p>
+As can be seen, the sharply elevated number of deaths beginning in 2020 continues to grow even further in 2021.
+<br/>
+<br/>Figure 2 breaks down this overall record count into the six most prevalent top-level ICD-10 codes of 2021. As seen in the chart, most categories at least preserve their levels from prior to the pandemic.
+<p style="text-align:center;"><img src="../Img/catdeathcount21.png" height="auto" width="75%" class="ImgClear"/></p>
+<p style="text-align:center;"><b>Figure 2: Count of Top ICD-10 Categories by Year</b></p>
+Specifically, further increases in circulatory, external, special, and (to a lesser extent) neoplasm codes are observed. Mild declines in respiratory and nervous system codes are observed. From Figure 2, it is clear that the vast majority of the increase in deaths observed in Figure 1 is due to records with the special code U071: Covid-19.
+<br/>
+<br/>Figure 3 shows the top ICD-10 categories for 2018, 2019, 2020, and 2021. The <i>x</i>-axis records the number of deaths in thousands for the given year, while the color axis shows the average age for records in the group.
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/topicd102018.png"><img class="ImgClear" src="../Img/topicd102018.png" /></a></td><td><a href="../Img/topicd102019.png"><img class="ImgClear" src="../Img/topicd102019.png" /></a></td></tr><tr><td><a href="../Img/topicd102020.png"><img class="ImgClear" src="../Img/topicd102020.png" /></a></td><td><a href="../Img/topicd102021.png"><img class="ImgClear" src="../Img/topicd102021.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 3: Top ICD-10 Diseases by Year</b></p>
+The charts for 2018 and 2019 are very consistent, with only the ranking for stroke and hypertensive heart disease changing. The leading diseases prior to the pandemic are primarily heart disease, COPD &amp; lung cancer, and dementia. In 2020 and 2021, Covid-19 becomes the leading cause of death, and in 2021 its margin grows, exceeding 400k records.
+<br/>
+<br/>Figure 4 shows the monthly counts of circulatory and Covid-19 deaths for 2020 and 2021. The monthly pattern for circulatory deaths in 2021 appears similar to that of 2020.
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/monthcircdeath21.png"><img class="ImgClear" src="../Img/monthcircdeath21.png" /></a></td><td><a href="../Img/monthcov19death21.png"><img class="ImgClear" src="../Img/monthcov19death21.png" /></a></td></tr></table></p>
+<p style="text-align:center;"><b>Figure 4: Monthly Circulatory and Covid-19 Deaths (2020-21)</b></p>
+The peak in Covid-19 deaths appears to be in the winter of 2020-21, with a maximum of nearly 100k records observed in January 2021.
+<br/>
+<br/>Figure 5 explores differences between 2020 and 2021, by computing percentage changes in record counts between the two years. The color of each bar reflects the percentage increase. ICD-10 codes with less than an average of 25 records between the years are suppressed, as these tend to have large percentage changes.
+<p style="text-align:center;"><img src="../Img/ucodchange21.png" height="auto" width="75%" class="ImgClear"/></p>
+<p style="text-align:center;"><b>Figure 5: Top 2021 Increases by Percent Change</b></p>
+A large percentage change (3450%) is observed in vaccine-related deaths. However, the raw number of deaths is very low, increasing from only 2 in 2020 to 71 in 2021. Given there was a massive increase in vaccine doses administered in 2021, it is not too surprising that this number sees a significant, albeit small, increase.
+<br/>
+<br/>Figure 6 shows the increase in excess circulatory deaths in the sub-40 population by biological sex. The graphs for both 2020 and 2021 are shown. The numbers for 2021 are computed by subtracting the 2021 number from 2019. This is done because the differences between 2021 and 2020 are relatively small; the majority of the increases occur from 2019 to 2020.
+<p style="text-align:center;"><img src="../Img/sub40yoysex21.png" height="auto" width="75%" class="ImgClear"/></p>
+<p style="text-align:center;"><b>Figure 6: Excess Circulatory Deaths under 40</b></p>
+As can be seen, the pattern from 2020 largely appears to continue. Namely, in the younger population, excess deaths among males are greater than females. As mentioned in the previous post, this corroborates evidence showing men tend to be impacted by heart disease earlier than women on average.
+<p style="text-align:center;"><img src="../Img/ageatdeathavg-2.png" height="auto" width="75%" class="ImgClear"/></p>
+<p style="text-align:center;"><b>Figure 7: Average Age at Death</b></p>
+Finally, Figure 7 shows the average age stated on each record. As can be seen, a second straight year of decline in this average is observed in 2021. Life expectancy is computed using alternate (and more sophisticated) criteria, but this data corroborates reports of a decrease in U.S. life expectancy due to the coronavirus pandemic.
+<br/>
+<br/>In conclusion, record counts for most of the common ICD-10 categories continue their surge into 2021. Covid-19 retains its place as the leading cause of death in 2021. Similar patterns are observed in the other leading causes of death between 2020 to 2021. Specifically, increases in circulatory deaths from their 2019 levels appear relatively consistent between the two years. From a high level, it appears that 2021 is somewhat of a continuation of the patterns beginning in the previous year.<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2022 nogilnick All Rights Reserved</cite>        
+    </div>
+</body>
+</html>
