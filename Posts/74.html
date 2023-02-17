@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nogilnick</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 64%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nogilnick</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="Plots.html">Plots</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>nogilnick</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>The Matrix-Vector Product and the SVD</h1><h2>Fri, 17 Feb 2023</h2><h3><i>Computer Science</i>, <i>Data Science</i>, <i>Machine Learning</i>, <i>Mathematics</i>, <i>Statistics</i></h3>The singular value decomposition (SVD) allows one to re-write a given matrix as a sum of rank one matrices. Specifically, using the SVD, one may re-write a given matrix <b>A</b> as follows:
+<p style="text-align:center;">\[\displaylines{\mathbf{A}=\mathbf{U}\mathbf{\Sigma}\mathbf{V}^T = \sum\limits_{i=1}^{n}{\mathbf{U}_i\mathbf{\Sigma}_{ii}\mathbf{V}_i^T} }\ ,\]</p>
+where \(\mathbf{V}_i^T\) is the transpose of the <i>i</i>-th column of <b>V</b>. Further, the Eckart-Young-Mirsky theorem proves that the best rank <i>k</i> approximation to the matrix <b>A</b> is found by summing only the first <i>k</i> elements of the right-hand sum.
+
+Properties of the SVD state that the columns of the matrix <b>U</b> contain the eigenvectors of the matrix \(\mathbf{A}\mathbf{A}^T\). Further, the columns of the matrix <b>V</b> contain the eigenvectors of the matrix \(\mathbf{A}^T\mathbf{A}\). Finally, the non-zero elements of the diagonal matrix \(\mathbf{\Sigma}\) are the square-roots of the eigenvalues of \(\mathbf{A}^T\mathbf{A}\) or \(\mathbf{A}\mathbf{A}^T\).
+<br/>
+<br/>Putting all these together provides an interesting insight into the behavior of the standard matrix-vector product. Specifically, consider an arbitrary vector <b>b</b> and the matrix-vector product <b>Ab</b>. If <b>A</b> is an <i>m</i>x<i>n</i> matrix and <b>b</b> is an <i>n</i>x<i>1</i> vector, then the resulting product is a linear combination of the columns of <b>A</b> and hence an <i>m</i>x<i>1</i> vector.
+<br/>
+<br/>Another perspective on this product is obtained by considering the rank-one decomposition. The matrix-vector product may be re-written as:
+<p style="text-align:center;">\[\displaylines{\mathbf{A}\mathbf{b}= \sum\limits_{i=1}^{n}{\mathbf{U}_i\mathbf{\Sigma}_{ii}\mathbf{V}_i^T\mathbf{b}} }\ .\]</p>
+Note that \(\mathbf{V}_i^T\mathbf{b}\) is the product of a <i>1</i>x<i>n</i> vector with an <i>n</i>x<i>1</i> vector and so is equivalent to the standard dot-product. In addition, \(\mathbf{\Sigma}_{ii}\) is the <i>i</i>-th singular value and so is also a scalar. If one assumes that both the eigenvectors and the vector <b>b</b> are normalized, this dot product is equivalent to the cosine similarity between <b>b</b> and \(\mathbf{V}_i\).
+<br/>
+<br/>This product may be seen as a measurement of the extent to which <b>b</b> and \(\mathbf{V}_i\) point in the same direction. Specifically, the cosine similarity ranges from 1 to -1 for vectors pointing in the same to opposite directions respectively. Next, this product is scaled proportional to the variance explained by the <i>i</i>-th component by multiplying by the <i>i</i>-th singular value. The resulting scalar is then multiplied by the <i>i</i>-th eigenvector of \(\mathbf{A}\mathbf{A}^T\) and finally the resulting vectors are summed together.
+<br/>
+<br/>In this way, the matrix-vector product <b>Ab</b> is written as a linear combination of the eigenvectors of \(\mathbf{A}\mathbf{A}^T\). Specifically, the more that <b>b</b> points in the direction of \(\mathbf{V}_i\), the more the resulting sum moves in the direction of the <i>i</i>-th left singular vector \(\mathbf{U}_i\), scaled proportionally by the explained variance.
+<br/>
+<br/>One can imagine beginning at the origin and then taking <i>n</i> steps. At each step, the dot-product of <b>b</b> with the <i>i</i>-th right-singular vector along with the <i>i</i>-th singular value determine how far to move in (or against) the direction of the <i>i</i>-th left-singular vector. After <i>n</i> steps one arrives at the vector \(\mathbf{A}\mathbf{A}^T\).<br/><br/></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2023 nogilnick All Rights Reserved</cite>        
+    </div>
+</body>
+</html>
