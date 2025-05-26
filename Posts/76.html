@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>nogilnick</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="../style.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <div class="HeadImg">
+        <div class="Header">
+            <div style="display: table; height: 100%; width: 100%;">
+                <div style="display: table-row; height: 100%; width: 100%;">
+                    <div style="display: table-cell; height: 100%; padding: 0 0 0 0.5%; text-align: left; vertical-align: bottom; width: 64%;">
+                        <a href="../index.html" style="text-decoration: none;"><text class="FontHeader"><b>nogilnick</b>.</text></a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="About.html">About</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="../index.html">Blog</a>
+                    </div>
+                    <div style="display: table-cell; height: 100%; padding: 0 0.5% 0 0; text-align: center; vertical-align: bottom; width: 12%;">
+                        <a class="FontNavi" href="Plots.html">Plots</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/><br/><br/>
+        <text class="FontLogo"><b>The Website and Blog</b></text><br/>
+        <text class="FontLogo">of</text><br/>
+        <text class="FontLogo"><b>nogilnick</b></text><br/>
+        <text class="FontLogo"><i>The machine learns and I from the machine.</i></text>
+        <br/><br/><br/><br/><br/><br/><br/><br/>
+    </div>
+    <div id="Cont" class="Contents">
+        <div class="CTable">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div class="BarLeft" id="LBar"></div>
+                <div class="BarCenter" id="CBar"><br/><h1>US Housing Data Analysis - 2025</h1><h2>Mon, 26 May 2025</h2><h3><i>Data Analysis</i>, <i>Data Visualization</i>, <i>Housing</i>, <i>Housing-Market</i>, <i>Investing</i>, <i>Real-Estate</i>, <i>Realtor</i></h3>Recently, some posts on social media were claiming that for-sale home listings in Washington DC were spiking, presumably due to recent cuts to government and other agencies. This post investigates data from <a href="https://www.zillow.com/research/data/">Zillow Research</a> both to investigate the US real estate market this year in general and to determine if such a claim holds any truth.
+<br/>
+<br/>If one compares the number of new listings in DC so far in 2025 to the average number of listings during the same week from 2023 and 2024, it does appear that there is some increase. However, plotting the same for the United States as a whole reveals a similar level of increase.<br/>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/newlistingswdcplot.png"><img class="ImgClear" src="../Img/newlistingswdcplot.png" /></a></td><td><a href="../Img/newlistingsusaplot.png"><img class="ImgClear" src="../Img/newlistingsusaplot.png" /></a></td></tr></table></p>
+
+<p>To better quantify this, one might look at the z-score for the percent change in current year over the 2023-24 baseline for Washington DC versus other regions. The following chart plots this weekly z-score for several large cities in the USA. Notably, DC does not seem to be particularly standout.</p>
+<p style="text-align:center;"><img src="../Img/newlistingszscorecity.png?w=845" height="auto" width="75%" class="ImgClear"/></p>
+
+<p>So which cities are standout, if any?</p>
+
+<p>The next series of plots computes the average YTD z-score for all cities in the data and shows the top and bottom 10 cities and states. California, Washington, Idaho, Arizona, and Nevada have some of the highest average z-scores, though they are not particularly large, relatively speaking.</p>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/bottompctchangecitylistings.png"><img class="ImgClear" src="../Img/bottompctchangecitylistings.png" /></a></td><td><a href="../Img/toppctchangecitylistings.png"><img class="ImgClear" src="../Img/toppctchangecitylistings.png" /></a></td></tr><tr><td><a href="../Img/bottompctchangestatelistings.png"><img class="ImgClear" src="../Img/bottompctchangestatelistings.png" /></a></td><td><a href="../Img/toppctchangestatelistings.png"><img class="ImgClear" src="../Img/toppctchangestatelistings.png" /></a></td></tr></table></p>
+
+<p>On the other hand, New York, Kansas, and Connecticut show some of the largest decreases in new listings over 2023-24, though they are not particularly large either.</p>
+
+<p>What about how long it takes to sell houses?</p>
+
+<p>Again, Washington DC shows increased <em>median days to sale (*)</em> in 2025, but so does the overall USA.</p>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/mediandaystosalewdc.png"><img class="ImgClear" src="../Img/mediandaystosalewdc.png" /></a></td><td><a href="../Img/mediandaystosaleusa.png"><img class="ImgClear" src="../Img/mediandaystosaleusa.png" /></a></td></tr></table></p>
+
+<p>The following chart shows the percent change in median days to sale over 2023-2024 baseline. It reveals that DC is not particularly standout relative to three other large US cities.</p>
+<p style="text-align:center;"><img src="../Img/zscoremediandayscities.png?w=879" height="auto" width="75%" class="ImgClear"/></p>
+
+<p>Which US cities and states are seeing the largest increases and decreases in <em>median days to sale</em>? The next few charts explore this in more detail.</p>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/bottompctchangemediandayscities.png"><img class="ImgClear" src="../Img/bottompctchangemediandayscities.png" /></a></td><td><a href="../Img/toppctchangemediandayscities.png"><img class="ImgClear" src="../Img/toppctchangemediandayscities.png" /></a></td></tr><tr><td><a href="../Img/bottompctchangemediandaysstates.png"><img class="ImgClear" src="../Img/bottompctchangemediandaysstates.png" /></a></td><td><a href="../Img/toppctchangemediandaysstates.png"><img class="ImgClear" src="../Img/toppctchangemediandaysstates.png" /></a></td></tr></table></p>
+
+<p>It seems that tech hubs like San Jose, New York, and Seattle are seeing inventory moving faster this year than in the previous two years. On the other hand, states like Arkansas, Kansas, Georgia, and Iowa are seeing a further slowdown recently. However, the change in most of these numbers is also not particularly large.</p>
+
+<p>Zillow Research publishes a market temperature which attempts to quantify the balance between supply and demand in a given region. Per the website, "a higher number means the market is more tilted in favor of sellers." Per <a href="https://www.zillow.com/research/market-heat-index-methodology-34057/">their methodology</a>, temperature values above 55 indicate a seller's market while temperature values below 44 indicate a buyer's market.</p>
+
+<p><table align="center" style="margin: 0px auto; text-align: center; vertical-align: middle"><tr><td><a href="../Img/zillowtempusatsplotbyyear.png"><img class="ImgClear" src="../Img/zillowtempusatsplotbyyear.png" /></a></td><td><a href="../Img/zillowtempusatsplot.png"><img class="ImgClear" src="../Img/zillowtempusatsplot.png" /></a></td></tr></table></p>
+
+<p>As a whole, the US market temperature has been trending lower over the past 3 years and this year looks to be continuing the trend downwards. However, the current US market temperature of 55 still indicates that the country, as a whole, falls into seller's market territory. Needless to say though, different stories are playing out in various markets throughout the country.</p>
+
+<p>So, what are the hottest real estate markets in the USA right now?</p>
+<p style="text-align:center;"><table align="center" style="margin: 0px auto; text-align:center; vertical-align: middle"><tr><td><a href="../Img/tophotestrecities.png"><img class="ImgClear" src="../Img/tophotestrecities.png" /></a></td><td><a href="../Img/bottomhotestrecities.png"><img class="ImgClear" src="../Img/bottomhotestrecities.png" /></a></td></tr><tr><td><a href="../Img/tophotestrestates.png"><img class="ImgClear" src="../Img/tophotestrestates.png" /></a></td><td><a href="../Img/bottomhotestrestates.png"><img class="ImgClear" src="../Img/bottomhotestrestates.png" /></a></td></tr></table></p>
+
+<p>San Jose and several cities in New York are some of the hottest markets this year so far, with Zillow temperatures all indicative of strong seller's markets (temperature ≥70). On the other hand, Florida finds itself as one of the coolest, with the state average falling solidly in buyer's market territory. DC compares relatively favorably among states, but this is likely skewed by the fact that states have both rural and urban areas, while DC does not.</p>
+
+<p>Overall, it seems there is a relative increase in both new listings and time on the market in 2025 so far. However, changes over the 2023-2024 baseline remain modest, which is unsurprising as the cost of borrowing has not shifted dramatically during this period. Finally, it does not appear that DC is particularly stand out this year.</p>
+
+<p>Note: <em>The data technically records the number of days till a home is marked as pending sale, which counts pending deals that fall through (*).</em></p></div>
+                <div class="BarRight" id="RBar"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Footer">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-row; height: 100%; width: 100%;">
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <a class="LinkFooter" href="../index.html">Home</a><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 20%; vertical-align: middle;">
+                    <text class="LinkFooter" onClick="window.scrollTo(0,0);">Top</text><br/><br/>
+                </div>
+                <div style="display: table-cell; height: 100%; width: 30%;"></div>
+            </div>
+        </div>
+        <br/>
+        <cite class="CiteText">2025 nogilnick All Rights Reserved</cite>        
+    </div>
+</body>
+</html>
